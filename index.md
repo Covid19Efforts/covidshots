@@ -78,6 +78,7 @@ $(document).ready( function () {
   .then(data => {console.log(data);
   data["states"].forEach((index, state) => {
   console.log(index, state);
+  return;
   })
   });
   
