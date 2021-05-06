@@ -56,7 +56,7 @@
 
 <script>
 $(document).ready( function () {
- $('#example-getting-started2').dropdown();
+ $('.ui fluid dropdown').dropdown();
  
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
 
