@@ -15,13 +15,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 
 
-
-
-<select class="selectpicker" multiple data-live-search="true">
+<select class="selectpicker">
   <option>Mustard</option>
   <option>Ketchup</option>
-  <option>Relish</option>
+  <option>Barbecue</option>
 </select>
+
 
 <table id="table_id" class="display">
     <thead>
