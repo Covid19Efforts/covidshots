@@ -8,9 +8,9 @@
  
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
 
-<!-- Include the plugin's CSS and JS: -->
-<script type="text/javascript" src="bootstrap-multiselect.min.js"></script>
-<link rel="stylesheet" href="bootstrap-multiselect.min.css" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="semantic/dist/semantic.min.js"></script>
 
 
 <select id="example-getting-started" multiple="multiple">
@@ -22,6 +22,27 @@
     <option value="onions">Onions</option>
 </select>
 
+<select name="skills" multiple="" class="ui fluid dropdown" id="example-getting-started2">
+  <option value="">Skills</option>
+<option value="angular">Angular</option>
+<option value="css">CSS</option>
+<option value="design">Graphic Design</option>
+<option value="ember">Ember</option>
+<option value="html">HTML</option>
+<option value="ia">Information Architecture</option>
+<option value="javascript">Javascript</option>
+<option value="mech">Mechanical Engineering</option>
+<option value="meteor">Meteor</option>
+<option value="node">NodeJS</option>
+<option value="plumbing">Plumbing</option>
+<option value="python">Python</option>
+<option value="rails">Rails</option>
+<option value="react">React</option>
+<option value="repair">Kitchen Repair</option>
+<option value="ruby">Ruby</option>
+<option value="ui">UI Design</option>
+<option value="ux">User Experience</option>
+</select>
 
 <table id="table_id" class="display">
     <thead>
@@ -44,7 +65,7 @@
 
 <script>
 $(document).ready( function () {
-  $('#example-getting-started').multiselect();
+ $('#example-getting-started2').dropdown();
  
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
 
