@@ -1,6 +1,7 @@
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.css"/>
  
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
+
 
 <table id="table_id" class="display">
     <thead>
