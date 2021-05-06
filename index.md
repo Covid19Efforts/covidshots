@@ -45,7 +45,7 @@ $(document).ready( function () {
   "credentials": "omit"
 }).then(response => response.json())
   .then(data => {console.log(data);
-  data["states"].forEach(index, state => {
+  data["states"].forEach((index, state) => {
   console.log(index, state);
   })
   });
