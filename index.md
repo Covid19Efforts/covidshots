@@ -1,13 +1,4 @@
 
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.css"/>
- 
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
-
 <link rel="stylesheet" type="text/css" href="semantic.min.css">
 
 <script src="semantic.min.js"></script>
@@ -82,7 +73,7 @@ $(document).ready( function () {
   })
   });
   
-    $('#table_id').DataTable();
+  
     
 } );    
 </script>
