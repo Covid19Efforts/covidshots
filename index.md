@@ -35,7 +35,23 @@
 
 <script>
 $(document).ready( function () {
+ 
+ fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
+
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "omit"
+}).then(response => response.json())
+  .then(data => {console.log(data);
+  data["states"].forEach(index, state => {
+  console.log(index, state);
+  })
+  });
+  
     $('#table_id').DataTable();
+    
 } );    
 </script>
 
