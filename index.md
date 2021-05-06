@@ -8,14 +8,18 @@
  
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.24/af-2.3.6/b-1.7.0/b-colvis-1.7.0/cr-1.5.3/fh-3.1.8/sb-1.0.1/sp-1.2.2/sl-1.3.3/datatables.min.js"></script>
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+<!-- Include the plugin's CSS and JS: -->
+<script type="text/javascript" src="bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="bootstrap-multiselect.css" type="text/css"/>
 
 
-<select class="selectpicker">
-  <option>Mustard</option>
-  <option>Ketchup</option>
-  <option>Barbecue</option>
+<select id="example-getting-started" multiple="multiple">
+    <option value="cheese">Cheese</option>
+    <option value="tomatoes">Tomatoes</option>
+    <option value="mozarella">Mozzarella</option>
+    <option value="mushrooms">Mushrooms</option>
+    <option value="pepperoni">Pepperoni</option>
+    <option value="onions">Onions</option>
 </select>
 
 
@@ -40,6 +44,7 @@
 
 <script>
 $(document).ready( function () {
+  $('#example-getting-started').multiselect();
  
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
 
@@ -100,5 +105,3 @@ Having trouble with Pages? Check out our [documentation](https://docs.github.com
 
 
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
