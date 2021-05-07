@@ -3,13 +3,8 @@
 <script src="semantic.min.js"></script>
 
 
-<select name="skills" multiple="" class="ui fluid dropdown" id="states2">  
+<select name="skills" multiple="" class="ui fluid dropdown" id="states">  
 </select>
-
-<div class="ui fluid dropdown" id="states" multiple="">
-  <div class="text"></div>
-  <i class="dropdown icon"></i>
-</div>
 
 <table id="table_id" class="display">
     <thead>
@@ -50,10 +45,9 @@ $(document).ready( function () {
   let stateList = [];
   data["states"].forEach((state, index) => {
   console.log(index, state);
-  stateList.push({name:state["state_name"], value:state["state_name"]});
+  stateList.push({name:state["state_name"], value:state["state_id"]});
   });
   $('#states').dropdown({values:stateList});
-  $('#states2').dropdown({values:stateList});
   });
   
   
