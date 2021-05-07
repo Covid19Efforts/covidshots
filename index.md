@@ -47,7 +47,9 @@ $(document).ready( function () {
   console.log(index, state);
   stateList.push({name:state["state_name"], value:state["state_id"]});
   });
-  $('#states').dropdown({values:stateList, placeholder:"Select states"});
+  $('#states').dropdown({values:stateList, placeholder:"Select states",
+  onChange: function(value, text, selectedItem){console.log(value, text, selectedItem);}
+  });
   });
   
   
