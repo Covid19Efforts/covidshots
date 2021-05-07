@@ -74,7 +74,11 @@ $(document).ready( function () {
     console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);
     toggleDistricts();
   },
-  onShow : function()
+  });
+  });
+  
+  $('#districts').dropdown({
+      onShow : function()
   {
   g_statesSelected.forEach((state, index) => 
   {
@@ -92,9 +96,6 @@ $(document).ready( function () {
   });
   }
   });
-  });
-  
-  
     
 } );    
 </script>
