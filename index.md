@@ -82,7 +82,7 @@ $(document).ready( function () {
       onShow : function()
   {
   g_districtsAvailable.clear();
-  let districtList = [];
+  
   g_statesSelected.forEach((state, index) => 
   {
     fetch("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + String(state), {
@@ -94,12 +94,15 @@ $(document).ready( function () {
         }).then(response => response.json())
         .then(data => 
         {
-            let dist = data["districts"];
-            districtList.push({name:dist["district_name"], value:dist["district_id"]});
+            let dists = data["districts"];
+            dists.forEach((dist, index) => {
+                g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
+            });
+            
             console.log("here1 ", data);
         });
   });
-    $('#districts').dropdown("change values", {values:districtList});
+    $('#districts').dropdown("change values", {values:g_districtsAvailable});
   }
   });
     
