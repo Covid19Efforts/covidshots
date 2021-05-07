@@ -4,7 +4,6 @@
 
 
 <select name="skills" multiple="" class="ui fluid dropdown" id="states">
-    <option value="">Select States</option>
 </select>
 
 <table id="table_id" class="display">
@@ -43,7 +42,7 @@ $(document).ready( function () {
   "credentials": "omit"
 }).then(response => response.json())
   .then(data => {console.log(data);
-  let stateList = [];
+  let stateList = [{name:"Select States", value:""}];
   data["states"].forEach((state, index) => {
   console.log(index, state);
   stateList.push({name:state["state_name"], value:state["state_id"]});
