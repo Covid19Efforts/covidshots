@@ -100,7 +100,7 @@ $(document).ready( function () {
             });
             
             console.log("here1 ", data);
-            $('#districts').dropdown("change values", {values:g_districtsAvailable});
+            $('#districts').dropdown("changevalues", {values:g_districtsAvailable});
         });
   });
   }
