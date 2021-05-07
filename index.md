@@ -26,12 +26,8 @@
 </table>
 
 <script>
+    g_statesSelected = new Set();
 $(document).ready( function () {
- 
-    
-    $('#example-getting-started2')
-  .dropdown()
-;
  
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
 
@@ -49,8 +45,8 @@ $(document).ready( function () {
   });
   $('#states').dropdown({values:stateList, placeholder:"Select states",
   onChange: function(value, text, $selectedItem){console.log("onChange", value, text, $selectedItem);},
-  onAdd: function(value, text, $selectedItem){console.log("onAdd", value, text, $selectedItem);},
-  onRemove: function(value, text, $selectedItem){console.log("onRemove", value, text, $selectedItem);}
+  onAdd: function(value, text, $selectedItem){console.log("onAdd", value, text, $selectedItem); g_statesSelected.add(value);},
+  onRemove: function(value, text, $selectedItem){console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);}
   });
   });
   
