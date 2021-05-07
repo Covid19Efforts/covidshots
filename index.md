@@ -6,7 +6,7 @@
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
-<select name="states" multiple="" class="ui fluid dropdown disabled" id="districts">
+<select name="districts" multiple="" class="ui fluid dropdown disabled" id="districts">
     <option>Select districts</option>
 </select>
 
