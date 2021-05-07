@@ -42,7 +42,7 @@ $(document).ready( function () {
   "credentials": "omit"
 }).then(response => response.json())
   .then(data => {console.log(data);
-  let stateList = [{name:"Select States", value:""}];
+  let stateList = [{name:"Select States"}];
   data["states"].forEach((state, index) => {
   console.log(index, state);
   stateList.push({name:state["state_name"], value:state["state_id"]});
