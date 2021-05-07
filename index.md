@@ -7,11 +7,6 @@
 </select>
 
 <select name="states" multiple="" class="ui fluid dropdown disabled" id="districts">
-    <option value="">Districts</option>
-    <div class="ui active dimmer">
-    <div class="ui text loader">Loading</div>
-  </div>
-  <p></p>
 </select>
 
 <table id="table_id" class="display">
