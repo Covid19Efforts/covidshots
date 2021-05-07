@@ -42,11 +42,11 @@
     {
         if(g_statesSelected.size > 0)
         {
-            $('#districts').parent().removeClass("disabled");
+            $('#districts').removeClass("disabled");
         }
         else
         {
-            $('#districts').parent().addClass("disabled");
+            $('#districts').addClass("disabled");
         }
     }
     
