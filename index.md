@@ -6,7 +6,7 @@
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
-<button class="ui button" id="getDistrictsBtn">
+<button class="ui primary button" id="getDistrictsBtn">
   Get districts
 </button>
 
