@@ -7,6 +7,11 @@
 </select>
 
 <select name="states" multiple="" class="ui fluid dropdown disabled" id="districts">
+    <option value="">Districts</option>
+    <div class="ui active dimmer">
+    <div class="ui text loader">Loading</div>
+  </div>
+  <p></p>
 </select>
 
 <table id="table_id" class="display">
@@ -30,6 +35,19 @@
 
 <script>
     g_statesSelected = new Set();
+    
+    function toggleDistricts()
+    {
+        if(g_statesSelected.size > 0)
+        {
+            $('#districts').removeClass("disabled");
+        }
+        else
+        {
+            $('#districts').addClass("disabled");
+        }
+    }
+    
 $(document).ready( function () {
  
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
@@ -48,9 +66,21 @@ $(document).ready( function () {
   });
   $('#states').dropdown({values:stateList, placeholder:"Select states",
   onChange: function(value, text, $selectedItem){console.log("onChange", value, text, $selectedItem);},
-  onAdd: function(value, text, $selectedItem){console.log("onAdd", value, text, $selectedItem); g_statesSelected.add(value);},
-  onRemove: function(value, text, $selectedItem){console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);}
+  onAdd: function(value, text, $selectedItem)
+  {
+    console.log("onAdd", value, text, $selectedItem); g_statesSelected.add(value);
+    toggleDistricts();
+    
+  },
+  onRemove: function(value, text, $selectedItem)
+  {
+    console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);
+    toggleDistricts();
+  }
+  onShow : function()
+  {
   
+  }
   });
   });
   
