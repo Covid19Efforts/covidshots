@@ -32,6 +32,7 @@
 <script>
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
+    g_districtsAvailable = new Set();
     
     function toggleDistricts()
     {
@@ -55,7 +56,7 @@ $(document).ready( function () {
   "mode": "cors",
   "credentials": "omit"
 }).then(response => response.json())
-  .then(data => {console.log(data);
+  .then(data => {
   let stateList = [];
   data["states"].forEach((state, index) => {
   console.log(index, state);
@@ -80,6 +81,8 @@ $(document).ready( function () {
   $('#districts').dropdown({
       onShow : function()
   {
+  g_districtsAvailable.clear();
+  let districtList = [];
   g_statesSelected.forEach((state, index) => 
   {
     fetch("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + String(state), {
@@ -91,9 +94,12 @@ $(document).ready( function () {
         }).then(response => response.json())
         .then(data => 
         {
+            let dist = data["districts"];
+            districtList.push({name:dist["district_name"], value:dist["district_id"]});
             console.log("here1 ", data);
         });
   });
+    $('#districts').dropdown("change values", {values:districtList});
   }
   });
     
