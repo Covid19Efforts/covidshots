@@ -96,7 +96,7 @@ $(document).ready( function () {
         {
             let dists = data["districts"];
             dists.forEach((dist, index) => {
-                g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
+                g_districtsAvailable.add({name:dist["district_name"], value:dist["district_id"]});
             });
             
             console.log("here1 ", data);
