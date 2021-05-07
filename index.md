@@ -32,7 +32,7 @@
 <script>
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
-    g_districtsAvailable = new Set();
+    g_districtsAvailable = [];
     
     function toggleDistricts()
     {
@@ -81,7 +81,7 @@ $(document).ready( function () {
   $('#districts').dropdown({
       onShow : function()
   {
-  g_districtsAvailable.clear();
+  g_districtsAvailable = [];
   
   g_statesSelected.forEach((state, index) => 
   {
