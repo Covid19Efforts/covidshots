@@ -47,6 +47,7 @@ $(document).ready( function () {
   onChange: function(value, text, $selectedItem){console.log("onChange", value, text, $selectedItem);},
   onAdd: function(value, text, $selectedItem){console.log("onAdd", value, text, $selectedItem); g_statesSelected.add(value);},
   onRemove: function(value, text, $selectedItem){console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);}
+  
   });
   });
   
