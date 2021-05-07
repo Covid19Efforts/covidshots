@@ -7,6 +7,7 @@
 </select>
 
 <select name="states" multiple="" class="ui fluid dropdown disabled" id="districts">
+    <option>Select districts</option>
 </select>
 
 <table id="table_id" class="display">
