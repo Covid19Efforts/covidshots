@@ -6,6 +6,10 @@
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
+<button class="ui button" id="getDistrictsBtn">
+  Get districts
+</button>
+
 <select name="districts" multiple="" class="ui fluid dropdown disabled" id="districts">
     <option>Select districts</option>
 </select>
@@ -48,6 +52,32 @@
     
 $(document).ready( function () {
  
+ $('#getDistrictsBtn').click(function(){
+ 
+ g_districtsAvailable = [];
+  
+  g_statesSelected.forEach((state, index) => 
+  {
+    fetch("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + String(state), {
+    "referrerPolicy": "strict-origin-when-cross-origin",
+    "body": null,
+    "method": "GET",
+    "mode": "cors",
+    "credentials": "omit"
+        }).then(response => response.json())
+        .then(data => 
+        {
+            let dists = data["districts"];
+            dists.forEach((dist, index) => {
+                g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
+            });
+            $('#districts').dropdown({values:g_districtsAvailable});
+            console.log("here1 ", data);
+        });
+  });
+ 
+ });
+ 
  fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
 
   "referrerPolicy": "strict-origin-when-cross-origin",
@@ -76,34 +106,6 @@ $(document).ready( function () {
     toggleDistricts();
   },
   });
-  });
-  
-  $('#districts').dropdown({
-      onShow : function()
-  {
-  g_districtsAvailable = [];
-  
-  g_statesSelected.forEach((state, index) => 
-  {
-    fetch("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + String(state), {
-    "referrerPolicy": "strict-origin-when-cross-origin",
-    "body": null,
-    "method": "GET",
-    "mode": "cors",
-    "credentials": "omit"
-        }).then(response => response.json())
-        .then(data => 
-        {
-            let dists = data["districts"];
-            dists.forEach((dist, index) => {
-                g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
-            });
-            
-            console.log("here1 ", data);
-            
-        });
-  });
-  }
   });
     
 } );    
