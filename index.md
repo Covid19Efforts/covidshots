@@ -69,7 +69,7 @@ $(document).ready( function () {
   let stateList = [];
   data["states"].forEach((state, index) => {
   console.log(index, state);
-  stateList.push(state["state_name"]);
+  stateList.push({name:state["state_name"], value:state["state_name"]});
   });
   $('#states').dropdown({values:stateList});
   });
