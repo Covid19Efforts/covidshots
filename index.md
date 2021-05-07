@@ -72,6 +72,7 @@ $(document).ready( function () {
                 g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
             });
             $('#districts').dropdown({values:g_districtsAvailable});
+            toggleDistricts();
             console.log("here1 ", data);
         });
   });
@@ -97,13 +98,10 @@ $(document).ready( function () {
   onAdd: function(value, text, $selectedItem)
   {
     console.log("onAdd", value, text, $selectedItem); g_statesSelected.add(value);
-    toggleDistricts();
-    
   },
   onRemove: function(value, text, $selectedItem)
   {
     console.log("onRemove", value, text, $selectedItem); g_statesSelected.delete(value);
-    toggleDistricts();
   },
   });
   });
