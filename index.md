@@ -3,11 +3,10 @@
 <script src="semantic.min.js"></script>
 
 
-<select name="skills" multiple="" class="ui fluid dropdown" id="states2">
-  
+<select name="skills" multiple="" class="ui fluid dropdown" id="states2">  
 </select>
 
-<div class="ui dropdown" id="states">
+<div class="ui fluid dropdown" id="states" multiple="">
   <div class="text"></div>
   <i class="dropdown icon"></i>
 </div>
