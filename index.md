@@ -67,7 +67,7 @@ $(document).ready( function () {
 }).then(response => response.json())
   .then(data => {console.log(data);
   let stateList = [];
-  data["states"].forEach((index, state) => {
+  data["states"].forEach((state, index) => {
   console.log(index, state);
   stateList.push(state["state_name"]);
   });
