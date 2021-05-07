@@ -6,6 +6,9 @@
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
+<select name="states" multiple="" class="ui fluid dropdown disabled" id="districts">
+</select>
+
 <table id="table_id" class="display">
     <thead>
         <tr>
