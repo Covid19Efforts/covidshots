@@ -3,15 +3,6 @@
 <script src="semantic.min.js"></script>
 
 
-<select id="example-getting-started" multiple="multiple">
-    <option value="cheese">Cheese</option>
-    <option value="tomatoes">Tomatoes</option>
-    <option value="mozarella">Mozzarella</option>
-    <option value="mushrooms">Mushrooms</option>
-    <option value="pepperoni">Pepperoni</option>
-    <option value="onions">Onions</option>
-</select>
-
 <select name="skills" multiple="" class="ui fluid dropdown" id="example-getting-started2">
   <option value="">Skills</option>
 <option value="angular">Angular</option>
@@ -33,6 +24,11 @@
 <option value="ui">UI Design</option>
 <option value="ux">User Experience</option>
 </select>
+
+<div class="ui dropdown" id="states">
+  <div class="text"></div>
+  <i class="dropdown icon"></i>
+</div>
 
 <table id="table_id" class="display">
     <thead>
@@ -70,10 +66,12 @@ $(document).ready( function () {
   "credentials": "omit"
 }).then(response => response.json())
   .then(data => {console.log(data);
+  let stateList = [];
   data["states"].forEach((index, state) => {
   console.log(index, state);
-  return;
-  })
+  stateList.push(state["state_name"]);
+  });
+  $('#states').dropdown({values:stateList});
   });
   
   
