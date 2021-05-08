@@ -72,7 +72,7 @@ $(document).ready( function () {
             dists.forEach((dist, index) => {
                 g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
             });
-            $('#districts').dropdown({values:g_districtsAvailable});
+            $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts"});
             $('#districts').dropdown("setup menu", {values:g_districtsAvailable});
             toggleDistricts();
             console.log("here1 ", data);
