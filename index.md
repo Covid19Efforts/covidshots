@@ -73,6 +73,7 @@ $(document).ready( function () {
                 g_districtsAvailable.push({name:dist["district_name"], value:dist["district_id"]});
             });
             $('#districts').dropdown({values:g_districtsAvailable});
+            $('#districts').dropdown("setup menu", {values:g_districtsAvailable});
             toggleDistricts();
             console.log("here1 ", data);
         });
