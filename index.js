@@ -179,7 +179,10 @@
                 columns: tableColumns,
             });
         
-            tata.info('Results obtained', 'You may have to scroll down to view them',{duration:5000});
+            tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{duration:5000, onClick:function()
+                {
+                    $('#centreList_wrapper')[0].scrollIntoView({behavior: 'smooth' });
+                }});
     }
     
     function GetCentresData(callback_func)
