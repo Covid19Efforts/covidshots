@@ -1,6 +1,10 @@
-theme: jekyll-theme-modernist
+theme: minima
 
-show_downloads: true
+header_pages:
+  - about.md
+  - portfolio.md
+
+#show_downloads: true
 
 navbar-links:
   About Me: "aboutme"
