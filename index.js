@@ -3,8 +3,10 @@
     
     //filters
     g_filter_count = 0; //count of enabled filters
-    g_filter_18to45 = new Boolean(false);
-    g_filter_45plus = new Boolean(false);
+    g_filter_age_18to45         = new Boolean(false);
+    g_filter_age_45plus         = new Boolean(false);
+    g_filter_vaccine_covishield = new Boolean(false);
+    g_filter_vaccine_covaxin    = new Boolean(false);
     
     //cache
     g_cache_all_centres = []; // data fetched from xhr. before applying filters.
@@ -53,9 +55,23 @@
             data.forEach((centre, index) => {
                 let filteredSessions = [];
                 centre["sessions"].forEach((session, index) => {
-                    if(g_filter_18to45 && g_filter_45plus == false)
+                    if(g_filter_age_18to45 == true && g_filter_age_45plus == false)
                     {
                         if(session["min_age_limit"] == 18)
+                        {
+                            filteredSessions.push(session);
+                        }
+                    }
+                    else if(g_filter_vaccine_covishield == true && g_filter_vaccine_covaxin == false)
+                    {
+                        if(session["vaccine"].toUpperCase() == "COVISHIELD")
+                        {
+                            filteredSessions.push(session);
+                        }
+                    }
+                    else if(g_filter_vaccine_covishield == false && g_filter_vaccine_covaxin == true)
+                    {
+                        if(session["vaccine"].toUpperCase() == "COVAXIN")
                         {
                             filteredSessions.push(session);
                         }
@@ -96,7 +112,6 @@
                 })
             }
             centreData = Object.assign({}, {name:centre["name"]}, daysData);
-            console.log("here11", daysData, centreData);
             tableData.push(centreData);
         });
         
@@ -202,10 +217,16 @@
     }
     
     /*Sanity - remove duplicates, etc.*/
-    function SanitizeUrl(pushState)
+    function SanitizeUrl(urlString, pushState)
     {
-        let sString = window.location.search;
-        let uSp = new URLSearchParams(sString);
+        if($.type(urlString) !== 'string')
+        {
+            tata.error('Code error', 'Check console for details');
+            console.error("expect urlString to be a string", urlString, $.type(urlString), typeof urlString);
+            return;
+        }
+
+        let uSp = new URLSearchParams(urlString);
         let params = (new Set(Array.from(uSp.keys())));
         let uSp2 = new URLSearchParams("");
         params.forEach( param => 
@@ -239,9 +260,10 @@
 
     function ProcessQueryParams()
     {
-        SanitizeUrl(false);
-        
         let sString = window.location.search;
+
+        SanitizeUrl(sString, false);
+        
         let uSp = new URLSearchParams(sString);
         let uVal = uSp.getAll('states').join(',');
         
@@ -253,7 +275,7 @@
                 stateIds.forEach(stateIdStr => 
                 {
                     let stateIdInt = parseInt(stateIdStr, 10);
-                    if(!isNaN(districtIdInt))
+                    if(!isNaN(stateIdInt))
                     {
                         g_statesSelected.add(stateIdInt);
                     }
@@ -297,22 +319,18 @@
         
         if(bAdd)
         {
-            if( uVal == null)
+            if( uVal == null || uVal == "")
             {
                 uSp.set(paramName, String(paramValue));
             }
             else
             {
-                if(uVal != "")
+                /*prevent duplicates*/
+                let vals = new Set(uVal.split(","));
+                
+                if(vals.has(paramValue) == false)
                 {
-                    /*prevent duplicates*/
-                    let vals = new Set(uVal.split(","));
-                    
-                    if(vals.has(paramValue) == false)
-                    {
-                        uSp.set(paramName, uVal + "," + String(paramValue));
-                    }
-                    
+                    uSp.set(paramName, uVal + "," + String(paramValue));
                 }
             }
         }
@@ -334,12 +352,19 @@
                         uVal = uVal.substring(1);
                     }
                 }
-                
-                uSp.set(paramName, uVal);
+
+                if(uVal == "")
+                {
+                    uSp.delete(paramName)
+                }
+                else
+                {
+                    uSp.set(paramName, uVal);
+                }
             }
         }
         
-        SanitizeUrl(true);
+        SanitizeUrl(decodeURIComponent(uSp.toString()), true);
     }
     
     function GetStates()
@@ -419,11 +444,17 @@ function OnFilterClicked(e,t)
     let bValidFilter = true;
     switch(e.currentTarget.id)
     {
-        case "filter_18_45":
-            g_filter_18to45 = filterOn;
+        case "filter_age_18_45":
+            g_filter_age_18to45 = filterOn;
         break;
-        case "filter_45_plus":
-            g_filter_45plus = filterOn;
+        case "filter_age_45_plus":
+            g_filter_age_45plus = filterOn;
+        break;
+        case "filter_vaccine_covishield":
+            g_filter_vaccine_covishield = filterOn;
+        break;
+        case "filter_vaccine_covaxin":
+            g_filter_vaccine_covaxin = filterOn;
         break;
         default:
         bValidFilter = false;
@@ -456,6 +487,7 @@ function GetDistricts()
           {
               let dists = data["districts"];
               let distSelected = new Set(g_districtsSelected);
+              let bFoundSelectedDist = false;
               dists.forEach((dist, index) => 
               {
                   let distName = dist["district_name"];
@@ -468,6 +500,7 @@ function GetDistricts()
                   {
                       distSelected.delete(distId);
                       bSelected = true;
+                      bFoundSelectedDist = true;
                   }
 
                   g_districtsAvailable.push({name:distName, value:distId, selected:bSelected});
@@ -489,8 +522,22 @@ function GetDistricts()
               g_cache_district_id_map = Object.assign({}, districtIdMap, g_cache_district_id_map);
               localStorage.setItem('g_cache_district_id_map', JSON.stringify(g_cache_district_id_map));
 
+              let distSelectedNames = [];
+              if(bFoundSelectedDist == true)
+              {
+                g_districtsSelected.forEach(distId => 
+                  {
+                      let distName = g_cache_district_id_map[distId];
+                      distSelectedNames.push(distName);
+                  });
+              }
+
               $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts", onAdd:onDistrictAdd, onRemove:onDistrictRemove});
               $('#districts').dropdown("setup menu", {values:g_districtsAvailable});
+              if(distSelectedNames.length > 0)
+              {
+                $('#districts').dropdown("set exactly", distSelectedNames);
+              }
               toggleDistricts();
           });
     });
@@ -509,6 +556,7 @@ ProcessQueryParams();
 $('#dateInput')[0].valueAsDate = new Date();
  
  $('#getCentresBtn').click(function(){
+    OnDateChange();
      RefreshAll();
         });
  

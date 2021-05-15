@@ -45,9 +45,10 @@ title: Covid vaccine tracker
 
 
 <h5 class="ui header">Filters</h5>
-<br />
-<button class="ui toggle button filter" id="filter_18_45">18-45</button>
-<button class="ui toggle button filter" id="filter_45_plus">45+</button>
+<button class="ui toggle button filter" id="filter_age_18_45">18-45</button>
+<button class="ui toggle button filter" id="filter_age_45_plus">45+</button>
+<button class="ui toggle button filter" id="filter_vaccine_covishield">Covishield</button>
+<button class="ui toggle button filter" id="filter_vaccine_covaxin">Covaxin</button>
 
 <h5 class="ui header">Auto refresh table</h5>
 
