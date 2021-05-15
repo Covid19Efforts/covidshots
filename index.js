@@ -178,6 +178,8 @@
                 pageLength: 50,
                 columns: tableColumns,
             });
+        
+            tata.info('Results obtained', 'You may have to scroll down to view them',{duration:5000});
     }
     
     function GetCentresData(callback_func)
