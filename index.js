@@ -128,6 +128,7 @@
                 let nextDate = new Date(selectedDate);
                 nextDate.setDate(nextDate.getDate() + day);
                 tableColumns.push({data: "day" + day, title:nextDate.toDateString(), "orderSequence": [ "desc", "asc"],
+                type:"html-num-fmt",
                 render: function(data, type)
                 {
                     let numAvail = data["available"];
@@ -221,7 +222,7 @@
     {
         if($.type(urlString) !== 'string')
         {
-            tata.error('Code error', 'Check console for details');
+            tata.error('Code error', 'Check console for details', {duration:5000});
             console.error("expect urlString to be a string", urlString, $.type(urlString), typeof urlString);
             return;
         }
@@ -308,6 +309,28 @@
                 });
             }
             GetDistricts();
+        }
+
+        uVal = uSp.get('date');//can't use get all. there can only be a single date parameter.
+        
+        if(uVal != null && uVal != "")
+        {
+            let bValidDate = false;
+            if(dayjs(uVal, 'YYYY-MM-DD', true).isValid() == true)
+            {
+                if(!isNaN(Date.parse(uVal)))
+                {
+                    bValidDate = true;
+                    $('#dateInput')[0].value = uVal;
+                }
+            }
+
+            if(bValidDate == false)
+            {
+                tata.error('Invalid date', 'Check console for details', {duration:5000});
+                console.error('Invalid date', uVal);
+                AddRemoveUrlParam(false, 'date', uVal);
+            }
         }
     }
 
@@ -553,7 +576,10 @@ $('.ui.button.toggle.filter').click(OnFilterClicked);
 
 ProcessQueryParams();
 
-$('#dateInput')[0].valueAsDate = new Date();
+if($('#dateInput')[0].value == "")
+{
+    $('#dateInput')[0].valueAsDate = new Date();
+}
  
  $('#getCentresBtn').click(function(){
     OnDateChange();
