@@ -1,7 +1,7 @@
 theme: minima
 
 header_pages:
-  - about.md
+  - index.md
   - portfolio.md
 
 #show_downloads: true
