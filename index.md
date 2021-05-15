@@ -31,7 +31,7 @@ title: Covid vaccine tracker
   <!--<a class="item"></a>-->
   <div class="right menu">
     <a class="item" id="siteTour">Tour</a>
-    <a class="item">Help</a>
+    <a href="https://github.com/lihas/vaccinetracker/blob/gh-pages/Readme.md" class="item">Help</a>
   </div>
 </div>
 
