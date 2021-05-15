@@ -617,6 +617,10 @@ if($('#dateInput')[0].value == "")
             element: document.querySelector('#filter_age_18_45').parentElement,
             title: "Filter results",
             intro: "<img src=\"images/tour_filters.png\" />"
+         },
+         {
+            title: "Share, Save, Bookmark Results",
+            intro: "<img src=\"images/tour_url.png\" /> The address link contains input parameters so that you can share the state with others or bookmark it for quick reference. <br /> <b>example</b> <br/><div class='ui mini action input'><input type='text' value='https://lihas.github.io/vaccinetracker/?states=9,12&date=2021-05-15&districts=631,143'><button class='ui teal right labeled icon button'><i class='copy icon'></i>Copy</button></div>"
          }
 
         ]
