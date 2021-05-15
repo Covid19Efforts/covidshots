@@ -590,6 +590,39 @@ if($('#dateInput')[0].value == "")
  {
     GetDistricts();
  });
+
+ $('#siteTour').click(function()
+ {
+    introJs().setOptions({
+        steps: [{
+        title : "Vaccine tracker 💉",
+        intro: "Welcome to website tour"
+        }, 
+        {
+          element: document.querySelector('#states').parentElement,
+          title: "Select one or more states",
+          intro: "<img src=\"images/tour_states.png\" />"
+        }, 
+        {
+            element: document.querySelector('#districts').parentElement,
+            title: "Select one or more districts",
+            intro: "<img src=\"images/tour_districts.png\" /><br />You can select multiple districts at once across all states selected previously"
+         },
+         {
+            element: document.querySelector('#getCentresBtn').parentElement,
+            title: "Get all data in a table",
+            intro: "<img src=\"images/tour_table.png\" /><br /> You can sort each column on the number of vaccines available"
+         },
+         {
+            element: document.querySelector('#filter_age_18_45').parentElement,
+            title: "Filter results",
+            intro: "<img src=\"images/tour_filters.png\" />"
+         }
+
+        ]
+      }).start();
+ });
+
  
  GetStates();
     

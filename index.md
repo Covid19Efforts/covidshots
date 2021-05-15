@@ -10,6 +10,7 @@ title: Covid vaccine tracker
 
 <link rel="stylesheet" type="text/css" href="semantic.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/intro.js@3.4.0/minified/introjs.min.css">
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
 <script src="semantic.min.js"></script>
@@ -22,8 +23,19 @@ title: Covid vaccine tracker
 <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
 <script src="https://unpkg.com/dayjs@1.8.21/plugin/customParseFormat.js"></script>
 <script>dayjs.extend(window.dayjs_plugin_customParseFormat);</script>
-<!--<script>dayjs().format()</script>-->
 
+<script src="https://unpkg.com/intro.js@3.4.0/minified/intro.min.js"></script>
+
+<div class="ui blue inverted menu">
+  <a class="item">Home</a>
+  <!--<a class="item"></a>-->
+  <div class="right menu">
+    <a class="item" id="siteTour">Tour</a>
+    <a class="item">Help</a>
+  </div>
+</div>
+
+<h5 class="ui header">States</h5>
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
@@ -31,6 +43,7 @@ title: Covid vaccine tracker
   Get districts
 </button>
 
+<h5 class="ui header">Districts</h5>
 <select name="districts" multiple="" class="ui fluid dropdown disabled" id="districts">
     <option>Select districts</option>
 </select>

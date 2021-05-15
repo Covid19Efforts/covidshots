@@ -1,14 +1,3 @@
 theme: jekyll-theme-modernist
 
-header_pages:
-  - index.md
-  - index.js
-
 #show_downloads: true
-
-navbar-links:
-  About Me: "aboutme"
-  Resources:
-    - Beautiful Jekyll: "https://beautifuljekyll.com"
-    - Learn markdown: "https://www.markdowntutorial.com/"
-  Author's home: "https://deanattali.com"
