@@ -9,5 +9,3 @@
 1. Cannot be used to book slots. For that you will have to use Cowin, et al.
 
 ### References
-1. favicon
-<div>Icons made by <a href="https://www.flaticon.com/authors/catkuro" title="catkuro">catkuro</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
