@@ -13,6 +13,9 @@
     g_cache_state_id_map = {};
     g_cache_district_id_map = {};
     
+    //special strings
+    const g_url_param_value_remove_all = "url_param_value_remove_all";//if used as value in AddRemoveUrlParam() value will remove whole param from url, and not just a single value
+
     //other variable
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
@@ -222,6 +225,17 @@
         GetCentresData(CreateTable);
     }
     
+    function IsValidFilterString(filterStr)
+    {
+        let bValid = false;
+
+        if(filterStr.match(/filter_.+/i) != null)
+        {
+            bValid = true;
+        }
+        return bValid;
+    }
+
     /*Sanity - remove duplicates, etc.*/
     function SanitizeUrl(urlString, pushState)
     {
@@ -242,7 +256,17 @@
             let uVal2 = [];
             uValSet.forEach(val => 
                 {
+                    let bValidVal = false;
+                    if(param == 'filters' && IsValidFilterString(val))
+                    {
+                        bValidVal = true;
+                    }
                     if(!isNaN(parseInt(val, 10)))
+                    {
+                        bValidVal = true;
+                    }
+
+                    if(bValidVal == true)
                     {
                         uVal2.push(val);
                     }
@@ -254,6 +278,7 @@
             let uVal2Str = uVal2.join(",");
             uSp2.set(param, uVal2Str);
         });
+
         if(pushState == true)
         {
             history.pushState(null, "", "?" + decodeURIComponent(uSp2.toString()));
@@ -269,8 +294,25 @@
         let sString = window.location.search;
 
         SanitizeUrl(sString, false);
-        
+
+        sString = window.location.search; //re-init as sanity might have changed things
         let uSp = new URLSearchParams(sString);
+
+        //more sanity
+        let validUrlParams = ['states', 'districts', 'date', 'filters'];
+        let allUrlParams = Array.from(uSp.keys());
+        allUrlParams.forEach(urlParam => 
+            {
+                if(!validUrlParams.includes(urlParam))
+                {
+                    console.error("Unsupported parameter", urlParam, allUrlParams);
+                    AddRemoveUrlParam(false, urlParam, g_url_param_value_remove_all);
+                }
+            });
+
+        sString = window.location.search; //re-init as sanity might have changed things
+        uSp = new URLSearchParams(sString);
+
         let uVal = uSp.getAll('states').join(',');
         
         if(uVal != null && uVal != "")
@@ -381,7 +423,7 @@
                     }
                 }
 
-                if(uVal == ""  || paramName == 'date')
+                if(uVal == ""  || paramName == 'date' || paramValue == g_url_param_value_remove_all)
                 {
                     uSp.delete(paramName)
                 }
@@ -439,10 +481,10 @@
         });
     }
     
-function OnDateChange(e)
-{
-    AddRemoveUrlParam(true, 'date', $('#dateInput')[0].value);
-}
+    function OnDateChange(e)
+    {
+        AddRemoveUrlParam(true, 'date', $('#dateInput')[0].value);
+    }
 
 function OnFilterClicked(e,t)
 {
@@ -470,7 +512,9 @@ function OnFilterClicked(e,t)
     console.log(e.currentTarget.id, filterOn, g_filter_count);
     
     let bValidFilter = true;
-    switch(e.currentTarget.id)
+    let filterStr = e.currentTarget.id;
+
+    switch(filterStr)
     {
         case "filter_age_18_45":
             g_filter_age_18to45 = filterOn;
@@ -492,7 +536,11 @@ function OnFilterClicked(e,t)
     
     if(bValidFilter)
     {
-        CreateTable();
+        AddRemoveUrlParam(filterOn, 'filters', filterStr);
+        if(g_cache_all_centres.length > 0)
+        {//recreate table if valid data present
+            CreateTable();
+        }
     }
 
 }
