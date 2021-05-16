@@ -17,7 +17,10 @@
     //special strings
     const g_url_param_value_remove_all = "url_param_value_remove_all";//if used as value in AddRemoveUrlParam() value will remove whole param from url, and not just a single value
 
-    //other variable
+    //set interval handle
+    g_handle_refresh_interval_timer = null;
+
+    //states and districts
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
@@ -239,6 +242,13 @@
     {
         GetCentresData(CreateTable);
     }
+
+    function RefreshAllTimer()
+    {
+        tata.info('Timer', 'Auto refresh data', {duration:5000});
+        console.info('Timer', 'Auto refresh data');
+        RefreshAll();
+    }
     
     function IsValidFilterString(filterStr)
     {
@@ -306,6 +316,9 @@
 
     function ProcessQueryParams()
     {
+        let bValidStatesParams = false;
+        let bValidDistrictsParams = false;
+
         let sString = window.location.search;
 
         SanitizeUrl(sString, false);
@@ -371,6 +384,15 @@
                                 if(!isNaN(valInt))
                                 {
                                     listToModify.add(valInt);
+
+                                    if(urlParam == 'states')
+                                    {
+                                        bValidStatesParams = true;
+                                    }
+                                    else if(urlParam == 'districts')
+                                    {
+                                        bValidDistrictsParams = true;
+                                    }
                                 }
                                 else
                                 {
@@ -426,6 +448,11 @@
                     }
                 }
             });
+
+            if(bValidStatesParams == true && bValidDistrictsParams == true)
+            {
+                RefreshAll();
+            }
     }
 
     function AddRemoveUrlParam(/*bool*/ bAdd, paramName, paramValue)//eg. 1,states,10 to add state ID 10
@@ -706,6 +733,62 @@ function GetDistricts()
     });
 }
 
+    function OnAutoRefreshIntervalChange(e,t)
+    {
+        if(g_handle_refresh_interval_timer != null)
+        {
+            clearInterval(g_handle_refresh_interval_timer);
+            g_handle_refresh_interval_timer = null;
+        }
+        
+        let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
+        let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
+        if(!isNaN(intervalTimeMinsInt))
+        {
+            let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
+            g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
+        }
+    }
+
+    function OnAutoRefreshClick(e,t)
+    {
+        let buttonOn = new Boolean(false);
+        if(e.currentTarget.classList.contains("active"))
+        {
+            buttonOn = true;
+        }
+        else
+        {
+            buttonOn = false;
+        }
+
+        if(g_handle_refresh_interval_timer != null)
+        {
+            clearInterval(g_handle_refresh_interval_timer);
+            g_handle_refresh_interval_timer = null;
+        }
+
+        if(buttonOn === true)
+        {
+            $('#input_auto_refresh_interval_parent').removeClass('disabled');
+            let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
+            let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
+            if(!isNaN(intervalTimeMinsInt))
+            {
+                let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
+                g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
+            }
+            else
+            {
+                console.error("invalid value for interval", intervalTimeMinsStr, intervalTimeMinsInt);
+            }
+        }
+        else
+        {
+            $('#input_auto_refresh_interval_parent').addClass('disabled');
+        }
+    }
+
 $(document).ready( function () 
 {
     /*from https://stackoverflow.com/a/66407003/981766 */
@@ -716,6 +799,8 @@ $('#dateInput').change(OnDateChange);
 $('.ui.button.toggle').state();
 
 $('.ui.button.toggle.filter').click(OnFilterClicked);
+$('#btn_auto_refresh').click(OnAutoRefreshClick);
+$('#input_auto_refresh_interval').change(OnAutoRefreshIntervalChange);
 
 ProcessQueryParams();
 
@@ -774,4 +859,5 @@ if($('#dateInput')[0].value == "")
  GetStates();
  $('#navbarMoreBtn').dropdown({on:'hover'});
  $('#filter_table_centres_hide_no_vaccine').popup({content:"Hide filtered centres which dont have vaccine available"});
+
 });    

@@ -87,8 +87,8 @@ title: Covid vaccine tracker
 <br />
 
 Refresh interval (minutes):
-<div class="ui right labeled input disabled">
-<input type="number" placeholder="Enter time.." id="ref_interval" name="ref_interval" min="1" max="600" value="5">
+<div class="ui right labeled input disabled" id="input_auto_refresh_interval_parent">
+<input type="number" placeholder="Enter time.." id="input_auto_refresh_interval" name="input_auto_refresh_interval" min="5" max="600" value="5">
 <div class="ui basic label">
 minutes
 </div>
