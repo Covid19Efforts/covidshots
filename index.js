@@ -313,72 +313,104 @@
         sString = window.location.search; //re-init as sanity might have changed things
         uSp = new URLSearchParams(sString);
 
-        let uVal = uSp.getAll('states').join(',');
-        
-        if(uVal != null && uVal != "")
-        {
-            if(uVal.match(/[0-9,]+/i) != null)
+        validUrlParams.forEach(urlParam => 
             {
-                let stateIds = new Set(uVal.split(","));//unique
-                stateIds.forEach(stateIdStr => 
+                let uVal = "";
+                if(urlParam == 'date')
                 {
-                    let stateIdInt = parseInt(stateIdStr, 10);
-                    if(!isNaN(stateIdInt))
-                    {
-                        g_statesSelected.add(stateIdInt);
-                    }
-                    else
-                    {
-                        console.error("error parsing string as int", stateIdStr);
-                    }
-                });
-            }
-        }
-
-        uVal = uSp.getAll('districts').join(',');
-        
-        if(uVal != null && uVal != "")
-        {
-            if(uVal.match(/[0-9,]+/i) != null)
-            {
-                let districtIds = new Set(uVal.split(","));//unique
-                districtIds.forEach(districtIdStr => 
-                {
-                    let districtIdInt = parseInt(districtIdStr, 10);
-                    if(!isNaN(districtIdInt))
-                    {
-                        g_districtsSelected.add(districtIdInt);
-                    }
-                    else
-                    {
-                        console.error("error parsing string as int", districtIdStr);
-                    }
-                });
-            }
-            GetDistricts();
-        }
-
-        uVal = uSp.get('date');//can't use get all. there can only be a single date parameter.
-        
-        if(uVal != null && uVal != "")
-        {
-            let bValidDate = false;
-            if(dayjs(uVal, 'YYYY-MM-DD', true).isValid() == true)
-            {
-                if(!isNaN(Date.parse(uVal)))
-                {
-                    bValidDate = true;
-                    $('#dateInput')[0].value = uVal;
+                    uVal = uSp.get(urlParam);//can't use get all. there can only be a single date parameter, and also a single value
                 }
-            }
+                else
+                {
+                    uVal = uSp.getAll(urlParam).join(',');
+                }
 
-            if(bValidDate == false)
-            {
-                tata.error('Invalid date', 'Check console for details', {duration:5000});
-                console.error('Invalid date', uVal);
-                AddRemoveUrlParam(false, 'date', uVal);
-            }
-        }
+                let listToModify = [];
+
+                switch(urlParam)
+                {
+                    case 'states':
+                        listToModify = g_statesSelected;
+                        break;
+                    case 'districts':
+                        listToModify = g_districtsSelected;
+                        break;
+                    case 'date':
+                    case 'filters':
+                        listToModify = null;
+                        break;
+                    default:
+                        console.error("unexpected urlParam. Sanitization code failed?", urlParam);
+                }
+
+                if(urlParam == 'states' || urlParam == 'districts')
+                {
+                    if(uVal != null && uVal != "")
+                    {
+                        if(uVal.match(/[0-9,]+/i) != null)
+                        {
+                            let vals = new Set(uVal.split(","));//unique
+                            vals.forEach(valStr => 
+                            {
+                                let valInt = parseInt(valStr, 10);
+                                if(!isNaN(valInt))
+                                {
+                                    listToModify.add(valInt);
+                                }
+                                else
+                                {
+                                    console.error("error parsing string as int", valStr);
+                                }
+                            });
+                        }
+                        if(urlParam == 'districts')
+                        {
+                            GetDistricts();
+                        }
+                    }
+                }else 
+                if(urlParam == 'date')
+                {
+                    if(uVal != null && uVal != "")
+                    {
+                        let bValidDate = false;
+                        if(dayjs(uVal, 'YYYY-MM-DD', true).isValid() == true)
+                        {
+                            if(!isNaN(Date.parse(uVal)))
+                            {
+                                bValidDate = true;
+                                $('#dateInput')[0].value = uVal;
+                            }
+                        }
+                    
+                        if(bValidDate == false)
+                        {
+                            tata.error('Invalid date', 'Check console for details', {duration:5000});
+                            console.error('Invalid date', uVal);
+                            AddRemoveUrlParam(false, urlParam, uVal);
+                        }
+                    }
+                }else
+                if(urlParam == 'filters')
+                {
+                    if(uVal != null && uVal != "")
+                    {
+                        let vals = new Set(uVal.split(","));//unique
+                        vals.forEach(val => 
+                            {
+                                if(IsValidFilterString(val))
+                                {
+                                    SwitchFilter(true, val, false, true);
+                                }
+                                else
+                                {
+                                    console.error("Invalid filter", val);
+                                    AddRemoveUrlParam(false, urlParam, val);
+                                }
+                            });
+                    }
+                }
+            });
     }
 
     function AddRemoveUrlParam(/*bool*/ bAdd, paramName, paramValue)//eg. 1,states,10 to add state ID 10
@@ -420,6 +452,10 @@
                     else if(uVal[0] == ",")
                     {
                         uVal = uVal.substring(1);
+                    }
+                    else if(uVal.endsWith(",") == true)
+                    {
+                        uVal = uVal.slice(0,-1);
                     }
                 }
 
@@ -486,6 +522,72 @@
         AddRemoveUrlParam(true, 'date', $('#dateInput')[0].value);
     }
 
+    /*TODO: need to make this idempotent in case prog a filter is attempted to be enabled twice g_filter_count will increment
+    unnecessarily. Do this only if you see a bug.*/
+    function SwitchFilter(bFilterOn/*true to turn on*/, filterString /*string: name of filter*/, bUpdateUrl, bUpdateUi = false)
+    {
+        let bValidFilter = IsValidFilterString(filterString);
+
+        if(bValidFilter == true)
+        {
+            switch(filterString)
+            {
+                case "filter_age_18_45":
+                    g_filter_age_18to45 = bFilterOn;
+                break;
+                case "filter_age_45_plus":
+                    g_filter_age_45plus = bFilterOn;
+                break;
+                case "filter_vaccine_covishield":
+                    g_filter_vaccine_covishield = bFilterOn;
+                break;
+                case "filter_vaccine_covaxin":
+                    g_filter_vaccine_covaxin = bFilterOn;
+                break;
+                default:
+                    bValidFilter = false;
+                    console.error("invalid filter");
+                break;
+            }
+        }
+
+        if(bUpdateUi == true && bValidFilter == true)
+        {
+            if(bFilterOn)
+            {
+                $("#" + filterString).addClass('active');
+            }
+            else
+            {
+                $("#" + filterString).removeClass('active');
+            }
+        }
+
+        if(bValidFilter === true)
+        {
+            if(bFilterOn === true)
+            {
+                g_filter_count++;
+            }
+            else
+            {
+                g_filter_count--;
+            }
+
+            if(bUpdateUrl === true)
+            {
+                AddRemoveUrlParam(bFilterOn, 'filters', filterString);
+            }
+
+            if(g_cache_all_centres.length > 0)
+            {//recreate table if valid data present
+                CreateTable();
+            }
+        }
+
+        console.log(bFilterOn, g_filter_count);
+    }
+
 function OnFilterClicked(e,t)
 {
     let filterOn = new Boolean(false);
@@ -500,48 +602,11 @@ function OnFilterClicked(e,t)
         console.log("filer deactivated");
     }
     
-    if(filterOn == true)
-    {
-        g_filter_count++;
-    }
-    else
-    {
-        g_filter_count--;
-    }
+    console.log(e.currentTarget.id);
     
-    console.log(e.currentTarget.id, filterOn, g_filter_count);
-    
-    let bValidFilter = true;
     let filterStr = e.currentTarget.id;
 
-    switch(filterStr)
-    {
-        case "filter_age_18_45":
-            g_filter_age_18to45 = filterOn;
-        break;
-        case "filter_age_45_plus":
-            g_filter_age_45plus = filterOn;
-        break;
-        case "filter_vaccine_covishield":
-            g_filter_vaccine_covishield = filterOn;
-        break;
-        case "filter_vaccine_covaxin":
-            g_filter_vaccine_covaxin = filterOn;
-        break;
-        default:
-        bValidFilter = false;
-        console.error("invalid filter");
-        break;
-    }
-    
-    if(bValidFilter)
-    {
-        AddRemoveUrlParam(filterOn, 'filters', filterStr);
-        if(g_cache_all_centres.length > 0)
-        {//recreate table if valid data present
-            CreateTable();
-        }
-    }
+    SwitchFilter(filterOn, filterStr, true, false);
 
 }
 
