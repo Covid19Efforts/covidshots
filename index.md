@@ -37,8 +37,8 @@ title: Covid vaccine tracker
     More
     <i class="dropdown icon"></i>
     <div class="menu">
-      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bugs</a>
-      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request a feature</a>
+      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
+      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
     </div>
   </div>
 <!---->
