@@ -347,7 +347,7 @@
         
         if(bAdd)
         {
-            if( uVal == null || uVal == "")
+            if( uVal == null || uVal == "" || paramName == 'date')
             {
                 uSp.set(paramName, String(paramValue));
             }
@@ -381,7 +381,7 @@
                     }
                 }
 
-                if(uVal == "")
+                if(uVal == ""  || paramName == 'date')
                 {
                     uSp.delete(paramName)
                 }
