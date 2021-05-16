@@ -27,11 +27,21 @@ title: Covid vaccine tracker
 <script src="https://unpkg.com/intro.js@3.4.0/minified/intro.min.js"></script>
 
 <div class="ui blue inverted menu">
-  <a href="https://lihas.github.io/vaccinetracker" class="item">Home</a>
+  <a href="https://lihas.github.io/vaccinetracker" class="item" target="_blank" rel="noopener noreferrer">Home</a>
   <!--<a class="item"></a>-->
   <div class="right menu">
     <a class="item" id="siteTour">Tour</a>
-    <a href="https://github.com/lihas/vaccinetracker/blob/gh-pages/Readme.md" class="item">Help</a>
+    <a href="https://github.com/lihas/vaccinetracker/blob/gh-pages/Readme.md" class="item" target="_blank" rel="noopener noreferrer">Help</a>
+<!---->
+  <div class="ui dropdown item" id="navbarMoreBtn">
+    More
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bugs</a>
+      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request a feature</a>
+    </div>
+  </div>
+<!---->
   </div>
 </div>
 

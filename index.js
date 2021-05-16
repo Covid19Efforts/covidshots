@@ -637,5 +637,5 @@ if($('#dateInput')[0].value == "")
 
  
  GetStates();
-    
+ $('#navbarMoreBtn').dropdown({on:'hover'});
 });    
