@@ -68,10 +68,12 @@ title: Covid vaccine tracker
 
 
 <h5 class="ui header">Filters</h5>
-<button class="ui toggle button filter" id="filter_age_18_45">18-45</button>
-<button class="ui toggle button filter" id="filter_age_45_plus">45+</button>
-<button class="ui toggle button filter" id="filter_vaccine_covishield">Covishield</button>
-<button class="ui toggle button filter" id="filter_vaccine_covaxin">Covaxin</button>
+<button class="ui toggle button filter grey basic" id="filter_age_18_45">18-45</button>
+<button class="ui toggle button filter grey basic" id="filter_age_45_plus">45+</button>
+<button class="ui toggle button filter grey basic" id="filter_vaccine_covishield">Covishield</button>
+<button class="ui toggle button filter grey basic" id="filter_vaccine_covaxin">Covaxin</button>
+<br /><br />
+<button class="ui toggle button filter grey basic" id="filter_table_centres_hide_no_vaccine">Hide Centres</button>
 
 <h5 class="ui header">Auto refresh table</h5>
 

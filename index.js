@@ -3,10 +3,11 @@
     
     //filters
     g_filter_count = 0; //count of enabled filters
-    g_filter_age_18to45         = new Boolean(false);
-    g_filter_age_45plus         = new Boolean(false);
-    g_filter_vaccine_covishield = new Boolean(false);
-    g_filter_vaccine_covaxin    = new Boolean(false);
+    g_filter_age_18to45                         = new Boolean(false);
+    g_filter_age_45plus                         = new Boolean(false);
+    g_filter_vaccine_covishield                 = new Boolean(false);
+    g_filter_vaccine_covaxin                    = new Boolean(false);
+    g_filter_table_centres_hide_no_vaccine      = new Boolean(false);
     
     //cache
     g_cache_all_centres = []; // data fetched from xhr. before applying filters.
@@ -46,6 +47,7 @@
         g_districtsSelected.delete(value);
     }
     
+    g_temp_numvac = [];
     function filterData(data)
     {
         if(g_filter_count == 0)
@@ -84,7 +86,20 @@
                         filteredSessions.push(session);
                     }
                 });
-            filteredData.push({name:centre["name"], sessions:filteredSessions});
+                let bVaccineAvailable = false;
+                filteredSessions.forEach( session => 
+                    {
+                        g_temp_numvac.push(session.available_capacity);
+                        if(session.available_capacity > 0)
+                        {
+                            bVaccineAvailable = true;
+                        }
+                    });
+
+                if(g_filter_table_centres_hide_no_vaccine == false || bVaccineAvailable == true)//p=>q <=> 'p+q
+                {
+                    filteredData.push({name:centre["name"], sessions:filteredSessions});
+                }
             });
             
             return filteredData;
@@ -544,6 +559,9 @@
                 case "filter_vaccine_covaxin":
                     g_filter_vaccine_covaxin = bFilterOn;
                 break;
+                case "filter_table_centres_hide_no_vaccine":
+                    g_filter_table_centres_hide_no_vaccine = bFilterOn;
+                break;
                 default:
                     bValidFilter = false;
                     console.error("invalid filter");
@@ -555,10 +573,14 @@
         {
             if(bFilterOn)
             {
+                $("#" + filterString).removeClass('grey');
+                $("#" + filterString).removeClass('basic');
                 $("#" + filterString).addClass('active');
             }
             else
             {
+                $("#" + filterString).addClass('grey');
+                $("#" + filterString).addClass('basic');
                 $("#" + filterString).removeClass('active');
             }
         }
@@ -606,7 +628,7 @@ function OnFilterClicked(e,t)
     
     let filterStr = e.currentTarget.id;
 
-    SwitchFilter(filterOn, filterStr, true, false);
+    SwitchFilter(filterOn, filterStr, true, true);
 
 }
 
@@ -751,4 +773,5 @@ if($('#dateInput')[0].value == "")
  
  GetStates();
  $('#navbarMoreBtn').dropdown({on:'hover'});
+ $('#filter_table_centres_hide_no_vaccine').popup({content:"Hide filtered centres which dont have vaccine available"});
 });    
