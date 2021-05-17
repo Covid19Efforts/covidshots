@@ -40,14 +40,30 @@
     
     function onDistrictAdd(value, text, $selectedItem)
     {
-        AddRemoveUrlParam(true, 'districts', value);
-        g_districtsSelected.add(value);
+        let distInt = parseInt(value);
+        if(!isNaN(distInt))
+        {
+            AddRemoveUrlParam(true, 'districts', distInt);
+            g_districtsSelected.add(distInt);
+        }
+        else
+        {
+            console.error("invalid value", value, distInt);
+        }
     }
     
     function onDistrictRemove(value, text, $selectedItem)
     {
-        AddRemoveUrlParam(false, 'districts', value);
-        g_districtsSelected.delete(value);
+        let distInt = parseInt(value);
+        if(!isNaN(distInt))
+        {
+            AddRemoveUrlParam(false, 'districts', distInt);
+            g_districtsSelected.delete(distInt);
+        }
+        else
+        {
+            console.error("invalid value", value, distInt);
+        }
     }
     
     g_temp_numvac = [];
@@ -547,13 +563,28 @@
         onChange: function(value, text, $selectedItem){console.log("onChange", value, text, $selectedItem);},
         onAdd: function(value, text, $selectedItem)
         {
-            AddRemoveUrlParam(true, 'states', value);
-            g_statesSelected.add(value);
+            let stateInt = parseInt(value);
+            if(!isNaN(stateInt))
+            {
+                AddRemoveUrlParam(true, 'states', stateInt);
+                g_statesSelected.add(stateInt);
+            }else
+            {
+                console.error("invalid value", value, stateInt);
+            }
         },
         onRemove: function(value, text, $selectedItem)
         {
-            AddRemoveUrlParam(false, 'states', value);
-            g_statesSelected.delete(value);
+            let stateInt = parseInt(value);
+            if(!isNaN(stateInt))
+            {
+                AddRemoveUrlParam(false, 'states', stateInt);
+                g_statesSelected.delete(stateInt);
+            }
+            else
+            {
+                console.error("invalid value", value, stateInt);
+            }
         },
         });
         });
@@ -740,7 +771,7 @@ function GetDistricts()
             clearInterval(g_handle_refresh_interval_timer);
             g_handle_refresh_interval_timer = null;
         }
-        
+
         let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
         let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
         if(!isNaN(intervalTimeMinsInt))
