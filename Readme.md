@@ -2,6 +2,7 @@ Use this website to find free vaccine slots
 ### Advantages over Cowin
 1. You can query across sevaral states, and districts at once. Eg. All vaccination centres in Delhi which have covishield available
 1. You can be alerted when a vaccination slot becomes available.
+1. You can sort data to quickly find centres with large number of free slots
 
 ![Select multiple states at once](images/tour_states.png)
 ![Select multiple districts at once](images/tour_districts.png)
