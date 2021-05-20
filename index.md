@@ -45,6 +45,8 @@ title: Covid vaccine tracker
   </div>
 </div>
 
+<h3 class="ui header">Find free vaccination slots across districts, set alarms!</h3>
+
 <h5 class="ui header">States</h5>
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
