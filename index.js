@@ -893,7 +893,11 @@ function GetDistricts()
 
         let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
         let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
-        if(!isNaN(intervalTimeMinsInt))
+        if(isNaN(intervalTimeMinsInt) || intervalTimeMinsInt < 5 || intervalTimeMinsInt > 600)
+        {
+            $('#input_auto_refresh_interval')[0].value = 5;
+        }
+        else
         {
             let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
             g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
