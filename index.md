@@ -73,16 +73,20 @@ title: Covid vaccine tracker
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covishield">Covishield</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covaxin">Covaxin</button>
 <br /><br />
-<button class="ui toggle button filter grey basic" id="filter_table_centres_hide_no_vaccine">Hide Centres</button>
+<button class="ui toggle button filter grey basic" id="filter_table_centres_show_all">Show all Centres</button>
 
 <h5 class="ui header">Auto refresh table</h5>
 
-<div class="toggle ui animated button" tabindex="0" id="btn_auto_refresh">
+<div class="toggle ui animated button" tabindex="0" id="btn_auto_refresh" style="float:left">
       <div class="hidden content">Auto Refresh</div>
       <div class="visible content">
       <i class="big sync alternate icon"></i>
+      </div>
 </div>
-</div>
+
+<button class="circular ui icon button" id="alarm_vaccine">
+  <i class="big bell slash icon" id="alarm_vaccine_icon"></i>
+</button>
 
 <br />
 

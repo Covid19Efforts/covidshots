@@ -7,12 +7,16 @@
     g_filter_age_45plus                         = new Boolean(false);
     g_filter_vaccine_covishield                 = new Boolean(false);
     g_filter_vaccine_covaxin                    = new Boolean(false);
-    g_filter_table_centres_hide_no_vaccine      = new Boolean(false);
+    g_filter_table_centres_show_all             = new Boolean(false);
     
     //cache
     g_cache_all_centres = []; // data fetched from xhr. before applying filters.
+    g_cache_filtered_data = []; //filtered data shown in table. useful for comparing changes in filtered data
     g_cache_state_id_map = {};
     g_cache_district_id_map = {};
+
+    //switch/states
+    g_switch_alarm_on = false;
     
     //special strings
     const g_url_param_value_remove_all = "url_param_value_remove_all";//if used as value in AddRemoveUrlParam() value will remove whole param from url, and not just a single value
@@ -69,12 +73,17 @@
     g_temp_numvac = [];
     function filterData(data)
     {
-        if(g_filter_count == 0)
-        {
-            return data;
-        }
-        else
-        {
+        /*since introduction of g_filter_table_centres_show_all flag filtering is done even when g_filter_count is 0
+        Unlike other filters when g_filter_table_centres_show_all is ON it increases the number of rows in the result
+        table rather than descreasing them
+        */
+        //let bSkipFiltering = (g_filter_count == 0);
+        //if(bSkipFiltering)
+        //{
+        //    return data;
+        //}
+        //else
+        //{
             let filteredData = [];
             data.forEach((centre, index) => {
                 let filteredSessions = [];
@@ -115,14 +124,14 @@
                         }
                     });
 
-                if(g_filter_table_centres_hide_no_vaccine == false || bVaccineAvailable == true)//p=>q <=> 'p+q
+                if(g_filter_table_centres_show_all == true || bVaccineAvailable == true)
                 {
                     filteredData.push({name:centre["name"], sessions:filteredSessions});
                 }
             });
             
             return filteredData;
-        }
+        //}
     }
     
     function convertDataToTable(data)
@@ -156,7 +165,84 @@
         
     }
     
-    function CreateTable()
+    function DetectChange(newData, oldData)
+    {
+        console.log(newData, oldData);
+        let notifyInfo = {};
+        for(let i = 0; i < newData.length ; i++)
+        {
+            for(let j = 0; j < oldData.length ; j++)
+            {
+                let newCentre = newData[i];
+                let oldCentre = oldData[i];
+
+                if(newCentre.name == oldCentre.name)
+                {
+                    let sessionsToNotify = [];
+                    for(let l = 0; l < newCentre.sessions.length; l++)
+                    {
+                        let newSession = newCentre.sessions[l];
+                        let notifyUser = true;//notify user if this is a new session or an existing session has more vaccines available
+                        if(newSession.available_capacity == 0)
+                        {
+                            notifyUser = false;
+                        }
+                        for(let m = 0; m < oldCentre.sessions.length; m++)
+                        {
+                            let oldSession = oldCentre.sessions[m];
+                            if(newSession.date.isSame(oldSession.date, 'day') && newSession.session_id == oldSession.session_id)
+                            {
+                                if(newSession.available_capacity < oldSession.available_capacity)
+                                {
+                                    notifyUser = false;
+                                }
+                                else
+                                {
+                                    console.log(newSession, oldSession);
+                                }
+                            }
+                        }
+
+                        if(notifyUser == true)
+                        {
+                            console.log(newSession);
+                            sessionsToNotify.push(newSession);
+                        }
+                    }
+                    if(sessionsToNotify.length > 0)
+                    {
+                        notifyInfo[newCentre.name] = sessionsToNotify;
+                    }
+                    break;
+                }
+            }
+        }
+        let centreNames = Object.keys(notifyInfo);
+        if(centreNames.length > 0)
+        {
+            let title = "New Vaccines Available!";
+            let caption = "";
+            centreNames.forEach(name => {
+                caption += name;
+                caption += "\t";
+                let sessions = notifyInfo[name];
+                sessions.forEach(
+                    session => {
+                        caption += session.format("D MMM");
+                        caption += "\t";
+                    }
+                );
+                caption += "<br />";
+            });
+            tata.success(title, caption, {position:'br', holding:true});
+            let alarmSound = new Audio('misc/mixkit-musical-reveal-961.wav');
+            alarmSound.loop = true;
+            alarmSound.play();
+            console.log(notifyInfo);
+        }
+    }
+
+    function CreateTable(bCallAlarm = false)
     {
         let tableColumns = [{data: 'name', title: 'Centre name'}];
             let selectedDate = new Date($('#dateInput')[0].value);
@@ -165,7 +251,8 @@
                 let nextDate = new Date(selectedDate);
                 nextDate.setDate(nextDate.getDate() + day);
                 tableColumns.push({data: "day" + day, title:nextDate.toDateString(), "orderSequence": [ "desc", "asc"],
-                type:"html-num-fmt",
+                //type:"html-num-fmt",
+                type:"format_cust_vacc_available" /*So that sorting is handled by $.fn.dataTable.ext.type.order[format_cust_vacc_available-pre]*/,
                 render: function(data, type)
                 {
                     let numAvail = data["available"];
@@ -204,10 +291,43 @@
                 });
             }
             
-            let filteredData = filterData(g_cache_all_centres);
-            console.log("filteredData", filteredData);
-            let tableData = convertDataToTable(filteredData);
+            let newFilteredData = filterData(g_cache_all_centres);
+            let oldFiltereddata = g_cache_filtered_data;
+
+            if(bCallAlarm == true)
+            {
+                let bAutoRefreshOn = ($('#input_auto_refresh_interval_parent').hasClass('disabled') == false);
+                if(bAutoRefreshOn == true && g_switch_alarm_on == true)
+                {
+                    DetectChange(newFilteredData, oldFiltereddata);
+                }
+            }
+
+            g_cache_filtered_data = newFilteredData.slice();
             
+            let tableData = convertDataToTable(newFilteredData);
+            
+            $.fn.dataTable.ext.type.order['format_cust_vacc_available-pre'] = function ( data ) 
+            {
+                let numVacs = data.match(/(<span><button class=".+"?>)(?<numVac>.+?)(<\/button><\/span>)/i).groups.numVac;
+                if(numVacs === "NA" )
+                {
+                    return -1;
+                }
+                else
+                {
+                    numVacsInt = parseInt(numVacs);
+                    if(!isNaN(numVacsInt))
+                    {
+                        return numVacsInt;
+                    }
+                    else
+                    {
+                        console.error("Error ordering. invalid value in cell", numVacs, data);
+                    }
+                }
+            };
+
             $('#centreList').DataTable({
                 destroy:true,
                 data:tableData,
@@ -231,7 +351,6 @@
         .then(function(data) 
         {
             let centresTable = [];
-            console.log("here3", data);
             data.forEach(centres => {
                 centres.centers.forEach(centre => {
                     let cName = centre["name"];
@@ -254,16 +373,16 @@
         });
     }
     
-    function RefreshAll()
+    function RefreshAll(bCallAlarm = false)
     {
-        GetCentresData(CreateTable);
+        GetCentresData(function (){CreateTable(bCallAlarm);});
     }
 
     function RefreshAllTimer()
     {
         tata.info('Timer', 'Auto refresh data', {duration:5000});
         console.info('Timer', 'Auto refresh data');
-        RefreshAll();
+        RefreshAll(true);
     }
     
     function IsValidFilterString(filterStr)
@@ -467,7 +586,7 @@
 
             if(bValidStatesParams == true && bValidDistrictsParams == true)
             {
-                RefreshAll();
+                RefreshAll(false);
             }
     }
 
@@ -617,8 +736,8 @@
                 case "filter_vaccine_covaxin":
                     g_filter_vaccine_covaxin = bFilterOn;
                 break;
-                case "filter_table_centres_hide_no_vaccine":
-                    g_filter_table_centres_hide_no_vaccine = bFilterOn;
+                case "filter_table_centres_show_all":
+                    g_filter_table_centres_show_all = bFilterOn;
                 break;
                 default:
                     bValidFilter = false;
@@ -661,7 +780,7 @@
 
             if(g_cache_all_centres.length > 0)
             {//recreate table if valid data present
-                CreateTable();
+                CreateTable(false);
             }
         }
 
@@ -802,7 +921,7 @@ function GetDistricts()
         if(buttonOn === true)
         {
             $('#input_auto_refresh_interval_parent').removeClass('disabled');
-            let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
+            let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);//interval in minutes
             let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
             if(!isNaN(intervalTimeMinsInt))
             {
@@ -842,7 +961,7 @@ if($('#dateInput')[0].value == "")
  
  $('#getCentresBtn').click(function(){
     OnDateChange();
-     RefreshAll();
+     RefreshAll(false);
         });
  
  $('#getDistrictsBtn').click(function()
@@ -878,6 +997,16 @@ if($('#dateInput')[0].value == "")
             intro: "<img src=\"images/tour_filters.png\" />"
          },
          {
+            element: document.querySelector('#btn_auto_refresh'),
+            title: "Auto refresh table",
+            intro: "<img src=\"images/tour_auto_refresh_not_clicked.png\" /> <img src=\"images/tour_auto_refresh_clicked.png\" /> Refresh table every 5 minutes. Refresh interval can be configured"
+         },
+         {
+            element: document.querySelector('#alarm_vaccine'),
+            title: "Sound alarm",
+            intro: "<img src=\"images/tour_alarm_not_clicked.png\" /> <img src=\"images/tour_alarm_clicked.png\" /> <p> When new vaccine slots become available</p>"
+         },
+         {
             title: "Share, Save, Bookmark Results",
             intro: "<img src=\"images/tour_url.png\" /> The address link contains input parameters so that you can share the state with others or bookmark it for quick reference. <br /> <b>example</b> <br/><div class='ui mini action input'><input type='text' value='https://lihas.github.io/vaccinetracker/?states=9,12&date=2021-05-15&districts=631,143'><button class='ui teal right labeled icon button'><i class='copy icon'></i>Copy</button></div>"
          }
@@ -889,6 +1018,24 @@ if($('#dateInput')[0].value == "")
  
  GetStates();
  $('#navbarMoreBtn').dropdown({on:'hover'});
- $('#filter_table_centres_hide_no_vaccine').popup({content:"Hide filtered centres which dont have vaccine available"});
-
+ $('#filter_table_centres_show_all').popup({content:"Show filtered centres which dont have vaccine available for the given days"});
+ $('#alarm_vaccine').popup({content:"Ring an alarm when new slots are found"});
+ $('#alarm_vaccine').click(function(e,t){
+     let bAutoRefreshOn = ($('#input_auto_refresh_interval_parent').hasClass('disabled') == false);
+     if(bAutoRefreshOn == true)
+     {
+        if($("#alarm_vaccine_icon").hasClass("slash") == true)
+        {
+           $("#alarm_vaccine_icon").removeClass("slash");
+           $("#alarm_vaccine_icon").addClass("green");
+           g_switch_alarm_on = true;
+        }
+        else
+        {
+           $("#alarm_vaccine_icon").addClass("slash");
+           $("#alarm_vaccine_icon").removeClass("green");
+           g_switch_alarm_on = false;
+        }
+     }
+ });
 });    
