@@ -28,7 +28,7 @@ title: Covid vaccine tracker
 <script src="https://unpkg.com/intro.js@3.4.0/minified/intro.min.js"></script>
 
 <div class="ui blue inverted menu">
-  <a href="https://lihas.github.io/vaccinetracker" class="item" target="_self" rel="noopener noreferrer">Home</a>
+  <a href="https://covidshots.in/?" class="item" target="_self" rel="noopener noreferrer">Home</a>
   <!--<a class="item"></a>-->
   <div class="right menu">
     <a class="item" id="siteTour">Tour</a>
