@@ -3,6 +3,9 @@ import json
 from time import sleep
 from datetime import datetime
 import gzip
+import sys
+
+g_config_max_retry = 3
 
 custom_states = [5 #Bihar
 , 6 #Chandigarh
@@ -29,16 +32,32 @@ url_headers={
 }
 
 def UrlRequest(url):
-    urlReq = urllib.request.Request(url, headers=url_headers)
-    response = urllib.request.urlopen(urlReq)
-    encoding = response.info().get('Content-Encoding')
-    if(encoding == 'gzip'):
-        file = gzip.GzipFile(fileobj=response)
-        data = file.read()
-        return data
+    retryCount = g_config_max_retry
+    waitTime = 10*60 
+    while retryCount > 0:
+        try:
+            urlReq = urllib.request.Request(url, headers=url_headers)
+            response = urllib.request.urlopen(urlReq)
+            encoding = response.info().get('Content-Encoding')
+            if(encoding == 'gzip'):
+                file = gzip.GzipFile(fileobj=response)
+                data = file.read()
+                return data
+            else:
+                data = response.read().decode('utf-8')
+                return data
+            break
+        except urllib.error.HTTPError as err:
+            if err.code == 403:
+                retryCount -= 1
+                print("except", url, waitTime)
+                sleep(waitTime)
+                waitTime *= 1.5
+                continue
+            else:
+                raise err
     else:
-        data = response.read().decode('utf-8')
-        return data
+        sys.exit("too many retries")#exit to prevent perhaps a permanent ban from API server
 
 
 url = "https://cdn-api.co-vin.in/api/v2/admin/location/states"
