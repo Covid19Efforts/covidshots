@@ -17,6 +17,8 @@
 
     //switch/states
     g_switch_alarm_on = false;
+    //persistent switches
+    g_switch_persistent_settings_auto_scroll = true;
     
     //special strings
     const g_url_param_value_remove_all = "url_param_value_remove_all";//if used as value in AddRemoveUrlParam() value will remove whole param from url, and not just a single value
@@ -242,7 +244,7 @@
         }
     }
 
-    function CreateTable(bCallAlarm = false)
+    function CreateTable(bCallAlarm = false, bScroll = true)
     {
         let tableColumns = [{data: 'name', title: 'Centre name'}];
             let selectedDate = new Date($('#dateInput')[0].value);
@@ -338,9 +340,21 @@
         
             tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{duration:5000, onClick:function()
                 {
-                    $('#centreList_wrapper')[0].scrollIntoView({behavior: 'smooth' });
-                }});
-            $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 2000);
+                    $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 600);
+                }});                
+
+            if(g_switch_persistent_settings_auto_scroll == true && bScroll == true)
+            {
+                let scrollAnim = $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 2000);
+                let animStop = function(){scrollAnim.stop();};
+                $(window).click(animStop);
+                $(window).bind('mousewheel', function(event){
+                    if(event.originalEvent.wheelDelta >= 0)
+                    {//scroll up
+                        animStop();
+                    }
+                });
+            }
     }
     
     function GetCentresData(callback_func)
@@ -374,16 +388,16 @@
         });
     }
     
-    function RefreshAll(bCallAlarm = false)
+    function RefreshAll(bCallAlarm = false, bScroll = true/*Scroll to results table*/)
     {
-        GetCentresData(function (){CreateTable(bCallAlarm);});
+        GetCentresData(function (){CreateTable(bCallAlarm, bScroll);});
     }
 
     function RefreshAllTimer()
     {
         tata.info('Timer', 'Auto refresh data', {duration:5000});
         console.info('Timer', 'Auto refresh data');
-        RefreshAll(true);
+        RefreshAll(true, false);
     }
     
     function IsValidFilterString(filterStr)
@@ -587,7 +601,7 @@
 
             if(bValidStatesParams == true && bValidDistrictsParams == true)
             {
-                RefreshAll(false);
+                RefreshAll(false, true);
             }
     }
 
@@ -781,7 +795,7 @@
 
             if(g_cache_all_centres.length > 0)
             {//recreate table if valid data present
-                CreateTable(false);
+                CreateTable(false, false);
             }
         }
 
@@ -944,6 +958,47 @@ function GetDistricts()
         }
     }
 
+function OnClickSettingsAutoScroll(e,t)
+{
+    let settingOn = new Boolean(false);
+    if($('#SettingAutoScrollInput')[0].checked == true)
+    {
+        settingOn = true;
+    }
+    else
+    {
+        settingOn = false;
+    }
+
+    if(settingOn == true)
+    {
+        $('#SettingAutoScrollInput')[0].checked = true;
+        g_switch_persistent_settings_auto_scroll = true;
+    }
+    else
+    {
+        $('#SettingAutoScrollInput')[0].checked = false;
+        g_switch_persistent_settings_auto_scroll = false;
+    }
+
+    localStorage.setItem('g_switch_persistent_settings_auto_scroll', g_switch_persistent_settings_auto_scroll);
+}
+
+function ProcessPersistentVariables()
+{
+    let settingVal = localStorage.getItem('g_switch_persistent_settings_auto_scroll');
+    if( settingVal == null || settingVal.toLowerCase() == "true")
+    {
+        g_switch_persistent_settings_auto_scroll = true;
+    }
+    else
+    {
+        g_switch_persistent_settings_auto_scroll = false;
+    }
+
+    $('#SettingAutoScrollInput')[0].checked = g_switch_persistent_settings_auto_scroll;
+}
+
 $(document).ready( function () 
 {
     /*from https://stackoverflow.com/a/66407003/981766 */
@@ -957,6 +1012,8 @@ $('.ui.button.toggle.filter').click(OnFilterClicked);
 $('#btn_auto_refresh').click(OnAutoRefreshClick);
 $('#input_auto_refresh_interval').change(OnAutoRefreshIntervalChange);
 
+ProcessPersistentVariables();
+
 ProcessQueryParams();
 
 if($('#dateInput')[0].value == "")
@@ -966,7 +1023,7 @@ if($('#dateInput')[0].value == "")
  
  $('#getCentresBtn').click(function(){
     OnDateChange();
-     RefreshAll(false);
+     RefreshAll(false, true);
         });
  
  $('#getDistrictsBtn').click(function()
@@ -1043,6 +1100,16 @@ if($('#dateInput')[0].value == "")
         }
      }
  });
+
+$('#SettingsDialogButton').click(function(e,t){
+    $('#SettingsDialogModal').modal('show');
+});
+
+
+$('#SettingAutoScroll').checkbox();
+//$('#SettingAutoScroll').first().checkbox({onChecked: function(){console.log("onChecked");},onUnChecked: function(){console.log("onUnChecked");}});
+$('#SettingAutoScroll').click(OnClickSettingsAutoScroll);
+
 });    
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/

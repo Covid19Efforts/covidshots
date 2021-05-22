@@ -40,9 +40,28 @@ title: Covid vaccine tracker
     <div class="menu">
       <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
       <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
+      <a class="item" target="_blank" rel="noopener noreferrer" id="SettingsDialogButton"><i class="cog icon"></i>Settings</a>
     </div>
   </div>
 <!---->
+  </div>
+</div>
+
+<div class="ui modal" id="SettingsDialogModal">
+  <div class="header">Settings</div>
+  <div class="scrolling content">
+
+  <div class="ui toggle checkbox" id="SettingAutoScroll">
+  <input type="checkbox" name="public" checked="checked" id="SettingAutoScrollInput">
+  <label title="When ON auto scrolls to table when results are available">Auto Scroll</label>
+  </div>
+
+    <p></p>
+  </div>
+  <div class="actions">
+    <!--<div class="ui approve button">Approve</div>
+    <div class="ui button">Neutral</div>-->
+    <div class="ui cancel button">Close</div>
   </div>
 </div>
 
