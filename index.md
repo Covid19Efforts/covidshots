@@ -1,7 +1,7 @@
 ---
 layout: default
 classes: wide
-title: Covid vaccine tracker
+title: Covid Shots
 ---
 
 <style>
@@ -32,14 +32,14 @@ title: Covid vaccine tracker
   <!--<a class="item"></a>-->
   <div class="right menu">
     <a class="item" id="siteTour">Tour</a>
-    <a href="https://github.com/lihas/vaccinetracker/blob/gh-pages/Readme.md" class="item" target="_blank" rel="noopener noreferrer">Help</a>
+    <a href="https://github.com/lihas/covidshots/blob/gh-pages/Readme.md" class="item" target="_blank" rel="noopener noreferrer">Help</a>
 <!---->
   <div class="ui dropdown item" id="navbarMoreBtn">
     More
     <i class="dropdown icon"></i>
     <div class="menu">
-      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
-      <a class="item" href="https://github.com/lihas/vaccinetracker/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
+      <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
+      <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
       <a class="item" target="_blank" rel="noopener noreferrer" id="SettingsDialogButton"><i class="cog icon"></i>Settings</a>
     </div>
   </div>
