@@ -2,6 +2,7 @@ import urllib.request
 import json
 from time import sleep
 from datetime import datetime
+import gzip
 
 custom_states = [5 #Bihar
 , 6 #Chandigarh
@@ -16,7 +17,6 @@ time1=datetime.now()
 
 print("time1", time1)
 
-url = "https://cdn-api.co-vin.in/api/v2/admin/location/states";
 url_headers={
     'User-Agent'                : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
     "authority"                 : "cdn-api.co-vin.in",
@@ -27,9 +27,22 @@ url_headers={
     "upgrade-insecure-requests" : "1"
 
 }
-urlReq = urllib.request.Request(url, headers=url_headers)
-response = urllib.request.urlopen(urlReq)
-stateJson = json.load(response)
+
+def UrlRequest(url):
+    urlReq = urllib.request.Request(url, headers=url_headers)
+    response = urllib.request.urlopen(urlReq)
+    encoding = response.info().get('Content-Encoding')
+    if(encoding == 'gzip'):
+        file = gzip.GzipFile(fileobj=response)
+        data = file.read()
+        return data
+    else:
+        data = response.read().decode('utf-8')
+        return data
+
+
+url = "https://cdn-api.co-vin.in/api/v2/admin/location/states"
+stateJson = json.loads(UrlRequest(url))
 stateJson = stateJson["states"]
 
 districts = []
@@ -47,31 +60,27 @@ try:
     for stateId in all_states:
     #for stateId in custom_states:
         print(stateId)
-        #sleep(5)
+        sleep(5)
         url = "https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + str(stateId)
-        urlReq = urllib.request.Request(url, headers=url_headers)
         requestCount += 1
-        response = urllib.request.urlopen(urlReq)
-        distJson = json.load(response)
+        distJson = json.loads(UrlRequest(url))
         distJson = distJson["districts"]
         for dist in distJson:
             distId = dist["district_id"]
             districts.append(distId)
             print("\tdistrict ",distId, stateId)
-            #sleep(5)
+            sleep(5)
             url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + str(distId) + "&date=17-05-2021"
-            urlReq = urllib.request.Request(url, headers=url_headers)
             requestCount += 1
-            response = urllib.request.urlopen(urlReq)
-            centresJson = json.load(response)
+            centresJson = json.loads(UrlRequest(url))
             centresJson = centresJson["centers"]
             for centre in centresJson:
                 centreId = centre["center_id"]
                 print("\t\tcentre ",centreId, distId, stateId)
                 centres.append(centreId)
         #print(distJson)
-except:
-    print("exception")
+except Exception as e:
+    print("exception", e)
 finally:
     time2=datetime.now()
     print(len(districts))

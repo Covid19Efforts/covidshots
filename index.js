@@ -340,6 +340,7 @@
                 {
                     $('#centreList_wrapper')[0].scrollIntoView({behavior: 'smooth' });
                 }});
+            $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 2000);
     }
     
     function GetCentresData(callback_func)
@@ -1043,3 +1044,20 @@ if($('#dateInput')[0].value == "")
      }
  });
 });    
+
+/*START https://codepen.io/desirecode/pen/MJPJqV*/
+
+$(document).ready(function(){ 
+    $(window).scroll(function(){ 
+        if ($(this).scrollTop() > 100) { 
+            $('#scrollToTop').fadeIn(); 
+        } else { 
+            $('#scrollToTop').fadeOut(); 
+        } 
+    }); 
+    $('#scrollToTop').click(function(){ 
+        $("html, body").animate({ scrollTop: 0 }, 600); 
+        return false; 
+    }); 
+});
+/*END*/
