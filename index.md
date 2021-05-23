@@ -27,6 +27,18 @@ title: Covid Shots
 
 <script src="https://unpkg.com/intro.js@3.4.0/minified/intro.min.js"></script>
 
+
+<!--START https://codepen.io/desirecode/pen/MJPJqV-->
+<a href="#" id="scrollToTop" style="display: none;"><span></span></a>
+<!--END-->
+
+ <div class="ui top sidebar" id="topBar" style="display:none">
+    <p id="AutoRefreshRecordGif">&nbsp;⬤</p>
+    <p>&nbsp;Refreshing in </p>
+    <p id="AutoRefreshRecordTimeRemaing"></p>
+    <p>&nbsp;seconds </p>
+  </div>
+
 <div class="ui blue inverted menu">
   <a href="https://covidshots.in/?" class="item" target="_self" rel="noopener noreferrer">Home</a>
   <!--<a class="item"></a>-->
@@ -97,7 +109,7 @@ title: Covid Shots
 <br /><br />
 <button class="ui toggle button filter grey basic" id="filter_table_centres_show_all">Show all Centres</button>
 
-<h5 class="ui header">Auto refresh table</h5>
+<h5 class="ui header">Auto refresh</h5>
 
 <div class="toggle ui animated button" tabindex="0" id="btn_auto_refresh" style="float:left">
       <div class="hidden content">Auto Refresh</div>
@@ -120,12 +132,26 @@ minutes
 </div>
 </div>
 
+<br/>
+<div style="display:none; float:right" id="vaccinesAvailableNumBlock">
+<h3 class="ui grey header" style="display:inline">Vaccines available &nbsp;</h3>
+<h2 id="vaccinesAvailableNum" class="ui orange header" style="display:inline">0</h2>
+</div>
+
+<br/>
+<div class="ui styled fluid accordion hidden" id="statsAccordion" style="display:none">
+  <div class="active title">
+    <i class="dropdown icon"></i>
+    View stats
+  </div>
+  <div class="active content">
+  </div>
+</div>
+
 <br />
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
 
 
-<!--START https://codepen.io/desirecode/pen/MJPJqV-->
-<a href="#" id="scrollToTop" style="display: none;"><span></span></a>
-<!--END-->
+
 
 <script src="index.js"></script>

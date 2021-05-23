@@ -1,5 +1,8 @@
     //config
     const g_config_daystoShow = 7;
+    const g_config_refresh_interval_default = 5;
+    const g_config_refresh_interval_min     = 5;
+    const g_config_refresh_interval_max     = 600;
     
     //filters
     g_filter_count = 0; //count of enabled filters
@@ -17,14 +20,21 @@
 
     //switch/states
     g_switch_alarm_on = false;
+    g_state_refresh_interval_current_val_minutes = g_config_refresh_interval_default;
     //persistent switches
     g_switch_persistent_settings_auto_scroll = true;
     
     //special strings
     const g_url_param_value_remove_all = "url_param_value_remove_all";//if used as value in AddRemoveUrlParam() value will remove whole param from url, and not just a single value
 
+    //stats
+    g_stats_num_available_vaccines = 0
+
+    //handles
     //set interval handle
     g_handle_refresh_interval_timer = null;
+    g_handle_refresh_text_interval_timer = null;
+    g_handle_audio_alarm            = null; //so that only one audio plays at a time
 
     //states and districts
     g_statesSelected = new Set();
@@ -75,6 +85,8 @@
     g_temp_numvac = [];
     function filterData(data)
     {
+        g_stats_num_available_vaccines = 0;
+
         /*since introduction of g_filter_table_centres_show_all flag filtering is done even when g_filter_count is 0
         Unlike other filters when g_filter_table_centres_show_all is ON it increases the number of rows in the result
         table rather than descreasing them
@@ -116,12 +128,15 @@
                         filteredSessions.push(session);
                     }
                 });
+
                 let bVaccineAvailable = false;
                 filteredSessions.forEach( session => 
                     {
                         g_temp_numvac.push(session.available_capacity);
-                        if(session.available_capacity > 0)
+                        let availableCapacity = session.available_capacity;
+                        if(availableCapacity > 0)
                         {
+                            g_stats_num_available_vaccines += availableCapacity;
                             bVaccineAvailable = true;
                         }
                     });
@@ -194,7 +209,7 @@
                             let oldSession = oldCentre.sessions[m];
                             if(newSession.date.isSame(oldSession.date, 'day') && newSession.session_id == oldSession.session_id)
                             {
-                                if(newSession.available_capacity < oldSession.available_capacity)
+                                if(newSession.available_capacity <= oldSession.available_capacity)
                                 {
                                     notifyUser = false;
                                 }
@@ -230,16 +245,26 @@
                 let sessions = notifyInfo[name];
                 sessions.forEach(
                     session => {
-                        caption += session.format("D MMM");
+                        caption += session.date.format("D MMM");
                         caption += "\t";
                     }
                 );
                 caption += "<br />";
             });
-            tata.success(title, caption, {position:'br', holding:true});
-            let alarmSound = new Audio('misc/mixkit-musical-reveal-961.wav');
-            alarmSound.loop = true;
-            alarmSound.play();
+
+            if(g_handle_audio_alarm != null)
+            {
+                if(g_handle_audio_alarm.ended == false)
+                {
+                    g_handle_audio_alarm.pause();
+                }
+                g_handle_audio_alarm.loop = true;
+                g_handle_audio_alarm.play();
+                tata.success(title, caption, {position:'br', holding:true, onClick: function(){
+                    g_handle_audio_alarm.stop();
+                }});
+            }
+            
             console.log(notifyInfo);
         }
     }
@@ -355,6 +380,10 @@
                     }
                 });
             }
+
+            console.log("stats", g_stats_num_available_vaccines, dayjs().toString());
+            $('#vaccinesAvailableNumBlock').show();
+            $('#vaccinesAvailableNum')[0].textContent = g_stats_num_available_vaccines;
     }
     
     function GetCentresData(callback_func)
@@ -398,6 +427,8 @@
         tata.info('Timer', 'Auto refresh data', {duration:5000});
         console.info('Timer', 'Auto refresh data');
         RefreshAll(true, false);
+        
+        $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
     }
     
     function IsValidFilterString(filterStr)
@@ -674,7 +705,7 @@
         "method": "GET",
         "mode": "cors",
         "credentials": "omit"
-        }).then(response => response.json())
+        }).then(response => {return response.json();})
         .then(data => {
         let stateList = [];
         data["states"].forEach((state, index) => 
@@ -721,6 +752,9 @@
             }
         },
         });
+        }).catch(error => {
+            tata.error("Network error", "Error connecting to cowin servers<br/ >Retry after some time", {holding:true});
+            console.error(error);
         });
     }
     
@@ -908,17 +942,37 @@ function GetDistricts()
 
         let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);
         let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
-        if(isNaN(intervalTimeMinsInt) || intervalTimeMinsInt < 5 || intervalTimeMinsInt > 600)
+        if(isNaN(intervalTimeMinsInt) || intervalTimeMinsInt < g_config_refresh_interval_min || intervalTimeMinsInt > g_config_refresh_interval_max)
         {
-            $('#input_auto_refresh_interval')[0].value = 5;
+            intervalTimeMinsInt = g_config_refresh_interval_default;
+            $('#input_auto_refresh_interval')[0].value = intervalTimeMinsInt;
         }
-        else
-        {
-            let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
-            g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
-        }
+        
+        g_state_refresh_interval_current_val_minutes = intervalTimeMinsInt;
+        let intervalTimeMilliSecInt = g_state_refresh_interval_current_val_minutes * 60 * 1000;
+        g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
+
+        $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60 ;
+        
     }
 
+    function UpdateTimerText()
+    {
+        let text = $('#AutoRefreshRecordTimeRemaing')[0].textContent;
+        if(text!="")
+        {
+            textInt = parseInt(text);
+            if(!isNaN(textInt))
+            {
+                textInt -= 1;
+                if(textInt<=0)
+                {
+                    textInt = 0;
+                }
+                $('#AutoRefreshRecordTimeRemaing')[0].textContent = textInt;
+            }
+        }
+    }
     function OnAutoRefreshClick(e,t)
     {
         let buttonOn = new Boolean(false);
@@ -937,6 +991,12 @@ function GetDistricts()
             g_handle_refresh_interval_timer = null;
         }
 
+        if(g_handle_refresh_text_interval_timer != null)
+        {
+            clearInterval(g_handle_refresh_text_interval_timer);
+            g_handle_refresh_text_interval_timer = null;
+        }
+
         if(buttonOn === true)
         {
             $('#input_auto_refresh_interval_parent').removeClass('disabled');
@@ -945,7 +1005,10 @@ function GetDistricts()
             if(!isNaN(intervalTimeMinsInt))
             {
                 let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
+                g_state_refresh_interval_current_val_minutes = intervalTimeMinsInt;
+                $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
                 g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
+                g_handle_refresh_text_interval_timer = setInterval(UpdateTimerText, 1000);
             }
             else
             {
@@ -956,6 +1019,8 @@ function GetDistricts()
         {
             $('#input_auto_refresh_interval_parent').addClass('disabled');
         }
+
+        $('#topBar').sidebar('toggle');
     }
 
 function OnClickSettingsAutoScroll(e,t)
@@ -1109,6 +1174,25 @@ $('#SettingsDialogButton').click(function(e,t){
 $('#SettingAutoScroll').checkbox();
 //$('#SettingAutoScroll').first().checkbox({onChecked: function(){console.log("onChecked");},onUnChecked: function(){console.log("onUnChecked");}});
 $('#SettingAutoScroll').click(OnClickSettingsAutoScroll);
+
+$('.ui.accordion').accordion();
+
+g_handle_audio_alarm = new Audio('misc/mixkit-musical-reveal-961.wav');
+
+let opac = 1;
+let animateRefresh = function(){
+    if(opac == 0)
+        opac = 1
+    else
+        opac = 0
+    $('#AutoRefreshRecordGif').animate({opacity:opac}, 400, function(){
+        animateRefresh();
+    });
+}
+
+$('#topBar').sidebar('setting', {closable: false, transition:'overlay' /*Push messes up fixed elemets' positioning*/, dimPage:false, onShow:function(){
+    animateRefresh();
+}});//.sidebar('toggle');
 
 });    
 

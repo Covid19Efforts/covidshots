@@ -1,3 +1,22 @@
+#topBar p{
+    color: #333333;
+    display: inline;
+    font-weight: bolder;
+}
+
+#topBar #AutoRefreshRecordGif {
+    color: #db2828;
+    width: fit-content;
+}
+
+#topBar #AutoRefreshRecordTimeRemaing {
+    color: #2085D0ff;
+}
+
+#topBar {
+    background: #FFD54EFF;
+}
+
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
     position:fixed;
@@ -13,6 +32,7 @@
     -moz-border-radius:60px;
     border-radius:60px
 }
+
 #scrollToTop span {
     position:absolute;
     top:50%;
