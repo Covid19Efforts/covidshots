@@ -51,6 +51,7 @@ body {
 </figure>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
 <script>
+    g_config_chart_refresh_interval_ms = 2000;
     g_stats_num_available_vaccines = 0;
 
     function loadStatsChart(){
@@ -70,7 +71,7 @@ body {
                     var x = (new Date()).getTime(), // current time
                         y = g_stats_num_available_vaccines;
                     series.addPoint([x, y], true, false);
-                }, 1000);
+                }, g_config_chart_refresh_interval_ms);
             }
         }
     },
