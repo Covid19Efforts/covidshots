@@ -150,12 +150,15 @@ minutes
 </div>
 
 <br/>
-<div style="display:none; float:right" id="vaccinesAvailableNumBlock">
-<h3 class="ui grey header" style="display:inline">Vaccines available &nbsp;</h3>
-<h2 id="vaccinesAvailableNum" class="ui orange header" style="display:inline">0</h2>
+<div style="display: flex; width: 100%;float: right;flex-direction: row; align-content: flex-end; align-items: flex-end;justify-items: flex-end;" id="vaccinesAvailableNumBlock">
+<img src="images/icons8-combo-chart.gif" id="viewStatsImgBtn">
+<h3 class="ui grey header" style="display:inline; margin:0;">Vaccines available &nbsp;</h3>
+<h1 id="vaccinesAvailableNum" class="ui orange header" style="display:inline; margin:0;">0</h1>
 </div>
 
-<br/>
+<iframe id="viewStatsContent" framborder="0" scrolling="no" style="display:none">
+</iframe>
+
 <div class="ui styled fluid accordion hidden" id="statsAccordion" style="display:none">
   <div class="active title">
     <i class="dropdown icon"></i>

@@ -17,6 +17,26 @@
     background: #FFD54EFF;
 }
 
+#vaccinesAvailableNumBlock img {
+    margin-right: auto; 
+    justify-self: flex-start;
+    width: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#vaccinesAvailableNumBlock img:hover {
+    transform: translateY(8px);
+    border-bottom-style: solid;
+    border-bottom-color: #2085D0;
+}
+
+#viewStatsContent {
+    border-radius: 20px;
+    width: 100%;
+    border:none;
+}
+
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
     position:fixed;

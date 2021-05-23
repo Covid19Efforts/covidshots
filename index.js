@@ -21,6 +21,7 @@
     //switch/states
     g_switch_alarm_on = false;
     g_state_refresh_interval_current_val_minutes = g_config_refresh_interval_default;
+    g_state_content_frame_loaded = false;
     //persistent switches
     g_switch_persistent_settings_auto_scroll = true;
     
@@ -41,6 +42,11 @@
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
     
+    function PostNumVaccines()
+    {
+        $('#viewStatsContent')[0].contentWindow.postMessage({type:"avaialablevaccinesNum", id:"parentFrame", g_stats_num_available_vaccines:g_stats_num_available_vaccines});
+    }
+
     function toggleDistricts()
     {
         if(g_statesSelected.size > 0)
@@ -147,6 +153,7 @@
                 }
             });
             
+            PostNumVaccines();
             return filteredData;
         //}
     }
@@ -581,9 +588,13 @@
                                 }
                             });
                         }
-                        if(urlParam == 'districts')
+                        if(urlParam == 'districts' && bValidDistrictsParams == true)
                         {
                             GetDistricts();
+                        }
+                        else if(urlParam == 'states' && bValidStatesParams == true)
+                        {
+                            GetStates();
                         }
                     }
                 }else 
@@ -1064,6 +1075,20 @@ function ProcessPersistentVariables()
     $('#SettingAutoScrollInput')[0].checked = g_switch_persistent_settings_auto_scroll;
 }
 
+function OnViewMoreStatsClick(){
+    //$('#viewStatsContent').load('stats.html', function(){
+    $('#viewStatsContent').attr('src', 'stats.html');
+    if($('#viewStatsContent').is(':visible') == false)
+    {
+        $('#viewStatsContent').show();
+        $('#viewStatsContent').css('transform','translateY(10px)');
+    }
+    else
+    {
+        $('#viewStatsContent').hide();
+    }
+}
+
 $(document).ready( function () 
 {
     /*from https://stackoverflow.com/a/66407003/981766 */
@@ -1073,8 +1098,6 @@ if($('#dateInput')[0].value == "")
 {
     $('#dateInput')[0].valueAsDate = new Date();
 }
-
-GetStates();
 
 $('#dateInput').change(OnDateChange);
 
@@ -1177,7 +1200,6 @@ $('#AboutDialogButton').click(function(e,t){
 
 
 $('#SettingAutoScroll').checkbox();
-//$('#SettingAutoScroll').first().checkbox({onChecked: function(){console.log("onChecked");},onUnChecked: function(){console.log("onUnChecked");}});
 $('#SettingAutoScroll').click(OnClickSettingsAutoScroll);
 
 $('.ui.accordion').accordion();
@@ -1199,6 +1221,10 @@ $('#topBar').sidebar('setting', {closable: false, transition:'overlay' /*Push me
     animateRefresh();
 }});//.sidebar('toggle');
 
+$('#viewStatsImgBtn').popup({content:"View more stats"});
+$('#viewStatsImgBtn').click(OnViewMoreStatsClick);
+
+GetStates();
 });    
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
@@ -1216,4 +1242,15 @@ $(document).ready(function(){
         return false; 
     }); 
 });
+
+window.addEventListener("message", event => {
+    if(event.data !="" && event.data.type == "iframeStatsLoaded" && event.data.id == "viewStatsContent")
+    {
+        console.log("message from iframe", event, $('#viewStatsContent')[0].contentWindow.document.body.offsetHeight);
+        $('#viewStatsContent').height($('#viewStatsContent')[0].contentWindow.document.body.offsetHeight * 1.05);
+        g_state_content_frame_loaded = true;
+        PostNumVaccines();
+    }
+});
+
 /*END*/
