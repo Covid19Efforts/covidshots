@@ -53,6 +53,7 @@ title: Covid Shots
       <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
       <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
       <a class="item" target="_blank" rel="noopener noreferrer" id="SettingsDialogButton"><i class="cog icon"></i>Settings</a>
+      <a class="item" target="_blank" rel="noopener noreferrer" id="AboutDialogButton"><i class="info circle icon"></i>About</a>
     </div>
   </div>
 <!---->
@@ -67,6 +68,22 @@ title: Covid Shots
   <input type="checkbox" name="public" checked="checked" id="SettingAutoScrollInput">
   <label title="When ON auto scrolls to table when results are available">Auto Scroll</label>
   </div>
+
+    <p></p>
+  </div>
+  <div class="actions">
+    <!--<div class="ui approve button">Approve</div>
+    <div class="ui button">Neutral</div>-->
+    <div class="ui cancel button">Close</div>
+  </div>
+</div>
+
+
+<div class="ui modal" id="AboutDialogModal">
+  <div class="header">About</div>
+  <div class="scrolling content">
+
+  <a href="https://icons8.com/icon/f35ivmW8y15E/combo-chart">Combo Chart icon by Icons8</a>
 
     <p></p>
   </div>
@@ -150,8 +167,5 @@ minutes
 
 <br />
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
-
-
-
 
 <script src="index.js"></script>

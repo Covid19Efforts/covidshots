@@ -1069,6 +1069,13 @@ $(document).ready( function ()
     /*from https://stackoverflow.com/a/66407003/981766 */
 document.head.appendChild(Object.assign(document.createElement("link"), {rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💉</text></svg>"}))
 
+if($('#dateInput')[0].value == "")
+{
+    $('#dateInput')[0].valueAsDate = new Date();
+}
+
+GetStates();
+
 $('#dateInput').change(OnDateChange);
 
 $('.ui.button.toggle').state();
@@ -1080,11 +1087,6 @@ $('#input_auto_refresh_interval').change(OnAutoRefreshIntervalChange);
 ProcessPersistentVariables();
 
 ProcessQueryParams();
-
-if($('#dateInput')[0].value == "")
-{
-    $('#dateInput')[0].valueAsDate = new Date();
-}
  
  $('#getCentresBtn').click(function(){
     OnDateChange();
@@ -1142,8 +1144,7 @@ if($('#dateInput')[0].value == "")
       }).start();
  });
 
- 
- GetStates();
+
  $('#navbarMoreBtn').dropdown({on:'hover'});
  $('#filter_table_centres_show_all').popup({content:"Show filtered centres which dont have vaccine available for the given days"});
  $('#alarm_vaccine').popup({content:"Ring an alarm when new slots are found"});
@@ -1168,6 +1169,10 @@ if($('#dateInput')[0].value == "")
 
 $('#SettingsDialogButton').click(function(e,t){
     $('#SettingsDialogModal').modal('show');
+});
+
+$('#AboutDialogButton').click(function(e,t){
+    $('#AboutDialogModal').modal('show');
 });
 
 
