@@ -52,7 +52,7 @@ Use this website to find free vaccine slots
 # Looking for contributors !!1
 #### UX, QA, Dev, Misc
 
-![Join us](images/joinTeam.png)
+![Join us](images/joinTeame.png)
 
 #### Credits
 <a href="https://www.freepik.com/vectors/business">Business vector created by pikisuperstar - www.freepik.com</a>
