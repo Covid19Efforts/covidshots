@@ -1,4 +1,9 @@
-Use this website to find free vaccine slots
+# Looking for contributors !!!
+#### UX, QA, Dev, Misc
+
+![Join us](images/joinTeam.png)
+
+## Use this website to find free vaccine slots, Set alarms
 ### Search across multiple districts (and states) at once
 <!--![Select multiple states at once](images/tour_states.png)-->
 <!--![Select multiple districts at once](images/tour_districts.png)-->
@@ -48,11 +53,6 @@ Use this website to find free vaccine slots
 
 #### Disadvantages over Cowin
 1. Cannot be used to book slots. For that you will have to use Cowin, et al. (Work in progress? Please join as a contributor)
-
-# Looking for contributors !!1
-#### UX, QA, Dev, Misc
-
-![Join us](images/joinTeame.png)
 
 #### Credits
 <a href="https://www.freepik.com/vectors/business">Business vector created by pikisuperstar - www.freepik.com</a>
