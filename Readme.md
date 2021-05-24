@@ -1,6 +1,6 @@
 Use this website to find free vaccine slots
 ### Search across multiple districts (and states) at once
-<img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/tour_states.png" style="width:500px">
+<img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/tour_states.png" width="500px" style="width:500px">
 <img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/tour_districts.png" style="width:500px">
 
 
