@@ -1,17 +1,13 @@
 Use this website to find free vaccine slots
 ### Search across multiple districts (and states) at once
-<!--![Select multiple states at once](images/tour_states.png)-->
-<!--![Select multiple districts at once](images/tour_districts.png)-->
 <img src="/lihas/covidshots/raw/gh-pages/images/tour_states.png" style="width:500px">
 <img src="/lihas/covidshots/raw/gh-pages/images/tour_districts.png" style="width:500px">
 
 
 #### Sort data (Highest number of available vaccines on top)
-<!--![Sort table data](images/vaccine_table_sort.png)-->
 <img src="/lihas/covidshots/raw/gh-pages/images/vaccine_table_sort.png" style="width:500px">
 
 #### Filter results
-<!--![Auto refresh](images/tour_filters.png)-->
 <img src="/lihas/covidshots/raw/gh-pages/images/tour_filters.png" style="width:500px">
 
 #### Monitor vaccine availability continuously (Auto refresh)
