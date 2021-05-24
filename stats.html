@@ -53,7 +53,14 @@ body {
 <script>
     g_config_chart_refresh_interval_ms = 2000;
     g_stats_num_available_vaccines = 0;
+    g_handle_chart_refresh_interval = null;
 
+    function UpdateChartData()
+    {
+        var x = (new Date()).getTime(), // current time
+            y = g_stats_num_available_vaccines;
+        series.addPoint([x, y], true, false);
+    }
     function loadStatsChart(){
         console.log("zsasa");
         Highcharts.chart('container', {
@@ -67,11 +74,7 @@ body {
 
                 // set up the updating of the chart each second
                 var series = this.series[0];
-                setInterval(function () {
-                    var x = (new Date()).getTime(), // current time
-                        y = g_stats_num_available_vaccines;
-                    series.addPoint([x, y], true, false);
-                }, g_config_chart_refresh_interval_ms);
+                g_handle_chart_refresh_interval = setInterval(UpdateChartData, g_config_chart_refresh_interval_ms);
             }
         }
     },
@@ -148,10 +151,27 @@ body {
 
     window.addEventListener("message", event => 
     {
-        if(event.data !="" && event.data.type == "avaialablevaccinesNum" && event.data.id == "parentFrame")
+        if(event.data !="" && event.data.id == "parentFrame")
         {
             console.log("message from parent",event, event.data);
-            g_stats_num_available_vaccines = event.data.g_stats_num_available_vaccines;
+            if(event.data.type == "avaialablevaccinesNum")
+            {
+                let numVaccines = event.data.g_stats_num_available_vaccines;
+                if(!isNaN(numVaccines))
+                {
+                    g_stats_num_available_vaccines = numVaccines;
+                }
+            }
+            else if(event.data.type == "chartUpdateIntervalMins")
+            {
+                let updateIntervalMins = event.data.g_state_refresh_interval_current_val_minutes;
+                if(!isNaN(updateIntervalMins))
+                {
+                    g_config_chart_refresh_interval_ms = updateIntervalMins * 60 * 1000;
+                    clearInterval(g_handle_chart_refresh_interval);
+                    g_handle_chart_refresh_interval = setInterval(UpdateChartData, g_config_chart_refresh_interval_ms);
+                }
+            }
         }
     });
 </script>

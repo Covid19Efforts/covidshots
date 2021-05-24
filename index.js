@@ -42,6 +42,11 @@
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
     
+    function PostChartUpdateIntervalMins()
+    {
+        $('#viewStatsContent')[0].contentWindow.postMessage({type:"chartUpdateIntervalMins", id:"parentFrame", g_state_refresh_interval_current_val_minutes:g_state_refresh_interval_current_val_minutes});
+    }
+
     function PostNumVaccines()
     {
         $('#viewStatsContent')[0].contentWindow.postMessage({type:"avaialablevaccinesNum", id:"parentFrame", g_stats_num_available_vaccines:g_stats_num_available_vaccines});
@@ -436,6 +441,10 @@
         RefreshAll(true, false);
         
         $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
+        /*Perf. Initially update chart frequently so that user doesn't feel that it is hung,
+        reduce rate to be in sync with refresh interval so that we dont load chart
+        with too much data.*/
+        PostChartUpdateIntervalMins();
     }
     
     function IsValidFilterString(filterStr)

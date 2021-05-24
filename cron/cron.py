@@ -4,8 +4,9 @@ from time import sleep
 from datetime import datetime
 import gzip
 import sys
+import sqlite3
 
-g_config_max_retry = 3
+g_config_max_retry = 4
 
 custom_states = [5 #Bihar
 , 6 #Chandigarh
@@ -50,11 +51,14 @@ def UrlRequest(url):
         except urllib.error.HTTPError as err:
             if err.code == 403:
                 retryCount -= 1
-                print("except", url, waitTime)
+                if retryCount == 1 :#really long wait time for last retry
+                    waitTime = 60 * 60
+                print("except", url, waitTime, retryCount)
                 sleep(waitTime)
                 waitTime *= 1.5
                 continue
             else:
+                print("unexpected except", err.code, err)
                 raise err
     else:
         sys.exit("too many retries")#exit to prevent perhaps a permanent ban from API server
@@ -72,6 +76,9 @@ all_states = []
 for state in stateJson:
     stateId = state["state_id"]
     all_states.append(stateId)
+
+def InitSqlTable():
+    
 
 requestCount = 0
 
