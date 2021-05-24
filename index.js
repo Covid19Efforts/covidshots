@@ -42,6 +42,9 @@
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
     
+    /*Perf. Initially update chart frequently so that user doesn't feel that it is hung,
+        reduce rate to be in sync with refresh interval so that we dont load chart
+        with too much data.*/
     function PostChartUpdateIntervalMins()
     {
         $('#viewStatsContent')[0].contentWindow.postMessage({type:"chartUpdateIntervalMins", id:"parentFrame", g_state_refresh_interval_current_val_minutes:g_state_refresh_interval_current_val_minutes});
@@ -441,9 +444,7 @@
         RefreshAll(true, false);
         
         $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
-        /*Perf. Initially update chart frequently so that user doesn't feel that it is hung,
-        reduce rate to be in sync with refresh interval so that we dont load chart
-        with too much data.*/
+        
         PostChartUpdateIntervalMins();
     }
     
@@ -1259,6 +1260,7 @@ window.addEventListener("message", event => {
         $('#viewStatsContent').height($('#viewStatsContent')[0].contentWindow.document.body.offsetHeight * 1.05);
         g_state_content_frame_loaded = true;
         PostNumVaccines();
+        setTimeout(PostChartUpdateIntervalMins, g_state_refresh_interval_current_val_minutes * 60 * 1000);
     }
 });
 
