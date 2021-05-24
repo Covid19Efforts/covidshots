@@ -47,6 +47,9 @@ Use this website to find free vaccine slots
 -->
 
 #### Disadvantages over Cowin
-1. Cannot be used to book slots. For that you will have to use Cowin, et al.
+1. Cannot be used to book slots. For that you will have to use Cowin, et al. (Work in progress? Please join as a contributor)
+
+# Looking for contributors !!1
+#### UX, QA, Dev, Misc
 
 #### References
