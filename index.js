@@ -22,6 +22,8 @@
     g_switch_alarm_on = false;
     g_state_refresh_interval_current_val_minutes = g_config_refresh_interval_default;
     g_state_content_frame_loaded = false;
+    g_state_auto_refresh_on = false;
+
     //persistent switches
     g_switch_persistent_settings_auto_scroll = true;
     
@@ -33,8 +35,8 @@
 
     //handles
     //set interval handle
-    g_handle_refresh_interval_timer = null;
-    g_handle_refresh_text_interval_timer = null;
+    g_handle_refresh_interval_timer = null; //timer to auto refresh table
+    g_handle_refresh_text_interval_timer = null;//timer shows count down seconds to next refersh
     g_handle_audio_alarm            = null; //so that only one audio plays at a time
 
     //states and districts
@@ -203,18 +205,20 @@
         let notifyInfo = {};
         for(let i = 0; i < newData.length ; i++)
         {
+            let bExistingCentre = false;
+            let newCentre = newData[i];
             for(let j = 0; j < oldData.length ; j++)
             {
-                let newCentre = newData[i];
-                let oldCentre = oldData[i];
+                let oldCentre = oldData[j];
 
                 if(newCentre.name == oldCentre.name)
                 {
+                    bExistingCentre = true;
                     let sessionsToNotify = [];
                     for(let l = 0; l < newCentre.sessions.length; l++)
                     {
                         let newSession = newCentre.sessions[l];
-                        let notifyUser = true;//notify user if this is a new session or an existing session has more vaccines available
+                        let notifyUser = true;//notify user if this is a new session (of existing centre) or an existing session has more vaccines available
                         if(newSession.available_capacity == 0)
                         {
                             notifyUser = false;
@@ -230,7 +234,7 @@
                                 }
                                 else
                                 {
-                                    console.log(newSession, oldSession);
+                                    console.log("new vaccines", newCentre.name, "diff", newSession.available_capacity - oldSession.available_capacity,newSession, oldSession);
                                 }
                             }
                         }
@@ -246,6 +250,24 @@
                         notifyInfo[newCentre.name] = sessionsToNotify;
                     }
                     break;
+                }
+            }
+
+            if(bExistingCentre == false)
+            {//new centre
+                console.log("new centre", newCentre);
+                let sessionsToNotify = [];
+                for(let l = 0; l < newCentre.sessions.length; l++)
+                {
+                    let newSession = newCentre.sessions[l];
+                    if(newSession.available_capacity > 0)
+                    {
+                        sessionsToNotify.push(newSession);
+                    }
+                }
+                if(sessionsToNotify.length > 0)
+                {
+                    notifyInfo[newCentre.name] = sessionsToNotify;
                 }
             }
         }
@@ -273,12 +295,14 @@
                 {
                     g_handle_audio_alarm.pause();
                 }
+            
                 g_handle_audio_alarm.loop = true;
                 g_handle_audio_alarm.play();
+            }
                 tata.success(title, caption, {position:'br', holding:true, onClick: function(){
                     g_handle_audio_alarm.stop();
                 }});
-            }
+            
             
             console.log(notifyInfo);
         }
@@ -1018,6 +1042,8 @@ function GetDistricts()
             g_handle_refresh_text_interval_timer = null;
         }
 
+        g_state_auto_refresh_on = buttonOn;
+
         if(buttonOn === true)
         {
             $('#input_auto_refresh_interval_parent').removeClass('disabled');
@@ -1039,6 +1065,7 @@ function GetDistricts()
         else
         {
             $('#input_auto_refresh_interval_parent').addClass('disabled');
+            $('#viewStatsContent').hide();
         }
 
         $('#topBar').sidebar('toggle');
@@ -1086,16 +1113,29 @@ function ProcessPersistentVariables()
 }
 
 function OnViewMoreStatsClick(){
-    //$('#viewStatsContent').load('stats.html', function(){
-    $('#viewStatsContent').attr('src', 'stats.html');
-    if($('#viewStatsContent').is(':visible') == false)
+    if(g_state_auto_refresh_on == true)
     {
-        $('#viewStatsContent').show();
-        $('#viewStatsContent').css('transform','translateY(10px)');
+        $('#viewStatsContent').attr('src', 'stats.html');
+        if($('#viewStatsContent').is(':visible') == false)
+        {
+            $('#viewStatsContent').show();
+            $('#viewStatsContent').css('transform','translateY(10px)');
+        }
+        else
+        {
+            $('#viewStatsContent').hide();
+        }
     }
     else
     {
-        $('#viewStatsContent').hide();
+        if($('#viewStatsContent').is(':visible') == false)
+        {
+            tata.error("Error", "Stats available only when auto refresh is ON")
+        }
+        else
+        {
+            $('#viewStatsContent').hide();
+        }
     }
 }
 
@@ -1231,7 +1271,7 @@ $('#topBar').sidebar('setting', {closable: false, transition:'overlay' /*Push me
     animateRefresh();
 }});//.sidebar('toggle');
 
-$('#viewStatsImgBtn').popup({content:"View more stats"});
+$('#viewStatsImgBtn').popup({content:"View more stats. Only works with auto refresh."});
 $('#viewStatsImgBtn').click(OnViewMoreStatsClick);
 
 GetStates();

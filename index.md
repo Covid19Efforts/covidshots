@@ -159,15 +159,6 @@ minutes
 <iframe id="viewStatsContent" framborder="0" scrolling="no" style="display:none">
 </iframe>
 
-<div class="ui styled fluid accordion hidden" id="statsAccordion" style="display:none">
-  <div class="active title">
-    <i class="dropdown icon"></i>
-    View stats
-  </div>
-  <div class="active content">
-  </div>
-</div>
-
 <br />
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
 

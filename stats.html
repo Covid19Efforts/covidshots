@@ -52,18 +52,21 @@ body {
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
 <script>
     g_config_chart_refresh_interval_ms = 2000;
-    g_stats_num_available_vaccines = 0;
+    const g_config_num_available_vaccines_invalid = -1;
+    g_stats_num_available_vaccines = g_config_num_available_vaccines_invalid;
     g_handle_chart_refresh_interval = null;
     g_handle_chart_series = null;
 
     function UpdateChartData()
     {
-        var x = (new Date()).getTime(), // current time
-            y = g_stats_num_available_vaccines;
-            g_handle_chart_series.addPoint([x, y], true, false);
+        if(g_stats_num_available_vaccines != g_config_num_available_vaccines_invalid)
+        {
+            var x = (new Date()).getTime(), // current time
+                y = g_stats_num_available_vaccines;
+                g_handle_chart_series.addPoint([x, y], true, false);
+        }
     }
     function loadStatsChart(){
-        console.log("zsasa");
         Highcharts.chart('container', {
     chart: {
     zoomType: 'x',
@@ -145,7 +148,14 @@ body {
                     y: Math.random()
                 });
             }
-            return [{x:(new Date()).getTime(), y:g_stats_num_available_vaccines}];
+            if(g_stats_num_available_vaccines != g_config_num_available_vaccines_invalid)
+            {
+                return [{x:(new Date()).getTime(), y:g_stats_num_available_vaccines}];
+            }
+            else
+            {
+                return [];
+            }
         }())
     }]
 });
@@ -162,6 +172,7 @@ body {
                 if(!isNaN(numVaccines))
                 {
                     g_stats_num_available_vaccines = numVaccines;
+                    UpdateChartData();
                 }
             }
             else if(event.data.type == "chartUpdateIntervalMins")
