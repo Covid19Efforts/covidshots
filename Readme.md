@@ -31,7 +31,7 @@ Use this website to find free vaccine slots
 #### Set audio alarm/ Receive notifications
 <!--![Audio alarm](images/tour_alarm_not_clicked.png)-->
 <!--![Audio alarm](images/tour_alarm_clicked.png)-->
-![Notification](images/notification.png)
+<!--![Notification](images/notification.png)-->
 <img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/tour_alarm_not_clicked.png" width="150px">
 <img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/tour_alarm_clicked.png" width="150px">
 <img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/images/notification.png" width="300px">
