@@ -1201,12 +1201,17 @@ ProcessQueryParams();
          {
             element: document.querySelector('#btn_auto_refresh'),
             title: "Auto refresh table",
-            intro: "<img src=\"images/tour_auto_refresh_not_clicked.png\" /> <img src=\"images/tour_auto_refresh_clicked.png\" /> Refresh table every 5 minutes. Refresh interval can be configured"
+            intro: "<img src=\"images/auto_refresh_time.png\" /> <img src=\"images/tour_auto_refresh_not_clicked.png\" /> <img src=\"images/tour_auto_refresh_clicked.png\" /> Refresh table every 5 minutes. Refresh interval can be configured"
          },
          {
             element: document.querySelector('#alarm_vaccine'),
             title: "Sound alarm",
             intro: "<img src=\"images/tour_alarm_not_clicked.png\" /> <img src=\"images/tour_alarm_clicked.png\" /> <p> When new vaccine slots become available</p>"
+         },
+         {
+            element: document.querySelector('#viewStatsImgBtn'),
+            title: "View stats",
+            intro: "<img src=\"images/stats.png\" /> <p>View vaccine availability statistics</p>"
          },
          {
             title: "Share, Save, Bookmark Results",
