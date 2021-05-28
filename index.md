@@ -123,6 +123,7 @@ title: Covid Shots
 <button class="ui toggle button filter grey basic" id="filter_age_45_plus">45+</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covishield">Covishield</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covaxin">Covaxin</button>
+<button class="ui toggle button filter grey basic" id="filter_vaccine_sputnikv">SPUTNIK V</button>
 <br /><br />
 <button class="ui toggle button filter grey basic" id="filter_table_centres_show_all">Show all Centres</button>
 

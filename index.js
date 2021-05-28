@@ -10,6 +10,7 @@
     g_filter_age_45plus                         = new Boolean(false);
     g_filter_vaccine_covishield                 = new Boolean(false);
     g_filter_vaccine_covaxin                    = new Boolean(false);
+    g_filter_vaccine_sputnikv                   = new Boolean(false);
     g_filter_table_centres_show_all             = new Boolean(false);
     
     //cache
@@ -103,6 +104,47 @@
     {
         g_stats_num_available_vaccines = 0;
 
+        let bAgeFilterApplied = false;
+        let validAges = [];
+        
+        let bVaccineFilterApplied = false;
+        let validVaccines = [];
+
+        if(g_filter_age_18to45 == true)
+        {
+            validAges.push(18);
+        }
+
+        if(g_filter_age_45plus == true)
+        {
+            validAges.push(25);
+        }
+
+        if(validAges.length > 0)
+        {
+            bAgeFilterApplied = true;
+        }
+
+        if(g_filter_vaccine_covishield == true)
+        {
+            validVaccines.push("COVISHIELD");
+        }
+
+        if(g_filter_vaccine_covaxin == true)
+        {
+            validVaccines.push("COVAXIN");
+        }
+
+        if(g_filter_vaccine_sputnikv == true)
+        {
+            validVaccines.push("SPUTNIK V");
+        }
+
+        if(validVaccines.length > 0)
+        {
+            bVaccineFilterApplied = true;
+        }
+
         /*since introduction of g_filter_table_centres_show_all flag filtering is done even when g_filter_count is 0
         Unlike other filters when g_filter_table_centres_show_all is ON it increases the number of rows in the result
         table rather than descreasing them
@@ -118,28 +160,20 @@
             data.forEach((centre, index) => {
                 let filteredSessions = [];
                 centre["sessions"].forEach((session, index) => {
-                    if(g_filter_age_18to45 == true && g_filter_age_45plus == false)
+                    let bAgeFilterPass = false;
+                    let bVaccineFilterPass = false;
+
+                    if((bAgeFilterApplied == false) || (validAges.includes(session["min_age_limit"])))
                     {
-                        if(session["min_age_limit"] == 18)
-                        {
-                            filteredSessions.push(session);
-                        }
+                        bAgeFilterPass = true;
                     }
-                    else if(g_filter_vaccine_covishield == true && g_filter_vaccine_covaxin == false)
+
+                    if((bVaccineFilterApplied == false) || (validVaccines.includes(session["vaccine"])))
                     {
-                        if(session["vaccine"].toUpperCase() == "COVISHIELD")
-                        {
-                            filteredSessions.push(session);
-                        }
+                        bVaccineFilterPass = true;
                     }
-                    else if(g_filter_vaccine_covishield == false && g_filter_vaccine_covaxin == true)
-                    {
-                        if(session["vaccine"].toUpperCase() == "COVAXIN")
-                        {
-                            filteredSessions.push(session);
-                        }
-                    }
-                    else
+
+                    if(bAgeFilterPass && bVaccineFilterPass)
                     {
                         filteredSessions.push(session);
                     }
@@ -351,7 +385,8 @@
                         }
                     }
                     
-                    let btnHtml = '<span>' + '<button class="mini ui ' + btnClr + ' button">' + btnContent + '</button>' +  '</span>';
+                    /*Modify $.fn.dataTable.ext.type.order regex when chaning this*/
+                    let btnHtml = '<span>' + '<button style=" cursor: default;" class="mini ui ' + btnClr + ' button">' + btnContent + '</button>' +  '</span>';
                     return btnHtml;
                 }
                 });
@@ -375,7 +410,7 @@
             
             $.fn.dataTable.ext.type.order['format_cust_vacc_available-pre'] = function ( data ) 
             {
-                let numVacs = data.match(/(<span><button class=".+"?>)(?<numVac>.+?)(<\/button><\/span>)/i).groups.numVac;
+                let numVacs = data.match(/(<span><button style=".+?" class=".+?">)(?<numVac>.+?)(<\/button><\/span>)/i).groups.numVac;
                 if(numVacs === "NA" )
                 {
                     return -1;
@@ -830,6 +865,9 @@
                 case "filter_vaccine_covaxin":
                     g_filter_vaccine_covaxin = bFilterOn;
                 break;
+                case "filter_vaccine_sputnikv":
+                    g_filter_vaccine_sputnikv = bFilterOn;
+                break;
                 case "filter_table_centres_show_all":
                     g_filter_table_centres_show_all = bFilterOn;
                 break;
@@ -1242,6 +1280,10 @@ ProcessQueryParams();
            $("#alarm_vaccine_icon").removeClass("green");
            g_switch_alarm_on = false;
         }
+     }
+     else
+     {
+        tata.error("Error", "Alarm works only when auto refresh is ON")
      }
  });
 
