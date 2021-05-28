@@ -364,7 +364,8 @@ window.mobileCheck = function() {
             {
                 let nextDate = new Date(selectedDate);
                 nextDate.setDate(nextDate.getDate() + day);
-                tableColumns.push({data: "day" + day, title:nextDate.toDateString(), "orderSequence": [ "desc", "asc"],
+                nextDateDjs = dayjs(nextDate);
+                tableColumns.push({data: "day" + day, title:nextDateDjs.format('ddd MMM DD'), "orderSequence": [ "desc", "asc"],
                 //type:"html-num-fmt",
                 type:"format_cust_vacc_available" /*So that sorting is handled by $.fn.dataTable.ext.type.order[format_cust_vacc_available-pre]*/,
                 render: function(data, type)
