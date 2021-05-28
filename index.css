@@ -37,6 +37,29 @@
     border:none;
 }
 
+.dataTables_length#centreList_length, #centreList_filter > label { /*Search box label*/
+    font-size: small;
+}
+
+#centreList_filter > label > span > input[type=search] { /*searchbox*/
+    border-radius: 20px;
+}
+
+.dataTables_length#centreList_length .selection.ui.dropdown {
+    min-width: 0;
+}
+
+#centreList_wrapper > div > div:nth-child(1)
+{
+    padding-bottom: 0;
+}
+
+#centreList_wrapper > div > div.row.dt-table
+{
+    padding-top: 0;
+}
+
+
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
     position:fixed;

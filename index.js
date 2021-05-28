@@ -453,6 +453,10 @@ window.mobileCheck = function() {
                 lengthMenu:[[50, 100, -1], [50, 100, "All"]],
                 pageLength: 50,
                 columns: tableColumns,
+                language: {
+                    "search" : "",
+                    "searchPlaceholder" : "Search..."
+                }
             });
 
             //dt_table.columns.adjust().responsive.recalc();
