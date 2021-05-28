@@ -432,6 +432,7 @@
             $('#centreList').DataTable({
                 destroy:true,
                 data:tableData,
+                responsive: true,
                 lengthMenu:[[50, 100, -1], [50, 100, "All"]],
                 pageLength: 50,
                 columns: tableColumns,
