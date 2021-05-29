@@ -456,7 +456,22 @@ window.mobileCheck = function() {
                 language: {
                     "search" : "",
                     "searchPlaceholder" : "Search..."
-                }
+                },
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'collection',
+                    className: 'ui toggle button filter grey basic tableOptionsButtonOuter',
+                    text: '☰',
+                    background : false,
+                    buttons : [{
+                        text : "A",
+                        className: 'ui toggle button filter grey basic tableOptionsButtonInner',
+                    },
+                    {
+                        text:"B"
+                    }
+                    ]
+                }],
             });
 
             //dt_table.columns.adjust().responsive.recalc();

@@ -17,14 +17,6 @@
     background: #FFD54EFF;
 }
 
-#vaccinesAvailableNumBlock img {
-    margin-right: auto; 
-    justify-self: flex-start;
-    width: 32px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
 #vaccinesAvailableNumBlock img:hover {
     transform: translateY(8px);
     border-bottom-style: solid;
@@ -49,6 +41,11 @@
     min-width: 0;
 }
 
+#centreList_wrapper
+{
+    margin-top: 25px;
+}
+
 #centreList_wrapper > div > div:nth-child(1)
 {
     padding-bottom: 0;
@@ -59,6 +56,9 @@
     padding-top: 0;
 }
 
+.ui.button.tableOptionsButtonOuter, .ui.button.tableOptionsButtonInner {
+    border: 1px solid transparent;
+}
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
