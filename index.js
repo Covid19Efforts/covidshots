@@ -504,11 +504,11 @@ window.mobileCheck = function() {
                 }],
             });
 
-            //dt_table.columns.adjust().responsive.recalc();
+            //g_handle_data_table.columns.adjust().responsive.recalc();
         
             if(bShowScrollNotif == true)
             {
-                tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{duration:5000, onClick:function()
+                tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{onClick:function()
                 {
                     $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 600);
                 }});                
@@ -748,6 +748,14 @@ window.mobileCheck = function() {
                         {
                             if(!isNaN(Date.parse(uVal)))
                             {
+                                if(IsDateInPast(uVal) == true)
+                                {
+                                    tata.error('Date error','The past can\'t hurt you anymore, unless you let it <i>~V.</i>', {duration:5000});
+                                    let today = new Date();
+                                    $('#dateInput')[0].valueAsDate = today;
+                                    uVal = dayjs(today).format('YYYY-MM-DD');
+                                    AddRemoveUrlParam(true, urlParam, uVal);
+                                }
                                 bValidDate = true;
                                 $('#dateInput')[0].value = uVal;
                             }
@@ -910,9 +918,36 @@ window.mobileCheck = function() {
         });
     }
     
+    function IsDateInPast(dateStr)
+    {
+        let today = new Date();
+        let todayDjs = dayjs(today);
+        let dateDjs = dayjs(dateStr, 'YYYY-MM-DD');
+        //isSame(session.date, 'day')
+        if(dateDjs.isBefore(todayDjs, 'day') == true)
+        {
+            return true;
+        }
+        return false;
+    }
+
     function OnDateChange(e)
     {
-        AddRemoveUrlParam(true, 'date', $('#dateInput')[0].value);
+        let selectedDate = $('#dateInput')[0].value;
+        if(IsDateInPast(selectedDate) == true)
+        {
+            let today = new Date();
+            $('#dateInput')[0].valueAsDate = today;
+            
+            let todayDjs = dayjs(today);
+            $('#dateInput').attr("min", todayDjs.format('YYYY-MM-DD'));
+
+            tata.error('Date error','The past can\'t hurt you anymore, unless you let it <i>~V.</i>', {duration:5000});
+        }
+        else
+        {
+            AddRemoveUrlParam(true, 'date', selectedDate);
+        }
     }
 
     /*TODO: need to make this idempotent in case prog a filter is attempted to be enabled twice g_filter_count will increment
@@ -1280,11 +1315,13 @@ $(document).ready( function ()
     /*from https://stackoverflow.com/a/66407003/981766 */
 document.head.appendChild(Object.assign(document.createElement("link"), {rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💉</text></svg>"}))
 
-
+let today = new Date();
 if($('#dateInput')[0].value == "")
 {
-    $('#dateInput')[0].valueAsDate = new Date();
+    $('#dateInput')[0].valueAsDate = today;
 }
+let todayDjs = dayjs(today);
+$('#dateInput').attr("min", todayDjs.format('YYYY-MM-DD'));
 
 $('#dateInput').change(OnDateChange);
 
