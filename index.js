@@ -1,7 +1,7 @@
     //config
     const g_config_daystoShow = 7;
     const g_config_refresh_interval_default = 5;
-    const g_config_refresh_interval_min     = 5;
+    const g_config_refresh_interval_min     = 2;
     const g_config_refresh_interval_max     = 600;
     
     //filters
