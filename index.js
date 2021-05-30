@@ -24,6 +24,7 @@
     g_state_content_frame_loaded = false;
     g_state_auto_refresh_on = false;
     g_option_table_centres_show_all = false;
+    g_option_table_centres_cell_show_details = false;
 
     //persistent switches
     g_switch_persistent_settings_auto_scroll = true;
@@ -458,10 +459,21 @@ window.mobileCheck = function() {
                 showAllBtnClasses += " grey";
             }
 
+            let showDetailsBtnClasses = "ui toggle button filter basic tableOptionsButtonInner";
+            if(g_option_table_centres_cell_show_details == true)
+            {
+                showDetailsBtnClasses += " active";
+            }
+            else
+            {
+                showDetailsBtnClasses += " grey";
+            }
+
             g_handle_data_table = $('#centreList').DataTable({
                 destroy:true,
                 data:tableData,
                 responsive: bIsMobileDevice,
+                scrollX: true,
                 lengthMenu:[[50, 100, -1], [50, 100, "All"]],
                 pageLength: 50,
                 columns: tableColumns,
@@ -485,7 +497,8 @@ window.mobileCheck = function() {
                         }
                     },
                     {
-                        text:"Show Details"
+                        text:"Show Details",
+                        className: showDetailsBtnClasses
                     }
                     ]
                 }],
