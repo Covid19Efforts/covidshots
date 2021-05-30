@@ -133,7 +133,7 @@ window.mobileCheck = function() {
 
         if(g_filter_age_45plus == true)
         {
-            validAges.push(25);
+            validAges.push(45);
         }
 
         if(validAges.length > 0)
