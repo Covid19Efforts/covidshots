@@ -11,7 +11,6 @@
     g_filter_vaccine_covishield                 = new Boolean(false);
     g_filter_vaccine_covaxin                    = new Boolean(false);
     g_filter_vaccine_sputnikv                   = new Boolean(false);
-    g_filter_table_centres_show_all             = new Boolean(false);
     
     //cache
     g_cache_all_centres = []; // data fetched from xhr. before applying filters.
@@ -19,11 +18,12 @@
     g_cache_state_id_map = {};
     g_cache_district_id_map = {};
 
-    //switch/states
+    //switch/states/option
     g_switch_alarm_on = false;
     g_state_refresh_interval_current_val_minutes = g_config_refresh_interval_default;
     g_state_content_frame_loaded = false;
     g_state_auto_refresh_on = false;
+    g_option_table_centres_show_all = false;
 
     //persistent switches
     g_switch_persistent_settings_auto_scroll = true;
@@ -36,6 +36,7 @@
 
     //handles
     //set interval handle
+    g_handle_data_table = null;//handle to vaccine table
     g_handle_refresh_interval_timer = null; //timer to auto refresh table
     g_handle_refresh_text_interval_timer = null;//timer shows count down seconds to next refersh
     g_handle_audio_alarm            = null; //so that only one audio plays at a time
@@ -159,6 +160,7 @@ window.mobileCheck = function() {
             bVaccineFilterApplied = true;
         }
 
+        /*g_filter_table_centres_show_all is now g_option_table_centres_show_all */
         /*since introduction of g_filter_table_centres_show_all flag filtering is done even when g_filter_count is 0
         Unlike other filters when g_filter_table_centres_show_all is ON it increases the number of rows in the result
         table rather than descreasing them
@@ -205,7 +207,7 @@ window.mobileCheck = function() {
                         }
                     });
 
-                if(g_filter_table_centres_show_all == true || bVaccineAvailable == true)
+                if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
                 {
                     filteredData.push({name:centre["name"], sessions:filteredSessions});
                 }
@@ -356,7 +358,7 @@ window.mobileCheck = function() {
         }
     }
 
-    function CreateTable(bCallAlarm = false, bScroll = true)
+    function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
     {
         let tableColumns = [{data: 'name', title: 'Centre name'}];
             let selectedDate = new Date($('#dateInput')[0].value);
@@ -446,7 +448,17 @@ window.mobileCheck = function() {
 
             let bIsMobileDevice = window.mobileCheck();
             console.info("bIsMobileDevice", bIsMobileDevice);
-            let dt_table = $('#centreList').DataTable({
+            let showAllBtnClasses = "ui toggle button filter basic tableOptionsButtonInner";
+            if(g_option_table_centres_show_all == true)
+            {
+                showAllBtnClasses += " active";
+            }
+            else
+            {
+                showAllBtnClasses += " grey";
+            }
+
+            g_handle_data_table = $('#centreList').DataTable({
                 destroy:true,
                 data:tableData,
                 responsive: bIsMobileDevice,
@@ -463,12 +475,17 @@ window.mobileCheck = function() {
                     className: 'ui toggle button filter grey basic tableOptionsButtonOuter',
                     text: '☰',
                     background : false,
+                    autoClose : false,
                     buttons : [{
-                        text : "A",
-                        className: 'ui toggle button filter grey basic tableOptionsButtonInner',
+                        text : "Show all",
+                        className: showAllBtnClasses,
+                        action : onTableOptionsButtonInnerClicked,
+                        attr: {
+                            id:"option_table_centres_show_all"
+                        }
                     },
                     {
-                        text:"B"
+                        text:"Show Details"
                     }
                     ]
                 }],
@@ -476,12 +493,15 @@ window.mobileCheck = function() {
 
             //dt_table.columns.adjust().responsive.recalc();
         
-            tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{duration:5000, onClick:function()
+            if(bShowScrollNotif == true)
+            {
+                tata.info('Results obtained', '<p style="cursor:pointer">You may have to scroll down to view them, or <b>click here</b></p>',{duration:5000, onClick:function()
                 {
                     $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 600);
                 }});                
+            }
 
-            if(g_switch_persistent_settings_auto_scroll == true && bScroll == true)
+            if(g_switch_persistent_settings_auto_scroll == true && bAutoScroll == true)
             {
                 let scrollAnim = $('html, body').animate({scrollTop: $("#centreList_wrapper").offset().top -100}, 2000);
                 let animStop = function(){scrollAnim.stop();};
@@ -907,9 +927,6 @@ window.mobileCheck = function() {
                 case "filter_vaccine_sputnikv":
                     g_filter_vaccine_sputnikv = bFilterOn;
                 break;
-                case "filter_table_centres_show_all":
-                    g_filter_table_centres_show_all = bFilterOn;
-                break;
                 default:
                     bValidFilter = false;
                     console.error("invalid filter");
@@ -978,6 +995,35 @@ function OnFilterClicked(e,t)
 
     SwitchFilter(filterOn, filterStr, true, true);
 
+}
+
+function onTableOptionsButtonInnerClicked(e,t)
+{
+    let buttons = g_handle_data_table.buttons();
+
+    for(let i = 0; i < buttons.length ; i++)
+    {
+        if(buttons[i].node.id == 'option_table_centres_show_all')
+        {
+            if(g_option_table_centres_show_all == true)
+            {//was active, is to be deactivated now
+                g_option_table_centres_show_all = false;
+                buttons[i].node.classList.add('grey');
+                buttons[i].node.classList.remove('active');
+            }
+            else
+            {
+                g_option_table_centres_show_all = true;
+                buttons[i].node.classList.add('active');
+                buttons[i].node.classList.remove('grey');
+            }
+
+            if(g_cache_all_centres.length > 0)
+            {//recreate table if valid data present
+                CreateTable(false, false, false);
+            }
+        }
+    }
 }
 
 function GetDistricts()
@@ -1302,7 +1348,6 @@ ProcessQueryParams();
 
 
  $('#navbarMoreBtn').dropdown({on:'hover'});
- $('#filter_table_centres_show_all').popup({content:"Show filtered centres which dont have vaccine available for the given days"});
  $('#alarm_vaccine').popup({content:"Ring an alarm when new slots are found"});
  $('#alarm_vaccine').click(function(e,t){
      let bAutoRefreshOn = ($('#input_auto_refresh_interval_parent').hasClass('disabled') == false);
