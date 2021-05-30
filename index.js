@@ -496,10 +496,10 @@ window.mobileCheck = function() {
                             id:"option_table_centres_show_all"
                         }
                     },
-                    {
-                        text:"Show Details",
-                        className: showDetailsBtnClasses
-                    }
+                    //{
+                    //    text:"Show Details",
+                    //    className: showDetailsBtnClasses
+                    //}
                     ]
                 }],
             });
