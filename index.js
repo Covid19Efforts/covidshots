@@ -348,11 +348,10 @@ window.mobileCheck = function() {
                 }
             
                 g_handle_audio_alarm.loop = true;
-                g_handle_audio_alarm.play();
+                g_handle_audio_alarm.pause();
             }
-                tata.success(title, caption, {position:'br', holding:true, onClick: function(){
-                    g_handle_audio_alarm.stop();
-                }});
+            let stopAudio = function(){g_handle_audio_alarm.stop();};
+                tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
             
             
             console.log(notifyInfo);
