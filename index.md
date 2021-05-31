@@ -155,7 +155,7 @@ title: Covid Shots
 
 Refresh interval (minutes):
 <div class="ui right labeled input disabled" id="input_auto_refresh_interval_parent">
-<input type="number" placeholder="Enter time.." id="input_auto_refresh_interval" name="input_auto_refresh_interval" min="5" max="600" value="5">
+<input type="number" placeholder="Enter time.." id="input_auto_refresh_interval" name="input_auto_refresh_interval" min="2" max="600" value="5">
 <div class="ui basic label">
 minutes
 </div>
