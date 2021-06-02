@@ -137,6 +137,9 @@ title: Covid Shots
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covaxin">Covaxin</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_sputnikv">SPUTNIK V</button>
 <br /><br />
+<button class="ui toggle button filter grey basic" id="filter_vaccine_dose_1">Dose 1</button>
+<button class="ui toggle button filter grey basic" id="filter_vaccine_dose_2">Dose 2</button>
+<br /><br />
 
 <h5 class="ui header">Auto refresh</h5>
 

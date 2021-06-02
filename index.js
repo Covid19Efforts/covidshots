@@ -11,6 +11,8 @@
     g_filter_vaccine_covishield                 = new Boolean(false);
     g_filter_vaccine_covaxin                    = new Boolean(false);
     g_filter_vaccine_sputnikv                   = new Boolean(false);
+    g_filter_vaccine_dose_1                     = new Boolean(false);
+    g_filter_vaccine_dose_2                     = new Boolean(false);
     
     //cache
     g_cache_all_centres = []; // data fetched from xhr. before applying filters.
@@ -115,7 +117,6 @@ window.mobileCheck = function() {
         }
     }
     
-    g_temp_numvac = [];
     function filterData(data)
     {
         g_stats_num_available_vaccines = 0;
@@ -190,20 +191,41 @@ window.mobileCheck = function() {
                         bVaccineFilterPass = true;
                     }
 
+                    let availableCapacityTotal = session.available_capacity;
+                    let availableCapacityDose1 = session.available_capacity_dose1;
+                    let availableCapacityDose2 = session.available_capacity_dose2;
+                    let availableCapacityToShow = availableCapacityTotal;
+                    //sanity
+                    if(availableCapacityTotal !== availableCapacityDose1 + availableCapacityDose2)
+                    {
+                        console.error("total vaccines != sum of dose 1, and 2", centre["name"], availableCapacityTotal, availableCapacityDose1, availableCapacityDose2);
+                    }
+
+                    if(g_filter_vaccine_dose_1 == true && g_filter_vaccine_dose_2 == false)
+                    {
+                        availableCapacityToShow = availableCapacityDose1;
+                    }
+                    else if(g_filter_vaccine_dose_1 == false && g_filter_vaccine_dose_2 == true)
+                    {
+                        availableCapacityToShow = availableCapacityDose2;
+                    }
+
+                    session["capacity_to_show"] = availableCapacityToShow;
+
                     if(bAgeFilterPass && bVaccineFilterPass)
                     {
                         filteredSessions.push(session);
                     }
+
                 });
 
                 let bVaccineAvailable = false;
                 filteredSessions.forEach( session => 
                     {
-                        g_temp_numvac.push(session.available_capacity);
-                        let availableCapacity = session.available_capacity;
-                        if(availableCapacity > 0)
+                        let availableCapacityToShow = session["capacity_to_show"];
+                        if(availableCapacityToShow > 0)
                         {
-                            g_stats_num_available_vaccines += availableCapacity;
+                            g_stats_num_available_vaccines += availableCapacityToShow;
                             bVaccineAvailable = true;
                         }
                     });
@@ -236,7 +258,7 @@ window.mobileCheck = function() {
                     if(calendarDate.isSame(session.date, 'day') == true)
                     {
                             daysData[dayStr].vaccine = session["vaccine"];
-                            daysData[dayStr].available = session["available_capacity"];
+                            daysData[dayStr].available = session["capacity_to_show"];//could be available_capacity, or available_capacity_dose1/available_capacity_dose2 depending on filters
                             daysData[dayStr].minAge = session["min_age_limit"];
                             daysData[dayStr].slots = session["slots"];
                     }
@@ -270,7 +292,7 @@ window.mobileCheck = function() {
                     {
                         let newSession = newCentre.sessions[l];
                         let notifyUser = true;//notify user if this is a new session (of existing centre) or an existing session has more vaccines available
-                        if(newSession.available_capacity == 0)
+                        if(newSession.capacity_to_show == 0)
                         {
                             notifyUser = false;
                         }
@@ -279,13 +301,13 @@ window.mobileCheck = function() {
                             let oldSession = oldCentre.sessions[m];
                             if(newSession.date.isSame(oldSession.date, 'day') && newSession.session_id == oldSession.session_id)
                             {
-                                if(newSession.available_capacity <= oldSession.available_capacity)
+                                if(newSession.capacity_to_show <= oldSession.capacity_to_show)
                                 {
                                     notifyUser = false;
                                 }
                                 else
                                 {
-                                    console.log("new vaccines", newCentre.name, "diff", newSession.available_capacity - oldSession.available_capacity,newSession, oldSession);
+                                    console.log("new vaccines", newCentre.name, "diff", newSession.capacity_to_show - oldSession.capacity_to_show,newSession, oldSession);
                                 }
                             }
                         }
@@ -311,7 +333,7 @@ window.mobileCheck = function() {
                 for(let l = 0; l < newCentre.sessions.length; l++)
                 {
                     let newSession = newCentre.sessions[l];
-                    if(newSession.available_capacity > 0)
+                    if(newSession.capacity_to_show > 0)
                     {
                         sessionsToNotify.push(newSession);
                     }
@@ -340,18 +362,19 @@ window.mobileCheck = function() {
                 caption += "<br />";
             });
 
+            let stopAudio = function(){g_handle_audio_alarm.pause();};
             if(g_handle_audio_alarm != null)
             {
                 if(g_handle_audio_alarm.ended == false)
                 {
-                    g_handle_audio_alarm.pause();
+                    stopAudio();
                 }
             
                 g_handle_audio_alarm.loop = true;
-                g_handle_audio_alarm.pause();
+                stopAudio();
             }
-            let stopAudio = function(){g_handle_audio_alarm.stop();};
-                tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
+            
+            tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
             
             
             console.log(notifyInfo);
@@ -480,7 +503,7 @@ window.mobileCheck = function() {
                     "search" : "",
                     "searchPlaceholder" : "Search..."
                 },
-                dom: 'Bfrtip',
+                dom: 'Blfrtip',
                 buttons: [{
                     extend: 'collection',
                     className: 'ui toggle button filter grey basic tableOptionsButtonOuter',
@@ -973,6 +996,12 @@ window.mobileCheck = function() {
                 break;
                 case "filter_vaccine_sputnikv":
                     g_filter_vaccine_sputnikv = bFilterOn;
+                break;
+                case "filter_vaccine_dose_1":
+                    g_filter_vaccine_dose_1 = bFilterOn;
+                break;
+                case "filter_vaccine_dose_2":
+                    g_filter_vaccine_dose_2 = bFilterOn;
                 break;
                 default:
                     bValidFilter = false;
