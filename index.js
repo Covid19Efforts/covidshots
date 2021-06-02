@@ -1236,6 +1236,7 @@ function GetDistricts()
            $("#alarm_vaccine_icon").addClass("slash");
            $("#alarm_vaccine_icon").removeClass("green");
            g_switch_alarm_on = false;
+           g_handle_audio_alarm.pause();
         }
     }
  
