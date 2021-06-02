@@ -5,7 +5,9 @@ title: Covid Shots
 ---
 
 <style title="inlineCSSTitle">
-.filter{}
+.filter{
+  margin-top: 10px !important;
+}
 
 #vaccinesAvailableNumBlock img {
     margin-right: auto; 
@@ -136,7 +138,7 @@ title: Covid Shots
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covishield">Covishield</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_covaxin">Covaxin</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_sputnikv">SPUTNIK V</button>
-<br /><br />
+<br />
 <button class="ui toggle button filter grey basic" id="filter_vaccine_dose_1">Dose 1</button>
 <button class="ui toggle button filter grey basic" id="filter_vaccine_dose_2">Dose 2</button>
 <br /><br />

@@ -1217,6 +1217,23 @@ function GetDistricts()
             }
         }
     }
+
+    function SetAlarmOn(bTurnOn)
+    {
+        if(bTurnOn)
+        {
+           $("#alarm_vaccine_icon").removeClass("slash");
+           $("#alarm_vaccine_icon").addClass("green");
+           g_switch_alarm_on = true;
+        }
+        else
+        {
+           $("#alarm_vaccine_icon").addClass("slash");
+           $("#alarm_vaccine_icon").removeClass("green");
+           g_switch_alarm_on = false;
+        }
+    }
+ 
     function OnAutoRefreshClick(e,t)
     {
         let buttonOn = new Boolean(false);
@@ -1243,6 +1260,7 @@ function GetDistricts()
 
         g_state_auto_refresh_on = buttonOn;
 
+        SetAlarmOn(buttonOn)
         if(buttonOn === true)
         {
             $('#input_auto_refresh_interval_parent').removeClass('disabled');
@@ -1424,7 +1442,6 @@ ProcessQueryParams();
       }).start();
  });
 
-
  $('#navbarMoreBtn').dropdown({on:'hover'});
  $('#alarm_vaccine').popup({content:"Ring an alarm when new slots are found"});
  $('#alarm_vaccine').click(function(e,t){
@@ -1433,15 +1450,11 @@ ProcessQueryParams();
      {
         if($("#alarm_vaccine_icon").hasClass("slash") == true)
         {
-           $("#alarm_vaccine_icon").removeClass("slash");
-           $("#alarm_vaccine_icon").addClass("green");
-           g_switch_alarm_on = true;
+            SetAlarmOn(true);
         }
         else
         {
-           $("#alarm_vaccine_icon").addClass("slash");
-           $("#alarm_vaccine_icon").removeClass("green");
-           g_switch_alarm_on = false;
+            SetAlarmOn(false);
         }
      }
      else
