@@ -371,7 +371,10 @@ window.mobileCheck = function() {
                 }
             
                 g_handle_audio_alarm.loop = true;
-                stopAudio();
+                if(g_switch_alarm_on == true)
+                {
+                    g_handle_audio_alarm.play();
+                }
             }
             
             tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
@@ -438,7 +441,7 @@ window.mobileCheck = function() {
             if(bCallAlarm == true)
             {
                 let bAutoRefreshOn = ($('#input_auto_refresh_interval_parent').hasClass('disabled') == false);
-                if(bAutoRefreshOn == true && g_switch_alarm_on == true)
+                if(bAutoRefreshOn == true)
                 {
                     DetectChange(newFilteredData, oldFiltereddata);
                 }
@@ -920,6 +923,8 @@ window.mobileCheck = function() {
                 console.error("invalid value", value, stateInt);
             }
         },
+        onShow : function(){console.log("onshow");},
+        onHide : function(){console.log("onhide");},
         onRemove: function(value, text, $selectedItem)
         {
             let stateInt = parseInt(value);
