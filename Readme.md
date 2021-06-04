@@ -1,3 +1,18 @@
+- [Looking for contributors !!!](#looking-for-contributors-)
+    - [UX, QA, Dev, Misc](#ux-qa-dev-misc)
+  - [Use this website to find free vaccine slots, Set alarms](#use-this-website-to-find-free-vaccine-slots-set-alarms)
+    - [Search across multiple districts (and states) at once](#search-across-multiple-districts-and-states-at-once)
+    - [Sort data (Highest number of available vaccines on top)](#sort-data-highest-number-of-available-vaccines-on-top)
+    - [Filter results](#filter-results)
+    - [Monitor vaccine availability continuously (Auto refresh)](#monitor-vaccine-availability-continuously-auto-refresh)
+    - [View availability statistics](#view-availability-statistics)
+    - [Set audio alarm/ Receive notifications](#set-audio-alarm-receive-notifications)
+    - [Disadvantages over Cowin](#disadvantages-over-cowin)
+- [Development](#development)
+  - [Building locally](#building-locally)
+  - [Contributing](#contributing)
+    - [Credits](#credits)
+
 # Looking for contributors !!!
 ### UX, QA, Dev, Misc
 
