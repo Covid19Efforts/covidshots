@@ -54,5 +54,20 @@
 ### Disadvantages over Cowin
 1. Cannot be used to book slots. For that you will have to use Cowin, et al. (Work in progress? Please join as a contributor)
 
+# Development
+## Building locally
+1. Clone this repo
+2. Open git bash (search google for git bash to download)
+3. run `bundle install`
+4. run `jekyll serve`
+5. The site will be available at `http://localhost:4000`
+
+More info : [Building your site locally](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll#building-your-site-locally)
+
+## Contributing
+1. Fork this repo to you github profile
+2. Make changes in your forked version of this repo. You can make as many commits as you want
+3. Raise a pull request so that this repo will get notified about your changes, and your changes can be merged with this site.
+
 ### Credits
 <a href="https://www.freepik.com/vectors/business">Business vector created by pikisuperstar - www.freepik.com</a>

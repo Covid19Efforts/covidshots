@@ -98,6 +98,7 @@ title: Covid Shots
   <div class="scrolling content">
 
   <a href="https://icons8.com/icon/f35ivmW8y15E/combo-chart">Combo Chart icon by Icons8</a>
+  <a href="https://thenounproject.com/search/?q=vaccine&i=2196600">vaccine by mynamepong from the Noun Project</a>
 
     <p></p>
   </div>
