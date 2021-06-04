@@ -11,7 +11,7 @@
 - [Development](#development)
   - [Building locally](#building-locally)
   - [Contributing](#contributing)
-    - [Credits](#credits)
+- [Credits](#credits)
 
 # Looking for contributors !!!
 ### UX, QA, Dev, Misc
@@ -84,5 +84,5 @@ More info : [Building your site locally](https://docs.github.com/en/pages/settin
 2. Make changes in your forked version of this repo. You can make as many commits as you want
 3. Raise a pull request so that this repo will get notified about your changes, and your changes can be merged with this site.
 
-### Credits
+# Credits
 <a href="https://www.freepik.com/vectors/business">Business vector created by pikisuperstar - www.freepik.com</a>
