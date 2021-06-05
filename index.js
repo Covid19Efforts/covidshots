@@ -1394,11 +1394,6 @@ ProcessPersistentVariables();
 
 ProcessQueryParams();
  
- $('#getCentresBtn').click(function(){
-    OnDateChange();
-     RefreshAll(false, true);
-        });
-
  $('#siteTour').click(function()
  {
     introJs().setOptions({
