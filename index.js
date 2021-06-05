@@ -91,11 +91,14 @@ window.mobileCheck = function() {
     
     function onDistrictAdd(value, text, $selectedItem)
     {
+        
         let distInt = parseInt(value);
         if(!isNaN(distInt))
         {
             AddRemoveUrlParam(true, 'districts', distInt);
             g_districtsSelected.add(distInt);
+            OnDateChange();
+            RefreshAll(false, true);
         }
         else
         {
@@ -110,6 +113,8 @@ window.mobileCheck = function() {
         {
             AddRemoveUrlParam(false, 'districts', distInt);
             g_districtsSelected.delete(distInt);
+            OnDateChange();
+            RefreshAll(false, true);
         }
         else
         {
@@ -918,6 +923,7 @@ window.mobileCheck = function() {
             {
                 AddRemoveUrlParam(true, 'states', stateInt);
                 g_statesSelected.add(stateInt);
+                GetDistricts();
             }else
             {
                 console.error("invalid value", value, stateInt);
@@ -932,6 +938,7 @@ window.mobileCheck = function() {
             {
                 AddRemoveUrlParam(false, 'states', stateInt);
                 g_statesSelected.delete(stateInt);
+                GetDistricts();
             }
             else
             {
@@ -1391,11 +1398,6 @@ ProcessQueryParams();
     OnDateChange();
      RefreshAll(false, true);
         });
- 
- $('#getDistrictsBtn').click(function()
- {
-    GetDistricts();
- });
 
  $('#siteTour').click(function()
  {
