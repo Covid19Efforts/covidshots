@@ -480,6 +480,7 @@ window.mobileCheck = function() {
             };
 
             let bIsMobileDevice = window.mobileCheck();
+            console.info("bIsMobileDevice", bIsMobileDevice);
             let showAllBtnClasses = "ui toggle button filter basic tableOptionsButtonInner";
             if(g_option_table_centres_show_all == true)
             {
