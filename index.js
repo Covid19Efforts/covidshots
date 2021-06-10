@@ -97,8 +97,6 @@ window.mobileCheck = function() {
         {
             AddRemoveUrlParam(true, 'districts', distInt);
             g_districtsSelected.add(distInt);
-            OnDateChange();
-            RefreshAll(false, true);
         }
         else
         {
@@ -113,8 +111,6 @@ window.mobileCheck = function() {
         {
             AddRemoveUrlParam(false, 'districts', distInt);
             g_districtsSelected.delete(distInt);
-            OnDateChange();
-            RefreshAll(false, true);
         }
         else
         {
@@ -122,6 +118,13 @@ window.mobileCheck = function() {
         }
     }
     
+    function onDistrictHide(value, text, $selectedItem)
+    {
+        OnDateChange();
+        RefreshAll(false, true);
+    }
+
+
     function filterData(data)
     {
         g_stats_num_available_vaccines = 0;
@@ -258,6 +261,7 @@ window.mobileCheck = function() {
                 let calendarDate = selectedDate.add(day, 'day');
                 let dayStr = "day" + day;
                 daysData[dayStr] = {vaccine:"", available: -1, minAge: -1, slots:[]};
+
                 sessions.forEach(session => 
                 {
                     if(calendarDate.isSame(session.date, 'day') == true)
@@ -269,7 +273,7 @@ window.mobileCheck = function() {
                     }
                 })
             }
-            centreData = Object.assign({}, {name:centre["name"], name_district:centre["name"]+" ("+centre["district"]+")"}, daysData);
+            centreData = Object.assign({}, {name:{name:centre["name"], district:centre["district"]}}, daysData);
             tableData.push(centreData);
         });
         
@@ -390,9 +394,13 @@ window.mobileCheck = function() {
     }
 
     function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
-    {
-        let tableColumns = [{data: 'name_district', title: 'Centre name'}];
-        // tableColumns.push({data: 'name_district', title: 'District'});
+    {   
+
+        let tableColumns = [{data: ['name'], title: 'Centre name', 
+        render: function(data, type){
+            console.log("data is "+ data);
+            return "<b>"+ data["name"] + "</b> ( " + data["district"] +" )";
+        }}];
             let selectedDate = new Date($('#dateInput')[0].value);
             for(let day = 0; day < g_config_daystoShow ; day++)
             {
@@ -926,14 +934,16 @@ window.mobileCheck = function() {
             {
                 AddRemoveUrlParam(true, 'states', stateInt);
                 g_statesSelected.add(stateInt);
-                GetDistricts();
             }else
             {
                 console.error("invalid value", value, stateInt);
             }
         },
         onShow : function(){console.log("onshow");},
-        onHide : function(){console.log("onhide");},
+        onHide : function(){
+            console.log("onhide");
+            GetDistricts();
+        },
         onRemove: function(value, text, $selectedItem)
         {
             let stateInt = parseInt(value);
@@ -941,7 +951,6 @@ window.mobileCheck = function() {
             {
                 AddRemoveUrlParam(false, 'states', stateInt);
                 g_statesSelected.delete(stateInt);
-                GetDistricts();
             }
             else
             {
@@ -1180,7 +1189,7 @@ function GetDistricts()
                   });
               }
 
-              $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts", onAdd:onDistrictAdd, onRemove:onDistrictRemove});
+              $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts", onAdd:onDistrictAdd, onRemove:onDistrictRemove, onHide:onDistrictHide});
               $('#districts').dropdown("setup menu", {values:g_districtsAvailable});
               if(distSelectedNames.length > 0)
               {

@@ -122,7 +122,6 @@ title: Covid Shots
     <option>Select districts</option>
 </select>
 
-<br>
 <label for="dateInput">Date:</label>
 <input type="date" id="dateInput" name="dateInput" />
 
