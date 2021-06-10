@@ -115,22 +115,16 @@ title: Covid Shots
 <select name="states" multiple="" class="ui fluid dropdown" id="states">
 </select>
 
-<button class="ui primary button" id="getDistrictsBtn">
-  Get districts
-</button>
 
 <h5 class="ui header">Districts</h5>
 <select name="districts" multiple="" class="ui fluid dropdown disabled" id="districts">
     <option>Select districts</option>
 </select>
 
-
 <label for="dateInput">Date:</label>
 <input type="date" id="dateInput" name="dateInput" />
 
-<button class="ui primary button" id="getCentresBtn">
-  Get centres
-</button>
+
 
 
 <h5 class="ui header">Filters</h5>
