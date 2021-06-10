@@ -53,7 +53,7 @@ class g_persistent_vars
 
     static g_booking_state_users_to_auto_book_add(userId)
     {
-        this._g_booking_state_users_to_auto_book.add(userId);
+        this._g_booking_state_users_to_auto_book.add(parseInt(userId));
         localStorage.setItem("_g_booking_state_users_to_auto_book", JSON.stringify([...this._g_booking_state_users_to_auto_book]));
     }
 
@@ -76,13 +76,13 @@ class g_persistent_vars
         localStorage.setItem("_g_booking_state_users_details", JSON.stringify(this._g_booking_state_users_details));
     }
 
-    static g_booking_state_users_to_auto_book_get()
+    static g_booking_state_users_details()
     {
         this._g_booking_state_users_details = JSON.parse(localStorage.getItem("_g_booking_state_users_details"));
         return this._g_booking_state_users_details;
     }
 
-    static g_booking_state_users_to_auto_book_get_by_user_id(userId/*Beneficiary reference ID*/)
+    static g_booking_state_users_details_get_by_user_id(userId/*Beneficiary reference ID*/)
     {
         this._g_booking_state_users_details = JSON.parse(localStorage.getItem("_g_booking_state_users_details"));
         let retVal = this._g_booking_state_users_details[userId];
@@ -185,12 +185,18 @@ function VerifyOtpClicked()
 
 }
 
-function AutoBookUserConfig(userid)
+function AutoBookUserConfig(userid, inputControl)
 {
-    console.log("AutoBookUserConfig", userid);
     if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
     {
-        g_persistent_vars.g_booking_state_users_to_auto_book_add(userid);
+        if(inputControl.checked == true)
+        {
+            g_persistent_vars.g_booking_state_users_to_auto_book_add(userid);
+        }
+        else
+        {
+            g_persistent_vars.g_booking_state_users_to_auto_book_remove(userid);
+        }
     }
 }
 
@@ -221,7 +227,16 @@ function GetAccountDetails()
             {data:"photo_id", title:"Photo ID"},
             {data:"vaccine_dose", title:"Dose"},
             {data:"vaccination_status", title:"Vaccination Status"},
-            {data:"User_name", title:"Enable Auto-book", render:function(data, type){return "<div class=\"ui checkbox\"><input type=\"checkbox\" onclick=\"AutoBookUserConfig(" + data.refId + ")\"><label></label></div>";}}
+            {data:"User_name", title:"Enable Auto-book", render:function(data, type){
+                let checked = " ";
+                let userId = data.refId;
+                if(g_persistent_vars.g_booking_state_users_to_auto_book_get().has(parseInt(userId)))
+                {
+                    checked = "checked";
+                }
+                return "<div class=\"ui checkbox\"><input type=\"checkbox\" onclick=\"AutoBookUserConfig(" + userId + ",this)\" " + checked + "><label></label></div>";
+            }
+            }
         ];
         let tableData = [];
         data.beneficiaries.forEach(person => {
@@ -339,4 +354,19 @@ function BookingInit()
     $('#BookingFormVerifyOtpBtn').click(VerifyOtpClicked);
     $('#BookingSettings .menu .item').tab({history:false});
     $('#btn_auto_book').click(OnAutoBookClick);
+}
+
+function TryAutoBook(notifyInfo)
+{
+    if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
+    {
+        let usersToBook = g_persistent_vars.g_booking_state_users_to_auto_book_get();
+        if(usersToBook.size > 0)
+        {
+            let notifyInfoClone = JSON.parse(JSON.stringify(notifyInfo));
+            usersToBook.forEach(function (userId){
+
+            });
+        }
+    }
 }

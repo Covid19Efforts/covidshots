@@ -380,8 +380,9 @@ window.mobileCheck = function() {
             
             tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
             
-            
             console.log(notifyInfo);
+
+            TryAutoBook(notifyInfo);
         }
     }
 
