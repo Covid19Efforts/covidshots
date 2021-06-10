@@ -60,6 +60,15 @@
     border: 1px solid transparent;
 }
 
+#btn_auto_book {
+    color:#c71585;
+}
+
+#btn_auto_book.bookingButtonSwitched{
+    color:#ffffff;
+    background-color:#c71585;
+}
+
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
     position:fixed;

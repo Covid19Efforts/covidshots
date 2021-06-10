@@ -347,6 +347,7 @@ window.mobileCheck = function() {
         let centreNames = Object.keys(notifyInfo);
         if(centreNames.length > 0)
         {
+            console.log("notifyInfo", notifyInfo);
             let title = "New Vaccines Available!";
             let caption = "";
             centreNames.forEach(name => {
@@ -1264,35 +1265,37 @@ function GetDistricts()
             g_handle_refresh_text_interval_timer = null;
         }
 
-        g_state_auto_refresh_on = buttonOn;
-
-        SetAlarmOn(buttonOn)
-        if(buttonOn === true)
-        {
-            $('#input_auto_refresh_interval_parent').removeClass('disabled');
-            let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value);//interval in minutes
-            let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
-            if(!isNaN(intervalTimeMinsInt))
-            {
-                let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
-                g_state_refresh_interval_current_val_minutes = intervalTimeMinsInt;
-                $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
-                g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
-                g_handle_refresh_text_interval_timer = setInterval(UpdateTimerText, 1000);
-            }
-            else
-            {
-                console.error("invalid value for interval", intervalTimeMinsStr, intervalTimeMinsInt);
-            }
-        }
-        else
-        {
-            $('#input_auto_refresh_interval_parent').addClass('disabled');
-            $('#viewStatsContent').hide();
-        }
-
-        $('#topBar').sidebar('toggle');
+        OnAutoRefreshClickInternal(buttonOn);
     }
+
+function OnAutoRefreshClickInternal(buttonOn) {
+    g_state_auto_refresh_on = buttonOn;
+
+    SetAlarmOn(buttonOn);
+    if (buttonOn === true) {
+        $('#input_auto_refresh_interval_parent').removeClass('disabled');
+        let intervalTimeMinsStr = ($('#input_auto_refresh_interval')[0].value); //interval in minutes
+        let intervalTimeMinsInt = parseInt(intervalTimeMinsStr);
+        if (!isNaN(intervalTimeMinsInt)) {
+            let intervalTimeMilliSecInt = intervalTimeMinsInt * 60 * 1000;
+            g_state_refresh_interval_current_val_minutes = intervalTimeMinsInt;
+            $('#AutoRefreshRecordTimeRemaing')[0].textContent = g_state_refresh_interval_current_val_minutes * 60;
+            g_handle_refresh_interval_timer = setInterval(RefreshAllTimer, intervalTimeMilliSecInt);
+            g_handle_refresh_text_interval_timer = setInterval(UpdateTimerText, 1000);
+        }
+
+        else {
+            console.error("invalid value for interval", intervalTimeMinsStr, intervalTimeMinsInt);
+        }
+    }
+
+    else {
+        $('#input_auto_refresh_interval_parent').addClass('disabled');
+        $('#viewStatsContent').hide();
+    }
+
+    $('#topBar').sidebar('toggle');
+}
 
 function OnClickSettingsAutoScroll(e,t)
 {
@@ -1480,6 +1483,13 @@ $('#AboutDialogButton').click(function(e,t){
 
 $('#SettingAutoScroll').checkbox();
 $('#SettingAutoScroll').click(OnClickSettingsAutoScroll);
+$('#SettingResetSite').click(function(){
+    localStorage.clear();
+    tata.success("Reset done", "reloeading website...", {onClose: function(){
+        window.location.href = window.location.origin;
+        window.location.reload();
+    }});
+});
 
 $('.ui.accordion').accordion();
 
@@ -1504,6 +1514,8 @@ $('#viewStatsImgBtn').popup({content:"View more stats. Only works with auto refr
 $('#viewStatsImgBtn').click(OnViewMoreStatsClick);
 
 GetStates();
+
+BookingInit();
 });    
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
