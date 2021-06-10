@@ -237,7 +237,7 @@ window.mobileCheck = function() {
 
                 if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
                 {
-                    filteredData.push({name:centre["name"], sessions:filteredSessions});
+                    filteredData.push({name:centre["name"], district:centre["district"], sessions:filteredSessions});
                 }
             });
             
@@ -269,7 +269,7 @@ window.mobileCheck = function() {
                     }
                 })
             }
-            centreData = Object.assign({}, {name:centre["name"]}, daysData);
+            centreData = Object.assign({}, {name:centre["name"], name_district:centre["name"]+" ("+centre["district"]+")"}, daysData);
             tableData.push(centreData);
         });
         
@@ -391,13 +391,15 @@ window.mobileCheck = function() {
 
     function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
     {
-        let tableColumns = [{data: 'name', title: 'Centre name'}];
+        let tableColumns = [{data: 'name_district', title: 'Centre name'}];
+        // tableColumns.push({data: 'name_district', title: 'District'});
             let selectedDate = new Date($('#dateInput')[0].value);
             for(let day = 0; day < g_config_daystoShow ; day++)
             {
                 let nextDate = new Date(selectedDate);
                 nextDate.setDate(nextDate.getDate() + day);
                 nextDateDjs = dayjs(nextDate);
+
                 tableColumns.push({data: "day" + day, title:nextDateDjs.format('ddd MMM DD'), "orderSequence": [ "desc", "asc"],
                 //type:"html-num-fmt",
                 type:"format_cust_vacc_available" /*So that sorting is handled by $.fn.dataTable.ext.type.order[format_cust_vacc_available-pre]*/,
@@ -478,7 +480,6 @@ window.mobileCheck = function() {
             };
 
             let bIsMobileDevice = window.mobileCheck();
-            console.info("bIsMobileDevice", bIsMobileDevice);
             let showAllBtnClasses = "ui toggle button filter basic tableOptionsButtonInner";
             if(g_option_table_centres_show_all == true)
             {
@@ -574,6 +575,7 @@ window.mobileCheck = function() {
             data.forEach(centres => {
                 centres.centers.forEach(centre => {
                     let cName = centre["name"];
+                    let cDistrictName = centre["district_name"];
                     let cSessions = centre["sessions"];
                     let cSessions2 = [];
                     cSessions.forEach(session => {
@@ -583,7 +585,7 @@ window.mobileCheck = function() {
                         cSessions2.push(session);
                     });
                     
-                    let cInfo = {name:cName, sessions:cSessions2};
+                    let cInfo = {name:cName, district:cDistrictName, sessions:cSessions2};
                     centresTable.push(cInfo);
                 });
             });
