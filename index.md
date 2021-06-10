@@ -116,7 +116,6 @@ title: Covid Shots
 </select>
 
 
-<br>
 <h5 class="ui header">Districts</h5>
 <select name="districts" multiple="" class="ui fluid dropdown disabled" id="districts">
     <option>Select districts</option>
