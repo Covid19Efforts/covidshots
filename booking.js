@@ -76,7 +76,7 @@ class g_persistent_vars
         localStorage.setItem("_g_booking_state_users_details", JSON.stringify(this._g_booking_state_users_details));
     }
 
-    static g_booking_state_users_details()
+    static g_booking_state_users_details_get()
     {
         this._g_booking_state_users_details = JSON.parse(localStorage.getItem("_g_booking_state_users_details"));
         return this._g_booking_state_users_details;
@@ -176,7 +176,7 @@ function VerifyOtpClicked()
     tata.success("Login success", "You hav successfully logged in");
     $('#InputOtpToVerify').hide();
     $('#UserLoggedIn').show();
-    $('#BookingAccountDetails').show();
+    $('#BookingAccountDetails,#BookingBookingSettings').show();
     GetAccountDetails();
     }).catch(error => {
         tata.error("OTP Error", "OTP incorrect or timed out");
@@ -200,6 +200,82 @@ function AutoBookUserConfig(userid, inputControl)
     }
 }
 
+//data.name + "</b><br/>" + data.refId
+function BookingDialogUsersRender(data, type)
+{//render method
+    let refId = data.refId;
+    let secret = refId.substring(refId.length - 4);
+    let refIds = refId.substring(0, refId.length - 4);
+    let name = data.name;
+    let userAge = parseInt(dayjs().format('YYYY')) - parseInt(data.birthYear);
+    let html = "<span id=\"BookingDialogUsersRender\"><p style=\"display:inline; font-size:medium;\">" + name + "</p><br/><p style=\"display:inline\">" + refIds + "</p><p style=\"display:inline\" class=\"BookingDialogUsersRenderSecret\">" + secret + "</p><br/><p style=\"display:inline\" class=\"BookingDialogUsersRenderAge\">Age: " + userAge + "</p></span>";
+    return html;
+}
+
+function BookingDialogPhotoIdRender(data, type)
+{
+    let idType = data.type;
+    let idNumber = data.number;
+    let html = "<span id=\"BookingDialogUsersRender\"><p style=\"display:inline; font-size:medium;\">" + idType + "</p><br/><p style=\"display:inline\">(" + idNumber + ")</p></span>";
+    return html;
+}
+
+function BookingDialogVaccineStatusRender(data, type)
+{
+    let vaccineImage = "assets/nounProject/";
+    let vaccineStatus = data.status;
+    let fontColor = "";
+    if (vaccineStatus.toLocaleLowerCase() == "Not Vaccinated".toLocaleLowerCase())
+    {
+        vaccineImage += "vaccine48_red.png";
+    }
+    else if (vaccineStatus.toLocaleLowerCase() == "Partially Vaccinated".toLocaleLowerCase())
+    {
+        vaccineImage += "vaccine48_yellow.png";
+    }
+    else if (vaccineStatus.toLocaleLowerCase() == "Vaccinated".toLocaleLowerCase())
+    {
+        vaccineImage += "vaccine48_green.png";
+    }
+    else
+    {
+        console.error("Unexpected vaccine status");
+    }
+
+    let appointmentTitle = "Next appointment: ";
+    let apptDescText = "";
+    let nextAppStyle = "display:none;";
+    let apps = data.appointments;
+    if (apps.length > 0)
+    {
+        let appt = apps[0];
+        let apptDate = dayjs(appt.date, 'DD-MM-YYYY');
+        if (IsDateInPastDjs(apptDate) == false) {
+            nextAppStyle = "font-size:small;";//should not be hidden
+            appointmentTitle += apptDate.format('ddd, MMM DD');
+
+            let apptBlockName = appt.block_name;
+            if (apptBlockName.toLocaleLowerCase() == "Not Applicable".toLowerCase()) {
+                apptBlockName = "";
+            }
+            else
+            {
+                apptBlockName += ", ";
+            }
+
+            let apptSlot = appt.slot.replaceAll(":00", "");
+            apptDescText += apptSlot;
+            apptDescText += "<br />";
+            apptDescText += "<b>" + appt.name + "</b>";
+            apptDescText += "<br />";
+            apptDescText += apptBlockName + appt.district_name + ", " + appt.state_name;
+        }
+    }
+
+    let html = "<div class=\"ui middle aligned list\"><div class=\"item\"><img class=\"ui avatar image\" src=\"" + vaccineImage + "\"><div class=\"content\"><div class=\"header\">" + vaccineStatus + "</div><div class=\"description\" style=\"dipslay:none;\"><!--desc--></div></div></div><div class=\"item\" style=\"" + nextAppStyle + "\"><img class=\"ui avatar image\" src=\"\" style=\"display:none;\"><div class=\"content\"><div class=\"header\">" + appointmentTitle + "</div><div class=\"description\">" + apptDescText + "</div></div></div></div>";
+    return html;
+}
+
 function GetAccountDetails()
 {
     if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
@@ -216,18 +292,18 @@ function GetAccountDetails()
     if(response.status >= 400)
     {
         let resText = response.text();//returns a promise
-        console.error("error getting deatils");
+        console.error("error getting details");
         throw resText;
     }
     return response.json();
     }).then(data => {
         console.log("Account details", data);
         let tableColumns=[
-            {data:"User_name", title:"User", render:function(data, type){return "<b>" + data.name + "</b><br/>" + data.refId + "";}},
-            {data:"photo_id", title:"Photo ID"},
-            {data:"vaccine_dose", title:"Dose"},
-            {data:"vaccination_status", title:"Vaccination Status"},
-            {data:"User_name", title:"Enable Auto-book", render:function(data, type){
+            {data:"User_name", title:"User", render:BookingDialogUsersRender},
+            {data:"photo_id", title:"Photo ID", render: BookingDialogPhotoIdRender},
+            /*{data:"vaccine_dose", title:"Dose"},*/
+            {data:"vaccination_status", title:"Vaccination", render:BookingDialogVaccineStatusRender},
+            /*{data:"User_name", title:"Enable Auto-book", render:function(data, type){
                 let checked = " ";
                 let userId = data.refId;
                 if(g_persistent_vars.g_booking_state_users_to_auto_book_get().has(parseInt(userId)))
@@ -236,12 +312,12 @@ function GetAccountDetails()
                 }
                 return "<div class=\"ui checkbox\"><input type=\"checkbox\" onclick=\"AutoBookUserConfig(" + userId + ",this)\" " + checked + "><label></label></div>";
             }
-            }
+            }*/
         ];
         let tableData = [];
         data.beneficiaries.forEach(person => {
             g_persistent_vars.g_booking_state_users_details_set(person);
-            let personData = {"User_name": {name:person.name, refId: person.beneficiary_reference_id}, "photo_id":person.photo_id_type,"vaccine_dose":"", "vaccination_status":person.vaccination_status};
+            let personData = { "User_name": { name: person.name, refId: person.beneficiary_reference_id, birthYear:person.birth_year}, "photo_id": { type: person.photo_id_type, number: person.photo_id_number }, "vaccine_dose": "", "vaccination_status": { status:person.vaccination_status, dose1:person.dose1_date, dose2:person.dose2_date, appointments:person.appointments}};
             tableData.push(personData);
 
             let bIsMobileDevice = window.mobileCheck();
@@ -278,7 +354,7 @@ function BookingLogOut()
     return;
     g_persistent_vars.g_bBooking_state_user_logged_in_set(false);
     g_persistent_vars.g_booking_state_auth_bearer_token_set("");
-    tata.warn("Logged out", "User logged out", {onClose:function(){
+    tata.warn("Logged out", "Refreshing site ...", {onClose:function(){
         window.location.reload();
     }});
 }
@@ -286,7 +362,7 @@ function BookingLogOut()
 function ShowBookingDialog(e,t){
     if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
     {
-        $('#BookingAccountDetails').show();
+        $('#BookingAccountDetails,#BookingBookingSettings').show();
         $('#UserLoggedIn').show();
         $('#InputOtpToVerify').hide();
         $('#InputMobileNumber').hide();
@@ -295,7 +371,7 @@ function ShowBookingDialog(e,t){
     }
     else
     {
-        $('#BookingAccountDetails').hide();
+        $('#BookingAccountDetails,#BookingBookingSettings').hide();
         $('#UserLoggedIn').hide();
     }
     $('#BookingSettings').modal('setting', 'closable', false).modal('show');
@@ -307,6 +383,7 @@ function OnAutoBookClick(e,t)
     {
         if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
         {
+            GetAccountDetails();//This is to recheck if user still logged in, as it forces page refresh when not
             if($('#btn_auto_refresh').hasClass('active') == false)
             {
                 $('#btn_auto_refresh').addClass('active');
@@ -330,9 +407,9 @@ function OnAutoBookClick(e,t)
     }
     else
     {
+        g_booking_state_auto_booking_on = false;
         $('#btn_auto_refresh').removeClass('active');
         OnAutoRefreshClickInternal(false);
-        g_booking_state_auto_booking_on = false;
     }
 
     if(g_booking_state_auto_booking_on == true)
@@ -354,19 +431,114 @@ function BookingInit()
     $('#BookingFormVerifyOtpBtn').click(VerifyOtpClicked);
     $('#BookingSettings .menu .item').tab({history:false});
     $('#btn_auto_book').click(OnAutoBookClick);
+    $('#BookingFormLogOut').click(BookingLogOut);
 }
 
 function TryAutoBook(notifyInfo)
 {
     if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
     {
-        let usersToBook = g_persistent_vars.g_booking_state_users_to_auto_book_get();
-        if(usersToBook.size > 0)
+        let usersToBook = Array.from(new Set(g_persistent_vars.g_booking_state_users_to_auto_book_get()));
+        if(usersToBook.length > 0)
         {
             let notifyInfoClone = JSON.parse(JSON.stringify(notifyInfo));
-            usersToBook.forEach(function (userId){
+            for (let ui = 0; ui < usersToBook.length; ui++)
+            {
+                let bMoveToNextUser = false;//processing for this user is done, move to next
+                let userId = usersToBook[ui];
+                let centreNames = Object.keys(notifyInfoClone);
+                if(centreNames.length > 0)
+                {
+                    for (let ci = 0; ci < centreNames.length; ci++)
+                    {
+                        let name = centreNames[ci];
+                        let sessions = notifyInfoClone[name].sessions;
+                        let centreId = notifyInfoClone[name].centreId;
+                        let userDetails = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
+                        let userAge = parseInt(dayjs().format('YYYY')) - parseInt(userDetails.birth_year);
+                        for (let si = 0; si < sessions.length; si++)
+                        {
+                            let session = sessions[si];
+                            let sessionMinAge = parseInt(session.min_age_limit);
+                            let ageCategory = 45;
+                            if (userAge >= 45)
+                            {
+                                ageCategory = 45;
+                            }
+                            else if (userAge >= 18)
+                            {//eg. a user with age 60 can't book in 18-45 slot
+                                ageCategory = 18;
+                            }
+                            else
+                            {
+                                console.error("Invalid user age", userDetails);
+                                return;
+                            }
 
-            });
+                            if(ageCategory == sessionMinAge && session.capacity_to_show > 0)
+                            {
+                                let dose = 1;
+                                if(userDetails["dose1_date"] != "")
+                                {//user has already taken dose 1
+                                    dose = 2;
+                                }
+
+                                if ((dose == 1 && session.available_capacity_dose1 > 0) || (dose == 2 && session.available_capacity_dose2 > 0))
+                                {
+                                    let bookPayload = { center_id: centreId, session_id: session.session_id, beneficiaries: [String(userId)], slot: session.slots[0], dose: dose };
+                                    console.info("Found a slot!", name, centreId, session, notifyInfoClone[name]);
+                                    TryAutoBookInternal(bookPayload, userId, name);
+                                    bMoveToNextUser = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (bMoveToNextUser == true)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+            }
         }
     }
+}
+
+function TryAutoBookInternal(payload, userId, centreName)
+{
+    let payloadStr = JSON.stringify(payload);
+    let userDetails = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
+        let bearerToken = g_persistent_vars.g_booking_state_auth_bearer_token_get();
+        fetch("https://cdn-api.co-vin.in/api/v2/appointment/schedule", {
+        "headers": {
+                "authorization": "Bearer " + bearerToken,
+                "content-type": "application/json",
+            },
+        "method": "POST",
+        "mode": "cors",
+        "body": payloadStr,
+    }).then(response => {
+    if(response.status >= 400)
+    {
+        let resText = response.text();//returns a promise
+        console.error("error getting details");
+        throw resText;
+    }
+    return response.json();
+    }).then(data => {
+        console.log("Booking details", data, userDetails.name, centreName, payload);
+        g_persistent_vars.g_booking_state_users_to_auto_book_remove(userId);
+        tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot);
+        
+    }).catch(error => {
+        tata.error("Error", "Error Booking");
+        error.then(resText => {
+            if(resText == "Unauthenticated access!")
+            {
+                console.error("Unauthenticated access");
+            }
+            BookingLogOut();
+        });
+    });
 }

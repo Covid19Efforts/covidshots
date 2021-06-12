@@ -1,4 +1,4 @@
-#topBar p{
+#topBar p {
     color: #333333;
     display: inline;
     font-weight: bolder;
@@ -26,14 +26,17 @@
 #viewStatsContent {
     border-radius: 20px;
     width: 100%;
-    border:none;
+    border: none;
 }
 
-.dataTables_length#centreList_length, #centreList_filter > label { /*Search box label*/
+.dataTables_length#centreList_length,
+#centreList_filter>label {
+    /*Search box label*/
     font-size: small;
 }
 
-#centreList_filter > label > span > input[type=search] { /*searchbox*/
+#centreList_filter>label>span>input[type=search] {
+    /*searchbox*/
     border-radius: 20px;
 }
 
@@ -41,64 +44,84 @@
     min-width: 0;
 }
 
-#centreList_wrapper
-{
+#centreList_wrapper {
     margin-top: 25px;
 }
 
-#centreList_wrapper > div > div:nth-child(1)
-{
+#centreList_wrapper>div>div:nth-child(1) {
     padding-bottom: 0;
 }
 
-#centreList_wrapper > div > div.row.dt-table
-{
+#centreList_wrapper>div>div.row.dt-table {
     padding-top: 0;
 }
 
-.ui.button.tableOptionsButtonOuter, .ui.button.tableOptionsButtonInner {
+.ui.button.tableOptionsButtonOuter,
+.ui.button.tableOptionsButtonInner {
     border: 1px solid transparent;
 }
 
 #btn_auto_book {
-    color:#c71585;
+    color: #c71585;
 }
 
-#btn_auto_book.bookingButtonSwitched{
-    color:#ffffff;
-    background-color:#c71585;
+#btn_auto_book.bookingButtonSwitched {
+    color: #ffffff;
+    background-color: #c71585;
+}
+
+#BookingDialogUsersRender {
+    font-family: sans-serif;
+}
+
+#BookingDialogUsersRender p {
+    font-size: small;
+}
+
+#BookingDialogUsersRender .BookingDialogUsersRenderSecret {
+    background-color: #51c2d5;
+    color: white;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+#BookingDialogUsersRender .BookingDialogUsersRenderAge {
+    color: rgb(255, 99, 71);
 }
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
-    position:fixed;
-    right:10px;
-    bottom:10px;
-    cursor:pointer;
-    width:50px;
-    height:50px;
-    background-color:#3498db;
-    text-indent:-9999px;
-    display:none;
-    -webkit-border-radius:60px;
-    -moz-border-radius:60px;
-    border-radius:60px
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    background-color: #3498db;
+    text-indent: -9999px;
+    display: none;
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+    border-radius: 60px
 }
 
 #scrollToTop span {
-    position:absolute;
-    top:50%;
-    left:50%;
-    margin-left:-8px;
-    margin-top:-12px;
-    height:0;
-    width:0;
-    border:8px solid transparent;
-    border-bottom-color:#ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -12px;
+    height: 0;
+    width: 0;
+    border: 8px solid transparent;
+    border-bottom-color: #ffffff;
 }
+
 #scrollToTop:hover {
-    background-color:#e74c3c;
-    opacity:1;filter:"alpha(opacity=100)";
-    -ms-filter:"alpha(opacity=100)";
+    background-color: #e74c3c;
+    opacity: 1;
+    filter: "alpha(opacity=100)";
+    -ms-filter: "alpha(opacity=100)";
 }
+
 /*END*/

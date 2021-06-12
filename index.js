@@ -1,7 +1,7 @@
     //config
     const g_config_daystoShow = 7;
-    const g_config_refresh_interval_default = 5;
-    const g_config_refresh_interval_min     = 2;
+    const g_config_refresh_interval_default = 1;
+    const g_config_refresh_interval_min     = 1;
     const g_config_refresh_interval_max     = 600;
     
     //filters
@@ -232,7 +232,7 @@ window.mobileCheck = function() {
 
                 if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
                 {
-                    filteredData.push({name:centre["name"], sessions:filteredSessions});
+                    filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"]});
                 }
             });
             
@@ -274,7 +274,7 @@ window.mobileCheck = function() {
     
     function DetectChange(newData, oldData)
     {
-        console.log(newData, oldData);
+        console.log("DetectChange", newData, oldData);
         let notifyInfo = {};
         for(let i = 0; i < newData.length ; i++)
         {
@@ -320,7 +320,7 @@ window.mobileCheck = function() {
                     }
                     if(sessionsToNotify.length > 0)
                     {
-                        notifyInfo[newCentre.name] = sessionsToNotify;
+                        notifyInfo[newCentre.name] = {sessions:sessionsToNotify, centreId:newCentre["centreId"]};
                     }
                     break;
                 }
@@ -340,7 +340,7 @@ window.mobileCheck = function() {
                 }
                 if(sessionsToNotify.length > 0)
                 {
-                    notifyInfo[newCentre.name] = sessionsToNotify;
+                    notifyInfo[newCentre.name] = {sessions:sessionsToNotify, centreId:newCentre["centreId"]};
                 }
             }
         }
@@ -353,7 +353,7 @@ window.mobileCheck = function() {
             centreNames.forEach(name => {
                 caption += name;
                 caption += "\t";
-                let sessions = notifyInfo[name];
+                let sessions = notifyInfo[name].sessions;
                 sessions.forEach(
                     session => {
                         caption += session.date.format("D MMM");
@@ -579,8 +579,7 @@ window.mobileCheck = function() {
                         session["date"] = cDateObj;
                         cSessions2.push(session);
                     });
-                    
-                    let cInfo = {name:cName, sessions:cSessions2};
+                    let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"]};
                     centresTable.push(cInfo);
                 });
             });
@@ -775,7 +774,7 @@ window.mobileCheck = function() {
                         {
                             if(!isNaN(Date.parse(uVal)))
                             {
-                                if(IsDateInPast(uVal) == true)
+                                if(IsDateInPastStr(uVal) == true)
                                 {
                                     tata.error('Date error','The past can\'t hurt you anymore, unless you let it <i>~V.</i>', {duration:5000});
                                     let today = new Date();
@@ -947,12 +946,16 @@ window.mobileCheck = function() {
         });
     }
     
-    function IsDateInPast(dateStr)
+    function IsDateInPastStr(dateStr)
+    {
+        let dateDjs = dayjs(dateStr, 'YYYY-MM-DD');
+        return IsDateInPastDjs(dateDjs);
+    }
+    
+    function IsDateInPastDjs(dateDjs)
     {
         let today = new Date();
         let todayDjs = dayjs(today);
-        let dateDjs = dayjs(dateStr, 'YYYY-MM-DD');
-        //isSame(session.date, 'day')
         if(dateDjs.isBefore(todayDjs, 'day') == true)
         {
             return true;
@@ -963,7 +966,7 @@ window.mobileCheck = function() {
     function OnDateChange(e)
     {
         let selectedDate = $('#dateInput')[0].value;
-        if(IsDateInPast(selectedDate) == true)
+        if(IsDateInPastStr(selectedDate) == true)
         {
             let today = new Date();
             $('#dateInput')[0].valueAsDate = today;

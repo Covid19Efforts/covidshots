@@ -119,8 +119,9 @@ title: Covid Shots
 <!--TAB START-->
     <div class="ui top attached tabular menu">
       <a class="active item" data-tab="Login">Login</a>
-      <a class="item" data-tab="accounts" id="BookingAccountDetails">Account Details</a>
-      <a class="item" data-tab="third" style="display:none">Third</a>
+      <a class="item" data-tab="accounts" id="BookingAccountDetails">Users</a>
+      <a class="item" data-tab="BookingTab" style="display:none" id="BookingBookingSettings">Booking</a>
+      <a class="item" data-tab="Fourth" style="display:none">Fourth</a>
     </div>
   <div class="ui bottom attached active tab segment" data-tab="Login">
 
@@ -165,8 +166,11 @@ title: Covid Shots
   <div class="ui bottom attached tab segment" data-tab="accounts" id="BookingAccountsList">
     <table id="bookingAccountDetails" class="display cell-border" width="100%"><thead></thead></table>
   </div>
-  <div class="ui bottom attached tab segment" data-tab="third">
-    Third
+  <div class="ui bottom attached tab segment" data-tab="BookingTab">
+    <!--Third tab-->
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="Fourth">
+    <!--Fourth tab-->
   </div>
 <!--TAB END-->
     <p></p>
@@ -245,7 +249,7 @@ title: Covid Shots
 
 Refresh interval (minutes):
 <div class="ui right labeled input disabled" id="input_auto_refresh_interval_parent">
-<input type="number" placeholder="Enter time..." id="input_auto_refresh_interval" name="input_auto_refresh_interval" min="2" max="600" value="5">
+<input type="number" placeholder="Enter time..." id="input_auto_refresh_interval" name="input_auto_refresh_interval" min="1" max="600" value="1">
 <div class="ui basic label">
 minutes
 </div>
