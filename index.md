@@ -177,7 +177,7 @@ title: Covid Shots
   <input type="checkbox" name="BookingDialogBookingSettingEnabledAutoBook" id="BookingDialogBookingSettingEnabledAutoBook" onclick="OnClickBookingDialogBookingSettingEnabledAutoBook(this)">
   <label for="BookingDialogBookingSettingEnabledAutoBook">Enable Autobook</label>
 </div>
-    <div class="header"><!--Sahil Singh--></div>
+    <div class="header" data-card-tag="userName"><!--eg. Sahil Singh--></div>
    </div> 
 
     <div class="content" style="padding:0;">
@@ -223,7 +223,7 @@ title: Covid Shots
         <input type="hidden" name="Delay">
         <i class="dropdown icon"></i>
         <div class="default text">Delay</div>
-        <div class="menu">
+        <div class="upward menu">
           <div class="item" data-value="Now">Now</div>
           <div class="item" data-value="Today">Today</div>
           <div class="item" data-value="Tomorrow">Tomorrow</div>

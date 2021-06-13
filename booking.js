@@ -568,5 +568,9 @@ function CreateUserSettingsCard(person)
         cardEle.find('label[for=' + inputId + ']').attr("for", newId);
     });
 
+    let bkgDelayId = 'BookingDialogBookingSettingsDelay_' + userId;
+    cardEle.find('#BookingDialogBookingSettingsDelay').attr("id", bkgDelayId);
+
     $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
+    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').find('#' + bkgDelayId).dropdown();
 }
