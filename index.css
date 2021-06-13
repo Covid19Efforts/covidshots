@@ -1,3 +1,17 @@
+.BkgDlgBookingSettings {
+    /*Empty class to make it easier to find the elements*/
+}
+
+body #BookingSettings {
+    font-family: sans-serif;
+}
+
+#BookingSettings .tab,
+#BookingSettings div.ui.top.attached.tabular.menu,
+#BookingSettings .tabular.menu .item.active {
+    border-color: #cc1b64;
+}
+
 #topBar p {
     color: #333333;
     display: inline;

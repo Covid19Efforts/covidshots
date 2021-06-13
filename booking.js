@@ -242,7 +242,7 @@ function BookingDialogVaccineStatusRender(data, type)
         console.error("Unexpected vaccine status");
     }
 
-    let appointmentTitle = "Next appointment: ";
+    let appointmentTitle = "Appointments: ";
     let apptDescText = "";
     let nextAppStyle = "display:none;";
     let apps = data.appointments;
@@ -301,18 +301,7 @@ function GetAccountDetails()
         let tableColumns=[
             {data:"User_name", title:"User", render:BookingDialogUsersRender},
             {data:"photo_id", title:"Photo ID", render: BookingDialogPhotoIdRender},
-            /*{data:"vaccine_dose", title:"Dose"},*/
             {data:"vaccination_status", title:"Vaccination", render:BookingDialogVaccineStatusRender},
-            /*{data:"User_name", title:"Enable Auto-book", render:function(data, type){
-                let checked = " ";
-                let userId = data.refId;
-                if(g_persistent_vars.g_booking_state_users_to_auto_book_get().has(parseInt(userId)))
-                {
-                    checked = "checked";
-                }
-                return "<div class=\"ui checkbox\"><input type=\"checkbox\" onclick=\"AutoBookUserConfig(" + userId + ",this)\" " + checked + "><label></label></div>";
-            }
-            }*/
         ];
         let tableData = [];
         data.beneficiaries.forEach(person => {
@@ -335,6 +324,7 @@ function GetAccountDetails()
                     {targets:'_all', className:'dt-head-center'},
             ]
             });
+            CreateUserSettingsCard(person);
         });
     }).catch(error => {
         tata.error("Error", "Error getting details");
@@ -374,7 +364,7 @@ function ShowBookingDialog(e,t){
         $('#BookingAccountDetails,#BookingBookingSettings').hide();
         $('#UserLoggedIn').hide();
     }
-    $('#BookingSettings').modal('setting', 'closable', false).modal('show');
+    $('#BookingSettings').modal('setting', 'closable', true).modal('show');
 }
 
 function OnAutoBookClick(e,t)
@@ -432,6 +422,7 @@ function BookingInit()
     $('#BookingSettings .menu .item').tab({history:false});
     $('#btn_auto_book').click(OnAutoBookClick);
     $('#BookingFormLogOut').click(BookingLogOut);
+    $('#BookingDialogBookingSettingsDelay').dropdown();
 }
 
 function TryAutoBook(notifyInfo)
@@ -541,4 +532,31 @@ function TryAutoBookInternal(payload, userId, centreName)
             BookingLogOut();
         });
     });
+}
+
+function OnClickBookingDialogBookingSettingEnabledAutoBook(emt)
+{
+    let parentCard = $(emt).closest('.BkgDlgBookingSettings.ui.card');
+    let dimmerNode = parentCard.find('#BookingDialogBookingSettingDimmer');
+    if (emt.checked == true)
+    {
+        dimmerNode.dimmer('show');
+        dimmerNode.dimmer('hide');//a bug in dimmer doesn't let it hide before calling show - first time
+    }
+    else
+    {
+        dimmerNode.dimmer('show');
+    }
+    console.log(emt);
+}
+
+function CreateUserSettingsCard(person)
+{
+    let templateNode = $('#BkgDlgBkgStngCardTemplate')[0];
+    let cloneNode = templateNode.content.cloneNode(true);
+    let cloneNodej = $(cloneNode);
+    let cardEle = cloneNodej.find('.BkgDlgBookingSettings.ui.card');
+    cardEle.attr('data-card-user', person.beneficiary_reference_id);
+    cardEle.find('div[data-card-tag="userName"]').text(person.name);
+    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
 }

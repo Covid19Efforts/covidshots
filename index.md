@@ -168,6 +168,75 @@ title: Covid Shots
   </div>
   <div class="ui bottom attached tab segment" data-tab="BookingTab">
     <!--Third tab-->
+    <!--Template start-->
+    <template id="BkgDlgBkgStngCardTemplate">
+    <div class="ui card fluid BkgDlgBookingSettings" data-card-user=""><!--data-card-user="" will contain user ID-->
+  <div class="content">
+    
+<div class="ui toggle checkbox" style="float:right;">
+  <input type="checkbox" name="BookingDialogBookingSettingEnabledAutoBook" id="BookingDialogBookingSettingEnabledAutoBook" onclick="OnClickBookingDialogBookingSettingEnabledAutoBook(this)">
+  <label for="BookingDialogBookingSettingEnabledAutoBook">Enable Autobook</label>
+</div>
+    <div class="header" data-card-tag="userName"><!--Sahil Singh--></div>
+   </div> 
+
+    <div class="content" style="padding:0;">
+    <div class="ui blurring segment" style="border:none;">
+        <div class="ui inverted active dimmer" id="BookingDialogBookingSettingDimmer">
+            <div class="content">
+                <h2 class="ui header">
+                        <p style="color:#ae1957;">Disabled</p>
+                    <div class="sub header">Use Enable Autobook button to enable auto booking for this user</div>
+                </h2>
+            </div>
+        </div>
+    
+      <p></p>
+      <!---->
+       <h4 class="ui sub header" style="display:inline;">Vaccines&nbsp;</h4>
+        
+        <div class="ui checkbox">
+        <input id="BookingDialogBookingVaccineAny" type="checkbox">
+        <label for="BookingDialogBookingVaccineAny">Any&nbsp;</label>
+        </div>
+
+        <div class="ui checkbox">
+        <input id="BookingDialogBookingVaccineCovishield" type="checkbox">
+        <label for="BookingDialogBookingVaccineCovishield">Covishield&nbsp;</label>
+        </div>
+
+        <div class="ui checkbox">
+        <input id="BookingDialogBookingVaccineCovaxin" type="checkbox">
+        <label for="BookingDialogBookingVaccineCovaxin">Covaxin&nbsp;</label>
+        </div>
+
+        <div class="ui checkbox">
+        <input id="BookingDialogBookingVaccineSputnikV" type="checkbox">
+        <label for="BookingDialogBookingVaccineSputnikV">SPUTNIK V&nbsp;</label>
+        </div>
+
+        <!--Delay-->
+        <br/>
+        <br/>
+        <h4 class="ui sub header" style="display:inline;">Delay&nbsp;</h4>
+        <div class="ui selection dropdown" id="BookingDialogBookingSettingsDelay">
+        <input type="hidden" name="Delay">
+        <i class="dropdown icon"></i>
+        <div class="default text">Delay</div>
+        <div class="menu">
+          <div class="item" data-value="Now">Now</div>
+          <div class="item" data-value="Today">Today</div>
+          <div class="item" data-value="Tomorrow">Tomorrow</div>
+        </div>
+        </div>
+
+      <!---->
+      </div>
+    </div>
+  </div>
+  </template>
+  <!--Template end-->
+    <!--Third tab end-->
   </div>
   <div class="ui bottom attached tab segment" data-tab="Fourth">
     <!--Fourth tab-->
