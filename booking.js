@@ -552,11 +552,21 @@ function OnClickBookingDialogBookingSettingEnabledAutoBook(emt)
 
 function CreateUserSettingsCard(person)
 {
+    let userId = person.beneficiary_reference_id;
     let templateNode = $('#BkgDlgBkgStngCardTemplate')[0];
     let cloneNode = templateNode.content.cloneNode(true);
     let cloneNodej = $(cloneNode);
     let cardEle = cloneNodej.find('.BkgDlgBookingSettings.ui.card');
-    cardEle.attr('data-card-user', person.beneficiary_reference_id);
+    cardEle.attr('data-card-user', userId);
     cardEle.find('div[data-card-tag="userName"]').text(person.name);
+    
+    //fix label-for associations
+    let inputIds = ['BookingDialogBookingSettingEnabledAutoBook', 'BookingDialogBookingVaccineAny', 'BookingDialogBookingVaccineCovishield', 'BookingDialogBookingVaccineCovaxin', 'BookingDialogBookingVaccineSputnikV'];
+    inputIds.forEach(function (inputId) {
+        let newId = inputId + "_" + userId;
+        cardEle.find('#' + inputId).attr("id", newId);
+        cardEle.find('label[for=' + inputId + ']').attr("for", newId);
+    });
+
     $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
 }

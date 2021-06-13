@@ -177,7 +177,7 @@ title: Covid Shots
   <input type="checkbox" name="BookingDialogBookingSettingEnabledAutoBook" id="BookingDialogBookingSettingEnabledAutoBook" onclick="OnClickBookingDialogBookingSettingEnabledAutoBook(this)">
   <label for="BookingDialogBookingSettingEnabledAutoBook">Enable Autobook</label>
 </div>
-    <div class="header" data-card-tag="userName"><!--Sahil Singh--></div>
+    <div class="header"><!--Sahil Singh--></div>
    </div> 
 
     <div class="content" style="padding:0;">
