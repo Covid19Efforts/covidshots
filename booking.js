@@ -5,95 +5,6 @@ const g_booking_config_secret = "U2FsdGVkX194jQCChEwkQBXzvshC6bewrzI96RXGqwopnQM
 g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
-class g_persistent_vars
-{
-    static _g_booking_state_auth_bearer_token = "";
-    static _g_bBooking_state_user_logged_in = false;
-    static _g_booking_state_users_to_auto_book = new Set();
-    static _g_booking_state_users_details = {};
-
-    static g_booking_state_auth_bearer_token_set(value)
-    {
-        this._g_booking_state_auth_bearer_token = value;
-        localStorage.setItem("_g_booking_state_auth_bearer_token", this._g_booking_state_auth_bearer_token);
-    }
-
-    static g_booking_state_auth_bearer_token_get()
-    {
-        if(this._g_booking_state_auth_bearer_token == "")
-        {
-            this._g_booking_state_auth_bearer_token = localStorage.getItem("_g_booking_state_auth_bearer_token");
-        }
-        if(this._g_booking_state_auth_bearer_token == null)
-        {
-            console.error("Error getting bearer token from local storage");
-        }
-        return this._g_booking_state_auth_bearer_token;
-    }
-
-    static g_bBooking_state_user_logged_in_set(value)
-    {
-        this._g_bBooking_state_user_logged_in = value;
-        localStorage.setItem("_g_bBooking_state_user_logged_in", this._g_bBooking_state_user_logged_in);
-    }
-
-    static g_bBooking_state_user_logged_in_get()
-    {
-        let userLoggedInStr = localStorage.getItem("_g_bBooking_state_user_logged_in");
-        if(userLoggedInStr == null)
-        {
-            this._g_bBooking_state_user_logged_in = false;
-        }
-        else
-        {
-            this._g_bBooking_state_user_logged_in = (userLoggedInStr.toLowerCase() == "true");
-        }
-        return this._g_bBooking_state_user_logged_in
-    }
-
-    static g_booking_state_users_to_auto_book_add(userId)
-    {
-        this._g_booking_state_users_to_auto_book.add(parseInt(userId));
-        localStorage.setItem("_g_booking_state_users_to_auto_book", JSON.stringify([...this._g_booking_state_users_to_auto_book]));
-    }
-
-    static g_booking_state_users_to_auto_book_remove(userId)
-    {
-        this._g_booking_state_users_to_auto_book.delete(userId);
-        localStorage.setItem("_g_booking_state_users_to_auto_book", JSON.stringify([...this._g_booking_state_users_to_auto_book]));
-    }
-
-    static g_booking_state_users_to_auto_book_get()
-    {
-        this._g_booking_state_users_to_auto_book = new Set(JSON.parse(localStorage.getItem("_g_booking_state_users_to_auto_book")));
-        return this._g_booking_state_users_to_auto_book;
-    }
-
-    ///
-    static g_booking_state_users_details_set(userDetails)
-    {
-        this._g_booking_state_users_details[userDetails.beneficiary_reference_id] = userDetails;
-        localStorage.setItem("_g_booking_state_users_details", JSON.stringify(this._g_booking_state_users_details));
-    }
-
-    static g_booking_state_users_details_get()
-    {
-        this._g_booking_state_users_details = JSON.parse(localStorage.getItem("_g_booking_state_users_details"));
-        return this._g_booking_state_users_details;
-    }
-
-    static g_booking_state_users_details_get_by_user_id(userId/*Beneficiary reference ID*/)
-    {
-        this._g_booking_state_users_details = JSON.parse(localStorage.getItem("_g_booking_state_users_details"));
-        let retVal = this._g_booking_state_users_details[userId];
-        if(retVal == undefined)
-        {
-            console.error("userId not found",userId, this._g_booking_state_users_details);
-        }
-        return retVal;
-    }
-}
-
 
 
 function GetOtpClicked()
@@ -534,20 +445,88 @@ function TryAutoBookInternal(payload, userId, centreName)
     });
 }
 
+function SaveUserAutoBookConfig(userId, bAddUser /*Add/remove user from autobook list*/)
+{
+    if (bAddUser == true)
+    {
+        let userDetails = { vaccines: ["any"], delay: "now" };
+        let parentCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
+        let VaccineAny = parentCard.find("#BookingDialogBookingVaccineAny_" + userId)[0];
+        if (VaccineAny.checked == false)
+        {
+            userDetails.vaccines = [];
+            let vacs = ["BookingDialogBookingVaccineCovishield", "BookingDialogBookingVaccineCovaxin", "BookingDialogBookingVaccineSputnikV"];
+            vacs.forEach(function (vac) {
+                let vacInput = parentCard.find("#" + vac + "_" + userId)[0];
+                if (vacInput.checked)
+                {
+                    let vacName = vac.replace("BookingDialogBookingVaccine", "").toLowerCase();
+                    userDetails.vaccines.push(vacName);
+                }
+            });
+        }
+        if (userDetails.vaccines.length == 0)
+        {
+            userDetails.vaccines = ["any"];
+        }
+        let delayVal = parentCard.find("#BookingDialogBookingSettingsDelay_" + userId).find("input")[0].value.toLowerCase();
+        if (delayVal != "")
+        {
+            userDetails.delay = delayVal;
+        }
+        g_persistent_vars.g_booking_state_users_to_auto_book_add(userId);
+        g_persistent_vars.g_booking_state_users_to_auto_book_settings_set(userId, userDetails);
+        
+    }
+    else
+    {
+        g_persistent_vars.g_booking_state_users_to_auto_book_remove(userId);
+        g_persistent_vars.g_booking_state_users_to_auto_book_settings_remove(userId);
+    }
+}
+
 function OnClickBookingDialogBookingSettingEnabledAutoBook(emt)
 {
     let parentCard = $(emt).closest('.BkgDlgBookingSettings.ui.card');
     let dimmerNode = parentCard.find('#BookingDialogBookingSettingDimmer');
+    let userId = parentCard.attr('data-card-user');
     if (emt.checked == true)
     {
         dimmerNode.dimmer('show');
         dimmerNode.dimmer('hide');//a bug in dimmer doesn't let it hide before calling show - first time
+        SaveUserAutoBookConfig(userId, true);
     }
     else
     {
+        SaveUserAutoBookConfig(userId, false);
         dimmerNode.dimmer('show');
     }
-    console.log(emt);
+}
+
+function OnBkgDlgSettingVaccine(that)
+{
+    let parentCard = $(that).closest('.BkgDlgBookingSettings.ui.card');
+    let userId = parentCard.attr('data-card-user');
+
+    if ($(that).attr("data-vaccine-name") == "any")
+    {
+        if (that.checked == true)
+        {
+            let vacs = ["BookingDialogBookingVaccineCovishield", "BookingDialogBookingVaccineCovaxin", "BookingDialogBookingVaccineSputnikV"];
+            vacs.forEach(function (vac) {
+                let vacInput = parentCard.find("#" + vac + "_" + userId);
+                vacInput[0].checked = false;//dont use semantic ui checkbox to uncheck it messes with inputs native onclick. vacInput.parent().checkbox("uncheck");
+            });
+        } 
+    }
+    else
+    {
+        if (that.checked == true) {
+            let vacInput = parentCard.find("#BookingDialogBookingVaccineAny_" + userId);
+            vacInput[0].checked = false;
+        }
+    }
+    SaveUserAutoBookConfig(userId, true);
 }
 
 function CreateUserSettingsCard(person)
@@ -572,5 +551,39 @@ function CreateUserSettingsCard(person)
     cardEle.find('#BookingDialogBookingSettingsDelay').attr("id", bkgDelayId);
 
     $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
-    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').find('#' + bkgDelayId).dropdown();
+    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').find('#' + bkgDelayId).dropdown({ onChange: function (val, txt, obj) { SaveUserAutoBookConfig(userId, true); } });
+    
+    //set state from persistence if any
+    if (g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
+    {
+        let userSettings = g_persistent_vars.g_booking_state_users_to_auto_book_settings_get_by_user_id(userId);
+        let parentCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
+        parentCard.find('#BookingDialogBookingSettingEnabledAutoBook_' + userId)[0].checked = true;//this will not fire onchange event
+        if (userSettings.vaccines.indexOf("any") == -1)
+        {
+            if (userSettings.vaccines.indexOf("covishield") != -1) {
+                let vacInput = parentCard.find("#BookingDialogBookingVaccineCovishield_" + userId);
+                vacInput[0].checked = true;
+            }
+            if (userSettings.vaccines.indexOf("covaxin") != -1) {
+                let vacInput = parentCard.find("#BookingDialogBookingVaccineCovaxin_" + userId);
+                vacInput[0].checked = true;
+            }
+            if (userSettings.vaccines.indexOf("sputnikv") != -1) {
+                let vacInput = parentCard.find("#BookingDialogBookingVaccineSputnikV_" + userId);
+                vacInput[0].checked = true;
+            }
+            
+        }
+        else {
+            let vacInput = parentCard.find("#BookingDialogBookingVaccineAny_" + userId);
+            vacInput[0].checked = true;
+        }
+        let delayDd = parentCard.find("#BookingDialogBookingSettingsDelay_" + userId);
+        delayDd.dropdown('set selected', userSettings.delay);
+        let dimmerNode = parentCard.find('#BookingDialogBookingSettingDimmer');
+        dimmerNode.dimmer('show');
+        dimmerNode.dimmer('hide');//a bug in dimmer doesn't let it hide before calling show - first time
+        
+    }
 }

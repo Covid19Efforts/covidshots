@@ -174,7 +174,7 @@ title: Covid Shots
   <div class="content">
     
 <div class="ui toggle checkbox" style="float:right;">
-  <input type="checkbox" name="BookingDialogBookingSettingEnabledAutoBook" id="BookingDialogBookingSettingEnabledAutoBook" onclick="OnClickBookingDialogBookingSettingEnabledAutoBook(this)">
+  <input type="checkbox" name="BookingDialogBookingSettingEnabledAutoBook" id="BookingDialogBookingSettingEnabledAutoBook" onchange="OnClickBookingDialogBookingSettingEnabledAutoBook(this)">
   <label for="BookingDialogBookingSettingEnabledAutoBook">Enable Autobook</label>
 </div>
     <div class="header" data-card-tag="userName"><!--eg. Sahil Singh--></div>
@@ -196,22 +196,22 @@ title: Covid Shots
        <h4 class="ui sub header" style="display:inline;">Vaccines&nbsp;</h4>
         
         <div class="ui checkbox">
-        <input id="BookingDialogBookingVaccineAny" type="checkbox">
+        <input id="BookingDialogBookingVaccineAny" type="checkbox" onclick="OnBkgDlgSettingVaccine(this)" data-vaccine-name="any">
         <label for="BookingDialogBookingVaccineAny">Any&nbsp;</label>
         </div>
 
         <div class="ui checkbox">
-        <input id="BookingDialogBookingVaccineCovishield" type="checkbox">
+        <input id="BookingDialogBookingVaccineCovishield" type="checkbox" onclick="OnBkgDlgSettingVaccine(this)" data-vaccine-name="covishield">
         <label for="BookingDialogBookingVaccineCovishield">Covishield&nbsp;</label>
         </div>
 
         <div class="ui checkbox">
-        <input id="BookingDialogBookingVaccineCovaxin" type="checkbox">
+        <input id="BookingDialogBookingVaccineCovaxin" type="checkbox" onclick="OnBkgDlgSettingVaccine(this)" data-vaccine-name="covaxin">
         <label for="BookingDialogBookingVaccineCovaxin">Covaxin&nbsp;</label>
         </div>
 
         <div class="ui checkbox">
-        <input id="BookingDialogBookingVaccineSputnikV" type="checkbox">
+        <input id="BookingDialogBookingVaccineSputnikV" type="checkbox" onclick="OnBkgDlgSettingVaccine(this)" data-vaccine-name="sputnikv">
         <label for="BookingDialogBookingVaccineSputnikV">SPUTNIK V&nbsp;</label>
         </div>
 
@@ -224,9 +224,9 @@ title: Covid Shots
         <i class="dropdown icon"></i>
         <div class="default text">Delay</div>
         <div class="upward menu">
-          <div class="item" data-value="Now">Now</div>
-          <div class="item" data-value="Today">Today</div>
-          <div class="item" data-value="Tomorrow">Tomorrow</div>
+          <div class="item" data-value="now">Now</div>
+          <div class="item" data-value="today">Today</div>
+          <div class="item" data-value="tomorrow">Tomorrow</div>
         </div>
         </div>
 
@@ -338,4 +338,5 @@ minutes
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
 
 <script src="index.js?v=1.1"></script>
+<script src="persistentVars.js?v=1.1"></script>
 <script src="booking.js?v=1.1"></script>
