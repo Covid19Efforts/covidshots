@@ -596,6 +596,13 @@ window.mobileCheck = function() {
 
     function RefreshAllTimer()
     {
+        if (g_booking_state_pending_stop_auto_book == true)
+        {
+            StopAutoBook();
+            g_booking_state_pending_stop_auto_book = false;//handled
+            return;
+        }
+
         tata.info('Timer', 'Auto refresh data', {duration:5000});
         console.info('Timer', 'Auto refresh data');
         RefreshAll(true, false);
@@ -777,9 +784,9 @@ window.mobileCheck = function() {
                                 if(IsDateInPastStr(uVal) == true)
                                 {
                                     tata.error('Date error','The past can\'t hurt you anymore, unless you let it <i>~V.</i>', {duration:5000});
-                                    let today = new Date();
-                                    $('#dateInput')[0].valueAsDate = today;
-                                    uVal = dayjs(today).format('YYYY-MM-DD');
+                                    let today = dayjs().format('YYYY-MM-DD');
+                                    $('#dateInput')[0].value = today;
+                                    uVal = today;
                                     AddRemoveUrlParam(true, urlParam, uVal);
                                 }
                                 bValidDate = true;
@@ -968,11 +975,10 @@ window.mobileCheck = function() {
         let selectedDate = $('#dateInput')[0].value;
         if(IsDateInPastStr(selectedDate) == true)
         {
-            let today = new Date();
-            $('#dateInput')[0].valueAsDate = today;
+            let today = dayjs().format('YYYY-MM-DD');
+            $('#dateInput')[0].value = today;
             
-            let todayDjs = dayjs(today);
-            $('#dateInput').attr("min", todayDjs.format('YYYY-MM-DD'));
+            $('#dateInput').attr("min", today);
 
             tata.error('Date error','The past can\'t hurt you anymore, unless you let it <i>~V.</i>', {duration:5000});
         }
@@ -1374,11 +1380,20 @@ $(document).ready( function ()
     /*from https://stackoverflow.com/a/66407003/981766 */
 document.head.appendChild(Object.assign(document.createElement("link"), {rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💉</text></svg>"}))
 
-let today = new Date();
+    let today = dayjs().format('YYYY-MM-DD');
 if($('#dateInput')[0].value == "")
 {
-    $('#dateInput')[0].valueAsDate = today;
+    $('#dateInput')[0].value = today;
 }
+else
+{
+    let selectedDate = dayjs($('#dateInput')[0].value, 'YYYY-MM-DD');
+    if (IsDateInPastDjs(selectedDate) == true)
+    {
+        $('#dateInput')[0].value = today;
+    }
+}
+
 let todayDjs = dayjs(today);
 $('#dateInput').attr("min", todayDjs.format('YYYY-MM-DD'));
 

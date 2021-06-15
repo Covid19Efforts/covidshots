@@ -5,6 +5,8 @@ const g_booking_config_secret = "U2FsdGVkX194jQCChEwkQBXzvshC6bewrzI96RXGqwopnQM
 g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
+g_booking_state_pending_stop_auto_book = false;//once all users have been booked
+
 
 
 function GetOtpClicked()
@@ -96,22 +98,7 @@ function VerifyOtpClicked()
 
 }
 
-function AutoBookUserConfig(userid, inputControl)
-{
-    if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
-    {
-        if(inputControl.checked == true)
-        {
-            g_persistent_vars.g_booking_state_users_to_auto_book_add(userid);
-        }
-        else
-        {
-            g_persistent_vars.g_booking_state_users_to_auto_book_remove(userid);
-        }
-    }
-}
-
-//data.name + "</b><br/>" + data.refId
+//render user details column
 function BookingDialogUsersRender(data, type)
 {//render method
     let refId = data.refId;
@@ -123,6 +110,7 @@ function BookingDialogUsersRender(data, type)
     return html;
 }
 
+//render photo ID column
 function BookingDialogPhotoIdRender(data, type)
 {
     let idType = data.type;
@@ -131,6 +119,7 @@ function BookingDialogPhotoIdRender(data, type)
     return html;
 }
 
+//render vaccine status column
 function BookingDialogVaccineStatusRender(data, type)
 {
     let vaccineImage = "assets/nounProject/";
@@ -220,23 +209,24 @@ function GetAccountDetails()
             let personData = { "User_name": { name: person.name, refId: person.beneficiary_reference_id, birthYear:person.birth_year}, "photo_id": { type: person.photo_id_type, number: person.photo_id_number }, "vaccine_dose": "", "vaccination_status": { status:person.vaccination_status, dose1:person.dose1_date, dose2:person.dose2_date, appointments:person.appointments}};
             tableData.push(personData);
 
-            let bIsMobileDevice = window.mobileCheck();
-
-            $('#bookingAccountDetails').DataTable({
-                destroy:true,
-                data:tableData,
-                responsive: bIsMobileDevice,
-                //scrollX: true,
-                dom: 't',
-                columns: tableColumns,
-                bSort:false,
-                columnDefs:[
-                    {targets:'_all', className:'dt-body-center'},
-                    {targets:'_all', className:'dt-head-center'},
-            ]
-            });
             CreateUserSettingsCard(person);
         });
+        let bIsMobileDevice = window.mobileCheck();
+
+        $('#bookingAccountDetails').DataTable({
+            destroy:true,
+            data:tableData,
+            responsive: bIsMobileDevice,
+            //scrollX: true,
+            dom: 't',
+            columns: tableColumns,
+            bSort:false,
+            columnDefs:[
+                {targets:'_all', className:'dt-body-center'},
+                {targets:'_all', className:'dt-head-center'},
+        ]
+        });
+
     }).catch(error => {
         tata.error("Error", "Error getting details");
         error.then(resText => {
@@ -252,11 +242,10 @@ function GetAccountDetails()
 
 function BookingLogOut()
 {
-    return;
     g_persistent_vars.g_bBooking_state_user_logged_in_set(false);
     g_persistent_vars.g_booking_state_auth_bearer_token_set("");
     tata.warn("Logged out", "Refreshing site ...", {onClose:function(){
-        window.location.reload();
+        //window.location.reload();
     }});
 }
 
@@ -278,8 +267,18 @@ function ShowBookingDialog(e,t){
     $('#BookingSettings').modal('setting', 'closable', true).modal('show');
 }
 
+function StopAutoBook()
+{
+    g_booking_state_auto_booking_on = false;
+    $('#btn_auto_refresh').removeClass('active');
+    OnAutoRefreshClickInternal(false);
+    $('#btn_auto_book').removeClass('bookingButtonSwitched');
+}
+
 function OnAutoBookClick(e,t)
 {
+    g_booking_state_pending_stop_auto_book = false;//clear any pending state
+
     if(g_booking_state_auto_booking_on == false)
     {
         if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
@@ -308,9 +307,7 @@ function OnAutoBookClick(e,t)
     }
     else
     {
-        g_booking_state_auto_booking_on = false;
-        $('#btn_auto_refresh').removeClass('active');
-        OnAutoRefreshClickInternal(false);
+        StopAutoBook();
     }
 
     if(g_booking_state_auto_booking_on == true)
@@ -343,7 +340,8 @@ function TryAutoBook(notifyInfo)
         let usersToBook = Array.from(new Set(g_persistent_vars.g_booking_state_users_to_auto_book_get()));
         if(usersToBook.length > 0)
         {
-            let notifyInfoClone = JSON.parse(JSON.stringify(notifyInfo));
+            //let notifyInfoClone = JSON.parse(JSON.stringify(notifyInfo));//messes up dayjs objects
+            let notifyInfoClone = notifyInfo;
             for (let ui = 0; ui < usersToBook.length; ui++)
             {
                 let bMoveToNextUser = false;//processing for this user is done, move to next
@@ -356,12 +354,41 @@ function TryAutoBook(notifyInfo)
                         let name = centreNames[ci];
                         let sessions = notifyInfoClone[name].sessions;
                         let centreId = notifyInfoClone[name].centreId;
-                        let userDetails = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
+                        let userDetails  = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
+                        let userSettings = g_persistent_vars.g_booking_state_users_to_auto_book_settings_get_by_user_id(userId);
                         let userAge = parseInt(dayjs().format('YYYY')) - parseInt(userDetails.birth_year);
                         for (let si = 0; si < sessions.length; si++)
                         {
                             let session = sessions[si];
                             let sessionMinAge = parseInt(session.min_age_limit);
+                            
+                            if (userSettings.vaccines.length != 0 && userSettings.vaccines.indexOf("any") == -1) {
+                                let sessionVaccine = session.vaccine.toLowerCase();
+                                sessionVaccine = sessionVaccine.replace(" ", "");//eg. "sputnik v" to "sputnikv"
+                                if (userSettings.vaccines.indexOf(sessionVaccine) == -1)
+                                {
+                                    continue;//this is a vaccine in which user is not interested
+                                }
+                            }
+
+                            let sessionDate = session.date;
+                            if (IsDateInPastDjs(sessionDate) == true)
+                            {
+                                continue;
+                            }
+
+                            let today = dayjs();
+                            let bIsSessionToday = false;
+                            if(sessionDate.isSame(today, 'day') == true)
+                            {
+                                bIsSessionToday = true;
+                            }
+                            
+                             if (userSettings.delay == "tomorrow" && bIsSessionToday)//dont book today's slots
+                            {
+                                 continue;
+                            }
+
                             let ageCategory = 45;
                             if (userAge >= 45)
                             {
@@ -387,11 +414,46 @@ function TryAutoBook(notifyInfo)
 
                                 if ((dose == 1 && session.available_capacity_dose1 > 0) || (dose == 2 && session.available_capacity_dose2 > 0))
                                 {
-                                    let bookPayload = { center_id: centreId, session_id: session.session_id, beneficiaries: [String(userId)], slot: session.slots[0], dose: dose };
-                                    console.info("Found a slot!", name, centreId, session, notifyInfoClone[name]);
-                                    TryAutoBookInternal(bookPayload, userId, name);
-                                    bMoveToNextUser = true;
-                                    break;
+                                    let slotIndex = 1;
+                                    if (userSettings.delay == "today")
+                                    {
+                                        slotIndex = 0;
+                                    }
+
+                                    let slotTimeSelected = "";
+                                    if (bIsSessionToday == true) {
+                                        for (let iSlot = 0; iSlot < session.slots.length; iSlot++) {
+                                            let slotTime = session.slots[iSlot].split("-")[slotIndex];
+                                            let slotTimeHr = parseInt(slotTime.split(":")[0]);
+                                            let slotTimeMn = parseInt(slotTime.substring(0, slotTime.length - 2).split(":")[1]);
+                                            if ((slotTimeHr != 12) && (slotTime.substring(slotTime.length - 2).toLowerCase() == "pm")) {
+                                                slotTimeHr += 12;
+                                            }
+                                            let timeNow = new Date();
+                                            let timeNowH = timeNow.getHours();
+                                            let timeNowM = timeNow.getMinutes();
+
+                                            if (timeNowH < slotTimeHr) {
+                                                slotTimeSelected = session.slots[iSlot];
+                                                break;
+                                            } else if (timeNowH == slotTimeHr && timeNowM < slotTimeMn) {
+                                                slotTimeSelected = session.slots[iSlot];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        slotTimeSelected = session.slots[0];
+                                    }
+                                    
+                                    if (slotTimeSelected != "") {
+                                        let bookPayload = { center_id: centreId, session_id: session.session_id, beneficiaries: [String(userId)], slot: slotTimeSelected, dose: dose };
+                                        console.info("Found a slot!", name, centreId, session, notifyInfoClone[name]);
+                                        TryAutoBookInternal(bookPayload, userId, name);
+                                        bMoveToNextUser = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -431,7 +493,14 @@ function TryAutoBookInternal(payload, userId, centreName)
     }).then(data => {
         console.log("Booking details", data, userDetails.name, centreName, payload);
         g_persistent_vars.g_booking_state_users_to_auto_book_remove(userId);
-        tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot);
+        g_persistent_vars.g_booking_state_users_to_auto_book_settings_remove(userId);
+
+        if (g_persistent_vars.g_booking_state_users_to_auto_book_get().size == 0)
+        {
+            g_booking_state_pending_stop_auto_book = true;
+        }
+
+        tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot, {holding:true});
         
     }).catch(error => {
         tata.error("Error", "Error Booking");
@@ -532,27 +601,30 @@ function OnBkgDlgSettingVaccine(that)
 function CreateUserSettingsCard(person)
 {
     let userId = person.beneficiary_reference_id;
-    let templateNode = $('#BkgDlgBkgStngCardTemplate')[0];
-    let cloneNode = templateNode.content.cloneNode(true);
-    let cloneNodej = $(cloneNode);
-    let cardEle = cloneNodej.find('.BkgDlgBookingSettings.ui.card');
-    cardEle.attr('data-card-user', userId);
-    cardEle.find('div[data-card-tag="userName"]').text(person.name);
+    let userCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
+    if (userCard.length == 0) {//create the card only if it doesn't exist already
+        let templateNode = $('#BkgDlgBkgStngCardTemplate')[0];
+        let cloneNode = templateNode.content.cloneNode(true);
+        let cloneNodej = $(cloneNode);
+        let cardEle = cloneNodej.find('.BkgDlgBookingSettings.ui.card');
+        cardEle.attr('data-card-user', userId);
+        cardEle.find('div[data-card-tag="userName"]').text(person.name);
     
-    //fix label-for associations
-    let inputIds = ['BookingDialogBookingSettingEnabledAutoBook', 'BookingDialogBookingVaccineAny', 'BookingDialogBookingVaccineCovishield', 'BookingDialogBookingVaccineCovaxin', 'BookingDialogBookingVaccineSputnikV'];
-    inputIds.forEach(function (inputId) {
-        let newId = inputId + "_" + userId;
-        cardEle.find('#' + inputId).attr("id", newId);
-        cardEle.find('label[for=' + inputId + ']').attr("for", newId);
-    });
+        //fix label-for associations
+        let inputIds = ['BookingDialogBookingSettingEnabledAutoBook', 'BookingDialogBookingVaccineAny', 'BookingDialogBookingVaccineCovishield', 'BookingDialogBookingVaccineCovaxin', 'BookingDialogBookingVaccineSputnikV'];
+        inputIds.forEach(function (inputId) {
+            let newId = inputId + "_" + userId;
+            cardEle.find('#' + inputId).attr("id", newId);
+            cardEle.find('label[for=' + inputId + ']').attr("for", newId);
+        });
 
-    let bkgDelayId = 'BookingDialogBookingSettingsDelay_' + userId;
-    cardEle.find('#BookingDialogBookingSettingsDelay').attr("id", bkgDelayId);
+        let bkgDelayId = 'BookingDialogBookingSettingsDelay_' + userId;
+        cardEle.find('#BookingDialogBookingSettingsDelay').attr("id", bkgDelayId);
 
-    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
-    $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').find('#' + bkgDelayId).dropdown({ onChange: function (val, txt, obj) { SaveUserAutoBookConfig(userId, true); } });
-    
+        $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').append(cloneNodej);
+        $('#BookingSettings div.tab.segment[data-tab="BookingTab"]').find('#' + bkgDelayId).dropdown({ onChange: function (val, txt, obj) { SaveUserAutoBookConfig(userId, true); } });
+    }
+
     //set state from persistence if any
     if (g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
     {
