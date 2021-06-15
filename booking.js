@@ -596,7 +596,7 @@ function OnBkgDlgSettingVaccine(that)
 
 function CreateUserSettingsCard(person)
 {
-    let userId = person.beneficiary_reference_id;
+    let userId = parseInt(person.beneficiary_reference_id);
     let userCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
     if (userCard.length == 0) {//create the card only if it doesn't exist already
         let templateNode = $('#BkgDlgBkgStngCardTemplate')[0];
