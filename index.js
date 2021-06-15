@@ -400,7 +400,6 @@ window.mobileCheck = function() {
 
         let tableColumns = [{data: ['name'], title: 'Centre name', 
         render: function(data, type){
-            console.log("data is "+ data);
             return "<b>"+ data["name"] + "</b> ( " + data["district"] +" )";
         }}];
             let selectedDate = new Date($('#dateInput')[0].value);
@@ -612,13 +611,6 @@ window.mobileCheck = function() {
 
     function RefreshAllTimer()
     {
-        if (g_booking_state_pending_stop_auto_book == true)
-        {
-            StopAutoBook();
-            g_booking_state_pending_stop_auto_book = false;//handled
-            return;
-        }
-
         tata.info('Timer', 'Auto refresh data', {duration:5000});
         console.info('Timer', 'Auto refresh data');
         RefreshAll(true, false);
@@ -1314,6 +1306,17 @@ function OnAutoRefreshClickInternal(buttonOn) {
         }
 
         else {
+            if(g_handle_refresh_interval_timer != null)
+            {
+                clearInterval(g_handle_refresh_interval_timer);
+                g_handle_refresh_interval_timer = null;
+            }
+
+            if(g_handle_refresh_text_interval_timer != null)
+            {
+                clearInterval(g_handle_refresh_text_interval_timer);
+                g_handle_refresh_text_interval_timer = null;
+            }
             console.error("invalid value for interval", intervalTimeMinsStr, intervalTimeMinsInt);
         }
     }

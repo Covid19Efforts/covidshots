@@ -5,8 +5,6 @@ const g_booking_config_secret = "U2FsdGVkX194jQCChEwkQBXzvshC6bewrzI96RXGqwopnQM
 g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
-g_booking_state_pending_stop_auto_book = false;//once all users have been booked
-
 
 
 function GetOtpClicked()
@@ -277,8 +275,6 @@ function StopAutoBook()
 
 function OnAutoBookClick(e,t)
 {
-    g_booking_state_pending_stop_auto_book = false;//clear any pending state
-
     if(g_booking_state_auto_booking_on == false)
     {
         if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
@@ -497,7 +493,7 @@ function TryAutoBookInternal(payload, userId, centreName)
 
         if (g_persistent_vars.g_booking_state_users_to_auto_book_get().size == 0)
         {
-            g_booking_state_pending_stop_auto_book = true;
+            StopAutoBook();
         }
 
         tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot, {holding:true});
