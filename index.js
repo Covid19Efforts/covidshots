@@ -91,6 +91,7 @@ window.mobileCheck = function() {
     
     function onDistrictAdd(value, text, $selectedItem)
     {
+        
         let distInt = parseInt(value);
         if(!isNaN(distInt))
         {
@@ -117,6 +118,13 @@ window.mobileCheck = function() {
         }
     }
     
+    function onDistrictHide(value, text, $selectedItem)
+    {
+        OnDateChange();
+        RefreshAll(false, true);
+    }
+
+
     function filterData(data)
     {
         g_stats_num_available_vaccines = 0;
@@ -232,7 +240,7 @@ window.mobileCheck = function() {
 
                 if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
                 {
-                    filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"]});
+                    filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"], district:centre["district"]});
                 }
             });
             
@@ -253,6 +261,7 @@ window.mobileCheck = function() {
                 let calendarDate = selectedDate.add(day, 'day');
                 let dayStr = "day" + day;
                 daysData[dayStr] = {vaccine:"", available: -1, minAge: -1, slots:[]};
+
                 sessions.forEach(session => 
                 {
                     if(calendarDate.isSame(session.date, 'day') == true)
@@ -264,7 +273,7 @@ window.mobileCheck = function() {
                     }
                 })
             }
-            centreData = Object.assign({}, {name:centre["name"]}, daysData);
+            centreData = Object.assign({}, {name:{name:centre["name"], district:centre["district"]}}, daysData);
             tableData.push(centreData);
         });
         
@@ -387,14 +396,20 @@ window.mobileCheck = function() {
     }
 
     function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
-    {
-        let tableColumns = [{data: 'name', title: 'Centre name'}];
+    {   
+
+        let tableColumns = [{data: ['name'], title: 'Centre name', 
+        render: function(data, type){
+            console.log("data is "+ data);
+            return "<b>"+ data["name"] + "</b> ( " + data["district"] +" )";
+        }}];
             let selectedDate = new Date($('#dateInput')[0].value);
             for(let day = 0; day < g_config_daystoShow ; day++)
             {
                 let nextDate = new Date(selectedDate);
                 nextDate.setDate(nextDate.getDate() + day);
                 nextDateDjs = dayjs(nextDate);
+
                 tableColumns.push({data: "day" + day, title:nextDateDjs.format('ddd MMM DD'), "orderSequence": [ "desc", "asc"],
                 //type:"html-num-fmt",
                 type:"format_cust_vacc_available" /*So that sorting is handled by $.fn.dataTable.ext.type.order[format_cust_vacc_available-pre]*/,
@@ -571,6 +586,7 @@ window.mobileCheck = function() {
             data.forEach(centres => {
                 centres.centers.forEach(centre => {
                     let cName = centre["name"];
+                    let cDistrictName = centre["district_name"];
                     let cSessions = centre["sessions"];
                     let cSessions2 = [];
                     cSessions.forEach(session => {
@@ -579,7 +595,7 @@ window.mobileCheck = function() {
                         session["date"] = cDateObj;
                         cSessions2.push(session);
                     });
-                    let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"]};
+                    let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"], district:cDistrictName};
                     centresTable.push(cInfo);
                 });
             });
@@ -932,7 +948,10 @@ window.mobileCheck = function() {
             }
         },
         onShow : function(){console.log("onshow");},
-        onHide : function(){console.log("onhide");},
+        onHide : function(){
+            console.log("onhide");
+            GetDistricts();
+        },
         onRemove: function(value, text, $selectedItem)
         {
             let stateInt = parseInt(value);
@@ -1181,7 +1200,7 @@ function GetDistricts()
                   });
               }
 
-              $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts", onAdd:onDistrictAdd, onRemove:onDistrictRemove});
+              $('#districts').dropdown({values:g_districtsAvailable, placeholder:"Select districts", onAdd:onDistrictAdd, onRemove:onDistrictRemove, onHide:onDistrictHide});
               $('#districts').dropdown("setup menu", {values:g_districtsAvailable});
               if(distSelectedNames.length > 0)
               {
@@ -1409,16 +1428,6 @@ ProcessPersistentVariables();
 
 ProcessQueryParams();
  
- $('#getCentresBtn').click(function(){
-    OnDateChange();
-     RefreshAll(false, true);
-        });
- 
- $('#getDistrictsBtn').click(function()
- {
-    GetDistricts();
- });
-
  $('#siteTour').click(function()
  {
     introJs().setOptions({
