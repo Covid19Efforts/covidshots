@@ -243,7 +243,7 @@ function BookingLogOut()
     g_persistent_vars.g_bBooking_state_user_logged_in_set(false);
     g_persistent_vars.g_booking_state_auth_bearer_token_set("");
     tata.warn("Logged out", "Refreshing site ...", {onClose:function(){
-        //window.location.reload();
+        window.location.reload();
     }});
 }
 
