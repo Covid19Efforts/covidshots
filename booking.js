@@ -625,33 +625,34 @@ function CreateUserSettingsCard(person)
     if (g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
     {
         let userSettings = g_persistent_vars.g_booking_state_users_to_auto_book_settings_get_by_user_id(userId);
-        let parentCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
-        parentCard.find('#BookingDialogBookingSettingEnabledAutoBook_' + userId)[0].checked = true;//this will not fire onchange event
-        if (userSettings.vaccines.indexOf("any") == -1)
-        {
-            if (userSettings.vaccines.indexOf("covishield") != -1) {
-                let vacInput = parentCard.find("#BookingDialogBookingVaccineCovishield_" + userId);
-                vacInput[0].checked = true;
-            }
-            if (userSettings.vaccines.indexOf("covaxin") != -1) {
-                let vacInput = parentCard.find("#BookingDialogBookingVaccineCovaxin_" + userId);
-                vacInput[0].checked = true;
-            }
-            if (userSettings.vaccines.indexOf("sputnikv") != -1) {
-                let vacInput = parentCard.find("#BookingDialogBookingVaccineSputnikV_" + userId);
-                vacInput[0].checked = true;
-            }
+        if (userSettings != undefined) {
+            let parentCard = $('.BkgDlgBookingSettings.ui.card[data-card-user=' + userId + ']');
+            parentCard.find('#BookingDialogBookingSettingEnabledAutoBook_' + userId)[0].checked = true;//this will not fire onchange event
+            if (userSettings.vaccines.indexOf("any") == -1) {
+                if (userSettings.vaccines.indexOf("covishield") != -1) {
+                    let vacInput = parentCard.find("#BookingDialogBookingVaccineCovishield_" + userId);
+                    vacInput[0].checked = true;
+                }
+                if (userSettings.vaccines.indexOf("covaxin") != -1) {
+                    let vacInput = parentCard.find("#BookingDialogBookingVaccineCovaxin_" + userId);
+                    vacInput[0].checked = true;
+                }
+                if (userSettings.vaccines.indexOf("sputnikv") != -1) {
+                    let vacInput = parentCard.find("#BookingDialogBookingVaccineSputnikV_" + userId);
+                    vacInput[0].checked = true;
+                }
             
+            }
+            else {
+                let vacInput = parentCard.find("#BookingDialogBookingVaccineAny_" + userId);
+                vacInput[0].checked = true;
+            }
+            let delayDd = parentCard.find("#BookingDialogBookingSettingsDelay_" + userId);
+            delayDd.dropdown('set selected', userSettings.delay);
+            let dimmerNode = parentCard.find('#BookingDialogBookingSettingDimmer');
+            dimmerNode.dimmer('show');
+            dimmerNode.dimmer('hide');//a bug in dimmer doesn't let it hide before calling show - first time
         }
-        else {
-            let vacInput = parentCard.find("#BookingDialogBookingVaccineAny_" + userId);
-            vacInput[0].checked = true;
-        }
-        let delayDd = parentCard.find("#BookingDialogBookingSettingsDelay_" + userId);
-        delayDd.dropdown('set selected', userSettings.delay);
-        let dimmerNode = parentCard.find('#BookingDialogBookingSettingDimmer');
-        dimmerNode.dimmer('show');
-        dimmerNode.dimmer('hide');//a bug in dimmer doesn't let it hide before calling show - first time
         
     }
 }

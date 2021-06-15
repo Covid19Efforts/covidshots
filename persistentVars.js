@@ -99,7 +99,7 @@ class g_persistent_vars
         let retVal = this._g_booking_state_users_to_auto_book_settings[userId];
         if(retVal == undefined)
         {
-            console.error("userId not found",userId, this._g_booking_state_users_to_auto_book_settings);
+            console.warn("userId not found",userId, this._g_booking_state_users_to_auto_book_settings);
         }
         return retVal;
     }
