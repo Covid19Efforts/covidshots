@@ -48,6 +48,8 @@
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
+
+    var demoServer= "https://46acf6be280b.ngrok.io/"
     
     /*Start  https://stackoverflow.com/a/11381730/981766*/
 window.mobileCheck = function() {
@@ -576,7 +578,7 @@ window.mobileCheck = function() {
     {
         let dateArr = $('#dateInput')[0].value.split('-');
         let dateStr = dateArr[2] + '-' + dateArr[1] + '-' + dateArr[0];
-        let promises = [...g_districtsSelected].map(dist => { return fetch("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
+        let promises = [...g_districtsSelected].map(dist => { return fetch(demoServer+"api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
         Promise.all(promises).then(responses => {return Promise.all(responses.map(response => {return response.json();}));})
         .then(function(data) 
         {
