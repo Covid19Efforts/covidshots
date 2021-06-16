@@ -6,6 +6,12 @@ g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
 
+function ChangeNumberClicked()
+{
+    $('#InputMobileNumber').show();
+    $('#BookingFormgetOtpBtn').show();
+    $('#InputOtpToVerify').hide();
+}
 
 function GetOtpClicked()
 {
@@ -195,7 +201,8 @@ function GetAccountDetails()
     }
     return response.json();
     }).then(data => {
-        console.log("Account details", data);
+        $('#NoUsersRegisteredMessage').hide();
+
         let tableColumns=[
             {data:"User_name", title:"User", render:BookingDialogUsersRender},
             {data:"photo_id", title:"Photo ID", render: BookingDialogPhotoIdRender},
@@ -226,13 +233,33 @@ function GetAccountDetails()
         });
 
     }).catch(error => {
-        tata.error("Error", "Error getting details");
         error.then(resText => {
+            let bLogOut = true;
             if(resText == "Unauthenticated access!")
             {
                 console.error("Unauthenticated access");
+                tata.error("Error", "Unauthenticated access");
+                bLogOut = true;
+            } else
+            {
+                try {
+                    resTextJ = JSON.parse(resText);
+                    if ((resTextJ.errorCode == "APPOIN0019") || (resText.error.includes("No beneficiary found for provided beneficiary mobile number") == true))
+                    {
+                        $('#NoUsersRegisteredMessage').show();
+                        tata.warn("No beneficiaries", "Add beneficiaries using CoWin portal");
+                        bLogOut = false;
+                    }
+                }
+                catch (e)
+                {
+                    console.error("error parsing response text", resText);
+                    bLogOut = true;
+                }
             }
-            BookingLogOut();
+            if (bLogOut) {
+                BookingLogOut();
+            }
         });
     });
     }
@@ -322,6 +349,8 @@ function BookingInit()
     $('#BookingSettingsDialogButton').click(ShowBookingDialog);
     $('#BookingFormgetOtpBtn').click(GetOtpClicked);
     $('#BookingFormResendOtpBtn').click(GetOtpClicked);
+    $('#BookingFormResendOtpBtn').click(GetOtpClicked);
+    $('#BookingFormChangeNumberBtn').click(ChangeNumberClicked);
     $('#BookingFormVerifyOtpBtn').click(VerifyOtpClicked);
     $('#BookingSettings .menu .item').tab({history:false});
     $('#btn_auto_book').click(OnAutoBookClick);

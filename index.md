@@ -164,7 +164,18 @@ title: Covid Shots
 
   </div>
   <div class="ui bottom attached tab segment" data-tab="accounts" id="BookingAccountsList">
+  <!--2nd tab-->
+  <div class="field" style="display:none" id="NoUsersRegisteredMessage">
+        <div class="ui yellow message">
+          <div class="header">
+            No users
+          </div>
+          <p>There are no users registered with your account. Please add then from <a href="https://www.cowin.gov.in/home" target="_blank">CoWin portal.</a></p>
+        </div>
+      </div>
+      <!--table-->
     <table id="bookingAccountDetails" class="display cell-border" width="100%"><thead></thead></table>
+  <!--2nd tab end-->
   </div>
   <div class="ui bottom attached tab segment" data-tab="BookingTab">
     <!--Third tab-->
