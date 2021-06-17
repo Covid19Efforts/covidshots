@@ -49,7 +49,7 @@
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
 
-    var demoServer= "https://46acf6be280b.ngrok.io/"
+    var demoServer= "https://f123b9f67b18.ngrok.io/"
     
     /*Start  https://stackoverflow.com/a/11381730/981766*/
 window.mobileCheck = function() {
