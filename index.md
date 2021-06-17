@@ -146,7 +146,7 @@ title: Covid Shots
           <div class="header">
             Logged in
           </div>
-          <p>You have successfully logged in. click on the <b>Log out</b> buttont to log out</p>
+          <p>You have successfully logged in. click on the <b>Log out</b> button to log out</p>
         </div>
         <button class="ui button" id="BookingFormLogOut">Log out</button>
       </div>
@@ -305,7 +305,7 @@ title: Covid Shots
   <i class="big bell slash icon" id="alarm_vaccine_icon"></i>
 </button>
 
-<h5 class="ui header">Auto book slots</h5>
+<h5 class="ui header">Automatically book a slot</h5>
 
 <div class="ui animated button" tabindex="0" id="btn_auto_book" style="float:left">
       <div class="hidden content">Auto book</div>

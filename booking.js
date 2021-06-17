@@ -90,7 +90,7 @@ function VerifyOtpClicked()
     $('#BookingFormDimmer').removeClass('active');
     g_persistent_vars.g_booking_state_auth_bearer_token_set(data["token"]);
     g_persistent_vars.g_bBooking_state_user_logged_in_set(true);
-    tata.success("Login success", "You hav successfully logged in");
+    tata.success("Login success", "You have successfully logged in");
     $('#InputOtpToVerify').hide();
     $('#UserLoggedIn').show();
     $('#BookingAccountDetails,#BookingBookingSettings').show();
