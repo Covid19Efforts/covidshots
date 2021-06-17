@@ -997,6 +997,8 @@ window.mobileCheck = function() {
         {
             AddRemoveUrlParam(true, 'date', selectedDate);
         }
+
+        RefreshAll(false, true);
     }
 
     /*TODO: need to make this idempotent in case prog a filter is attempted to be enabled twice g_filter_count will increment
