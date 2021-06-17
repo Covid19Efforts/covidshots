@@ -901,7 +901,7 @@ window.mobileCheck = function() {
     
     function GetStates()
     {
-        fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
+        fetch(demoServer+"api/v2/admin/location/states", {
         
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": null,
@@ -1135,7 +1135,7 @@ function GetDistricts()
   
     g_statesSelected.forEach((state, index) => 
     {
-      fetch("https://cdn-api.co-vin.in/api/v2/admin/location/districts/" + String(state), {
+      fetch(+demoServer+"api/v2/admin/location/districts?id=" + String(state), {
       "referrerPolicy": "strict-origin-when-cross-origin",
       "body": null,
       "method": "GET",
