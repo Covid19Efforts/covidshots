@@ -281,7 +281,7 @@ window.mobileCheck = function() {
         
     }
     
-    function DetectChange(newData, oldData)
+    function DetectChangeInternal(newData, oldData)
     {
         console.log("DetectChange", newData, oldData);
         let notifyInfo = {};
@@ -353,6 +353,12 @@ window.mobileCheck = function() {
                 }
             }
         }
+        return notifyInfo;
+    }
+
+    function DetectChange(newData, oldData, bShowNotification = true)
+    {
+        let notifyInfo = DetectChangeInternal(newData, oldData);
         let centreNames = Object.keys(notifyInfo);
         if(centreNames.length > 0)
         {
@@ -372,22 +378,23 @@ window.mobileCheck = function() {
                 caption += "<br />";
             });
 
-            let stopAudio = function(){g_handle_audio_alarm.pause();};
             if(g_handle_audio_alarm != null)
             {
                 if(g_handle_audio_alarm.ended == false)
                 {
-                    stopAudio();
+                    PauseAudio();
                 }
             
-                g_handle_audio_alarm.loop = true;
-                if(g_switch_alarm_on == true)
+                
+                if(g_switch_alarm_on == true && g_booking_state_auto_booking_on == false)//in case of autobook we only sound alarm when asking for OTP
                 {
-                    g_handle_audio_alarm.play();
+                    PlayAudio();
                 }
             }
             
-            tata.success(title, caption, {position:'br', holding:true, onClick: stopAudio, onClose: stopAudio});
+            if (bShowNotification == true) {
+                tata.success(title, caption, { position: 'br', holding: true, onClick: PauseAudio, onClose: PauseAudio });
+            }
             
             console.log(notifyInfo);
 
@@ -459,7 +466,7 @@ window.mobileCheck = function() {
                 let bAutoRefreshOn = ($('#input_auto_refresh_interval_parent').hasClass('disabled') == false);
                 if(bAutoRefreshOn == true)
                 {
-                    DetectChange(newFilteredData, oldFiltereddata);
+                    DetectChange(newFilteredData, oldFiltereddata, true);
                 }
             }
 
@@ -1548,7 +1555,8 @@ $('#viewStatsImgBtn').click(OnViewMoreStatsClick);
 
 GetStates();
 
-BookingInit();
+    BookingInit();
+    UtilInit();
 });    
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/

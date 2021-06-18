@@ -2,6 +2,19 @@ const g_booking_config_encryption_secret1 = "b5cab167-7977-4df1-8027-a63aa144f04
 const g_booking_config_encryption_secret2 = "CoWIN@$#&*(!@%^&";//Key
 const g_booking_config_secret = "U2FsdGVkX194jQCChEwkQBXzvshC6bewrzI96RXGqwopnQMmteiKcarRFTwVmjraC1fqnT6TjpzR3tg0A8DdzQ==";
 
+
+const g_booking_config_prompt_for_otp_on_logout = true;
+const g_booking_config_verify_otp_pending_payloads_attr_name = "data-state-bProcessPendingPayloads";
+
+/*
+consider a scenario where auto refersh has been looking for slots for many hours,
+and when it finds one the user session has expired. The plan is to keep the info
+cached and prompt user for new OTP (code would auto trigger generate OTP beforehand).
+As soon as user enters OTP we login and try booking with pending info.
+each element of this array will be an object - { "userId": userId, "centreName": centreName, "payload": payload };
+*/
+g_booking_state_pending_payloads = [];
+
 g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
@@ -14,6 +27,11 @@ function ChangeNumberClicked()
 }
 
 function GetOtpClicked()
+{
+    GetOtpInternal(false);
+}
+
+function GetOtpInternal(bProcessPendingPayloads = false/*A booking attempt was interrupted. need to reloign and retry*/)
 {
     let mobileNumStr = $('#BookingFormOtpMobileNumber')[0].value;
     let mobileNumInt = parseInt(mobileNumStr);
@@ -48,6 +66,15 @@ function GetOtpClicked()
         $('#BookingFormgetOtpBtn').hide();
         $('#InputOtpToVerify').show();
         $('#BookingFormDimmer').removeClass('active');
+    
+        if (bProcessPendingPayloads == true)
+        {
+            $('#InputOtpToVerify').attr(g_booking_config_verify_otp_pending_payloads_attr_name, true);
+        }
+        else {
+            $('#InputOtpToVerify').removeAttr(g_booking_config_verify_otp_pending_payloads_attr_name);
+    }
+        
     }).catch(error => {
         tata.error("OTP Error", "Error Generating OTP");
         $('#BookingFormDimmer').removeClass('active');
@@ -92,6 +119,30 @@ function VerifyOtpClicked()
     g_persistent_vars.g_bBooking_state_user_logged_in_set(true);
     tata.success("Login success", "You have successfully logged in");
     $('#InputOtpToVerify').hide();
+    let bProcessPendingPayloads = false;
+    let attrtVal = $('#InputOtpToVerify').attr(g_booking_config_verify_otp_pending_payloads_attr_name);
+    if ((g_booking_state_pending_payloads.length > 0) && (attrtVal.toLowerCase() === "true"))
+    {
+        bProcessPendingPayloads = true;
+    }
+    else
+    {
+        bProcessPendingPayloads = false;
+        $('#InputOtpToVerify').removeAttr(g_booking_config_verify_otp_pending_payloads_attr_name);
+        g_booking_state_pending_payloads = [];
+    }
+
+    if (bProcessPendingPayloads == true)
+    {
+        g_booking_state_pending_payloads.forEach(payload => {
+            //{ "userId": userId, "centreName": centreName, "payload": payload }
+            let userId = payload.userId;
+            let centreName = payload.centreName;
+            let userPayload = payload.payload;
+            TryAutoBookInternal(userPayload, userId, centreName, true);
+        });
+    }
+
     $('#UserLoggedIn').show();
     $('#BookingAccountDetails,#BookingBookingSettings').show();
     GetAccountDetails();
@@ -274,21 +325,43 @@ function BookingLogOut()
     }});
 }
 
-function ShowBookingDialog(e,t){
-    if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true)
-    {
-        $('#BookingAccountDetails,#BookingBookingSettings').show();
-        $('#UserLoggedIn').show();
-        $('#InputOtpToVerify').hide();
-        $('#InputMobileNumber').hide();
-        $('#BookingFormgetOtpBtn').hide();
-        GetAccountDetails();
+function ShowBookingDialog(e, t) {
+    ShowBookingDialogInternal(false);
+}
+
+function ShowBookingDialogInternal(bProcessPendingPayloads = false/*A booking attempt was interrupted. need to reloign and retry*/){
+    
+    if (bProcessPendingPayloads == false) {
+        if (g_persistent_vars.g_bBooking_state_user_logged_in_get() == true) {
+            $('#BookingAccountDetails,#BookingBookingSettings').show();
+            $('#UserLoggedIn').show();
+            $('#InputOtpToVerify').hide();
+            $('#InputMobileNumber').hide();
+            $('#BookingFormgetOtpBtn').hide();
+            GetAccountDetails();
+        }
+        else {
+            $('#BookingAccountDetails,#BookingBookingSettings').hide();
+            $('#UserLoggedIn').hide();
+        }
     }
     else
     {
-        $('#BookingAccountDetails,#BookingBookingSettings').hide();
-        $('#UserLoggedIn').hide();
+        if (g_booking_state_pending_payloads.length > 0)
+        {
+            PlayAudio();
+            tata.warn("Log in again", "Enter the OTP you have received", { position: 'tr', holding: true, onClick: PauseAudio, onClose: PauseAudio });
+            GetOtpInternal(true);
+            $('#InputMobileNumber').hide();
+            $('#BookingFormgetOtpBtn').hide();
+            $('#InputOtpToVerify').show();
+            $('#otpObtained')[0].value = "";//clear previous OTP
+            $('#BookingFormDimmer').removeClass('active');
+            $('#BookingSettings .menu .item').tab('change tab', 'Login');
+            $('#BookingAccountDetails,#BookingBookingSettings').hide();
+        }
     }
+
     $('#BookingSettings').modal('setting', 'closable', true).modal('show');
 }
 
@@ -475,7 +548,7 @@ function TryAutoBook(notifyInfo)
                                     if (slotTimeSelected != "") {
                                         let bookPayload = { center_id: centreId, session_id: session.session_id, beneficiaries: [String(userId)], slot: slotTimeSelected, dose: dose };
                                         console.info("Found a slot!", name, centreId, session, notifyInfoClone[name]);
-                                        TryAutoBookInternal(bookPayload, userId, name);
+                                        TryAutoBookInternal(bookPayload, userId, name, false);
                                         bMoveToNextUser = true;
                                         break;
                                     }
@@ -494,7 +567,7 @@ function TryAutoBook(notifyInfo)
     }
 }
 
-function TryAutoBookInternal(payload, userId, centreName)
+function TryAutoBookInternal(payload, userId, centreName, bProcessingPendingPayloads = false/*To prevent infinite recursion. If true it means that we are already on retry code path*/)
 {
     let payloadStr = JSON.stringify(payload);
     let userDetails = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
@@ -525,16 +598,37 @@ function TryAutoBookInternal(payload, userId, centreName)
             StopAutoBook();
         }
 
+        g_booking_state_pending_payloads = g_booking_state_pending_payloads.filter(ele => ele.userId != userId);//remove user
+
         tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot, {holding:true});
         
     }).catch(error => {
         tata.error("Error", "Error Booking");
         error.then(resText => {
+            bTriggerLogout = true;
             if(resText == "Unauthenticated access!")
             {
                 console.error("Unauthenticated access");
+                if ((g_booking_config_prompt_for_otp_on_logout == true) && (bProcessingPendingPayloads == false/*Not on retry path*/))
+                {
+                    bTriggerLogout = false;
+                    //payload, userId, centreName
+                    let userDetails = { "userId": userId, "centreName": centreName, "payload": payload };
+                    if (g_booking_state_pending_payloads.find(elem => elem.userId == userId) == undefined) {//unique
+                        g_booking_state_pending_payloads.push(userDetails);
+                        if ($('#BookingSettings').modal('is active') == false) {
+                            ShowBookingDialogInternal(true);
+                        }
+                    }
+                }
             }
-            BookingLogOut();
+            else
+            {
+                console.error("Unknown access", resText);
+            }
+            if (bTriggerLogout == true) {
+                BookingLogOut();
+            }
         });
     });
 }

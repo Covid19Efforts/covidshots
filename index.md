@@ -30,6 +30,7 @@ title: Covid Shots
 <script src="components/state.min.js"></script>
 <script src="js/tablesort.js"></script>
 <script src="js/tata.js"></script>
+<script src="js/idle.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.semanticui.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.js"></script>
@@ -342,6 +343,7 @@ minutes
 <br />
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
 
+<script src="util.js?v=1.1"></script>
 <script src="index.js?v=1.1"></script>
 <script src="persistentVars.js?v=1.1"></script>
 <script src="booking.js?v=1.1"></script>
