@@ -1,0 +1,12 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+@media screen and (min-width: 741px){
+.wrapper {
+  max-width: 75%;
+  min-width: 640px;
+  width: initial;
+}
+}

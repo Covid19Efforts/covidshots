@@ -407,7 +407,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 
 	let tableColumns = [{data: ['name'], title: 'Centre name', 
 		render: function(data, type){
-			return "<b>"+ data["name"] + "</b> ( " + data["district"] +" )";
+			return "<b>"+ data["name"] + "</b><br /> ( " + data["district"] +" )";
 		}}];
 	let selectedDate = new Date($('#dateInput')[0].value);
 	for(let day = 0; day < g_config_daystoShow ; day++)
