@@ -26,11 +26,11 @@ class MockApi
 
     static EnableMockApi() {
         this._g_bMockEnabled = "true";
-        localStorage.setItem("_g_bMockEnabled", _g_bMockEnabled);
+        localStorage.setItem("_g_bMockEnabled", this._g_bMockEnabled);
     }
 
     static clear() {
-        DisableMockApi();
+        this.DisableMockApi();
     }
 
     static DisableMockApi() {
