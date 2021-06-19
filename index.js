@@ -579,37 +579,38 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 	$('#vaccinesAvailableNumBlock').show();
 	$('#vaccinesAvailableNum')[0].textContent = g_stats_num_available_vaccines;
 }
-    
-function GetCentresData(callback_func)
-{
-	let dateArr = $('#dateInput')[0].value.split('-');
-	let dateStr = dateArr[2] + '-' + dateArr[1] + '-' + dateArr[0];
-	let promises = [...g_districtsSelected].map(dist => { return fetch("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
-	Promise.all(promises).then(responses => {return Promise.all(responses.map(response => {return response.json();}));})
-		.then(function(data) 
-		{
-			let centresTable = [];
-			data.forEach(centres => {
-				centres.centers.forEach(centre => {
-					let cName = centre["name"];
-					let cDistrictName = centre["district_name"];
-					let cSessions = centre["sessions"];
-					let cSessions2 = [];
-					cSessions.forEach(session => {
-						let cDate = session["date"];
-						let cDateObj = dayjs(cDate, 'DD-MM-YYYY');
-						session["date"] = cDateObj;
-						cSessions2.push(session);
-					});
-					let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"], district:cDistrictName};
-					centresTable.push(cInfo);
-				});
-			});
 
-			g_cache_all_centres = centresTable;
-			callback_func();
-		});
-}
+  function GetCentresData(callback_func)
+  {
+        let dateArr = $('#dateInput')[0].value.split('-');
+        let dateStr = dateArr[2] + '-' + dateArr[1] + '-' + dateArr[0];
+        let promises = [...g_districtsSelected].map(dist => { return fetch(MockApi.GetServerUrl()+"/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
+        Promise.all(promises).then(responses => {return Promise.all(responses.map(response => {return response.json();}));})
+        .then(function(data) 
+        {
+            let centresTable = [];
+            data.forEach(centres => {
+                centres.centers.forEach(centre => {
+                    let cName = centre["name"];
+                    let cDistrictName = centre["district_name"];
+                    let cSessions = centre["sessions"];
+                    let cSessions2 = [];
+                    cSessions.forEach(session => {
+                        let cDate = session["date"];
+                        let cDateObj = dayjs(cDate, 'DD-MM-YYYY');
+                        session["date"] = cDateObj;
+                        cSessions2.push(session);
+                    });
+                    
+					let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"], district:cDistrictName};
+                    centresTable.push(cInfo);
+                });
+            });
+
+            g_cache_all_centres = centresTable;
+            callback_func();
+        });
+  }
     
 function RefreshAll(bCallAlarm = false, bScroll = true/*Scroll to results table*/)
 {
@@ -904,9 +905,9 @@ function AddRemoveUrlParam(/*bool*/ bAdd, paramName, paramValue)//eg. 1,states,1
 	SanitizeUrl(decodeURIComponent(uSp.toString()), true);
 }
     
-function GetStates()
-{
-	fetch("https://cdn-api.co-vin.in/api/v2/admin/location/states", {
+    function GetStates()
+    {
+        fetch(MockApi.GetServerUrl()+"/api/v2/admin/location/states", {
         
 		"referrerPolicy": "strict-origin-when-cross-origin",
 		"body": null,
@@ -1577,6 +1578,7 @@ $(document).ready(function(){
 /*END*/
 
 window.addEventListener("message", event => {
+
 	if(event.data !="" && event.data.type == "iframeStatsLoaded" && event.data.id == "viewStatsContent")
 	{
 		console.log("message from iframe", event, $('#viewStatsContent')[0].contentWindow.document.body.offsetHeight);
