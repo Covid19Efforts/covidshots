@@ -1,0 +1,24 @@
+{
+  "name": "vaccinetracker",
+  "version": "1.0.0",
+  "description": "- [Looking for contributors !!!](#looking-for-contributors-)\r     - [UX, QA, Dev, Misc](#ux-qa-dev-misc)\r   - [Use this website to find free vaccine slots, Set alarms](#use-this-website-to-find-free-vaccine-slots-set-alarms)\r     - [Search across multiple districts (and states) at once](#search-across-multiple-districts-and-states-at-once)\r     - [Sort data (Highest number of available vaccines on top)](#sort-data-highest-number-of-available-vaccines-on-top)\r     - [Filter results](#filter-results)\r     - [Monitor vaccine availability continuously (Auto refresh)](#monitor-vaccine-availability-continuously-auto-refresh)\r     - [View availability statistics](#view-availability-statistics)\r     - [Set audio alarm/ Receive notifications](#set-audio-alarm-receive-notifications)\r     - [Disadvantages over Cowin](#disadvantages-over-cowin)\r - [Development](#development)\r   - [Building locally](#building-locally)\r   - [Contributing](#contributing)\r - [Credits](#credits)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lihas/vaccinetracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lihas/vaccinetracker/issues"
+  },
+  "homepage": "https://github.com/lihas/vaccinetracker#readme",
+  "devDependencies": {
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
+  }
+}
