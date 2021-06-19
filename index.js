@@ -48,8 +48,6 @@
     g_statesSelected = new Set();
     g_districtsSelected = new Set();
     g_districtsAvailable = [];
-
-    var demoServer= "https://925baedca28e.ngrok.io/"
     
     /*Start  https://stackoverflow.com/a/11381730/981766*/
 window.mobileCheck = function() {
@@ -578,7 +576,7 @@ window.mobileCheck = function() {
     {
         let dateArr = $('#dateInput')[0].value.split('-');
         let dateStr = dateArr[2] + '-' + dateArr[1] + '-' + dateArr[0];
-        let promises = [...g_districtsSelected].map(dist => { return fetch(demoServer+"api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
+        let promises = [...g_districtsSelected].map(dist => { return fetch(MockApi.GetServerUrl()+"/api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + String(dist) +"&date=" + dateStr, {"referrerPolicy": "strict-origin-when-cross-origin", "body": null, "method": "GET", "mode": "cors",  "credentials": "omit"});});
         Promise.all(promises).then(responses => {return Promise.all(responses.map(response => {return response.json();}));})
         .then(function(data) 
         {
@@ -901,7 +899,7 @@ window.mobileCheck = function() {
     
     function GetStates()
     {
-        fetch(demoServer+"api/v2/admin/location/states", {
+        fetch(MockApi.GetServerUrl()+"/api/v2/admin/location/states", {
         
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": null,
