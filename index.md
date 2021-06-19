@@ -70,6 +70,7 @@ title: Covid Shots
       <a class="item" target="_blank" rel="noopener noreferrer" id="SettingsDialogButton"><i class="cog icon"></i>Settings</a>
       <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="bug icon"></i>Report bug</a>
       <a class="item" href="https://github.com/lihas/covidshots/issues" target="_blank" rel="noopener noreferrer"><i class="magic icon"></i>Request feature</a>
+      <a class="item" href="https://github.com/Covid19Efforts/covidshots" target="_blank" rel="noopener noreferrer"><i class="github icon"></i>View on Github</a>
       <a class="item" target="_blank" rel="noopener noreferrer" id="AboutDialogButton"><i class="info circle icon"></i>About</a>
     </div>
   </div>
