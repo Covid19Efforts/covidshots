@@ -11,6 +11,7 @@
 - [Development](#development)
   - [Building locally](#building-locally)
   - [Contributing](#contributing)
+  - [Mock API](#Mock-API)
 - [Credits](#credits)
 
 # Looking for contributors !!!
@@ -58,6 +59,7 @@
 
 <!--
 ### Advantages over Cowin
+1. Auto book!
 1. You can query across sevaral states, and districts at once. Eg. All vaccination centres in Delhi which have covishield available
 1. You can be alerted when a vaccination slot becomes available.
 1. You can sort data to quickly find centres with large number of free slots
@@ -67,7 +69,7 @@
 -->
 
 ### Disadvantages over Cowin
-1. Cannot be used to book slots. For that you will have to use Cowin, et al. (Work in progress? Please join as a contributor)
+~~1. Cannot be used to book slots. For that you will have to use Cowin, et al. (Work in progress? Please join as a contributor)~~
 
 # Development
 ## Building locally
@@ -83,6 +85,19 @@ More info : [Building your site locally](https://docs.github.com/en/pages/settin
 1. Fork this repo to you github profile
 2. Make changes in your forked version of this repo. You can make as many commits as you want
 3. Raise a pull request so that this repo will get notified about your changes, and your changes can be merged with this site.
+
+## Mock API
+Uisng mock API can help in testing. When mock API is in use the data is fetched from our ngrok API instead of cowin servers.
+
+1. Enable usage of mock API
+Open developer settings in chrome, and run the following funtion.
+```
+MockApi.IsMockEnabled()
+```
+2. Disable
+```
+MockApi.DisableMockApi()
+```
 
 # Credits
 <a href="https://www.freepik.com/vectors/business">Business vector created by pikisuperstar - www.freepik.com</a>
