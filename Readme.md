@@ -11,6 +11,7 @@
 - [Development](#development)
   - [Building locally](#building-locally)
   - [Contributing](#contributing)
+  - [Mock API](#Mock-API)
 - [Credits](#credits)
 
 # Looking for contributors !!!
