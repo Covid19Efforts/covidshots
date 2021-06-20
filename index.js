@@ -414,7 +414,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 	{
 		let nextDate = new Date(selectedDate);
 		nextDate.setDate(nextDate.getDate() + day);
-		nextDateDjs = dayjs(nextDate);
+		let nextDateDjs = dayjs(nextDate);
 
 		tableColumns.push({data: "day" + day, title:nextDateDjs.format('ddd MMM DD'), "orderSequence": [ "desc", "asc"],
 			//type:"html-num-fmt",
