@@ -19,6 +19,9 @@ g_booking_state_last_transaction_id = "";
 g_booking_state_auto_booking_on = false;//autobook button is clicked and autobook is active currently
 
 
+//handles
+g_booking_handle_data_table_user_details = null;
+
 function ChangeNumberClicked()
 {
     $('#InputMobileNumber').show();
@@ -269,7 +272,7 @@ function GetAccountDetails()
         });
         let bIsMobileDevice = window.mobileCheck();
 
-        $('#bookingAccountDetails').DataTable({
+        g_booking_handle_data_table_user_details = $('#bookingAccountDetails').DataTable({
             destroy:true,
             data:tableData,
             responsive: bIsMobileDevice,
@@ -280,8 +283,10 @@ function GetAccountDetails()
             columnDefs:[
                 {targets:'_all', className:'dt-body-center'},
                 {targets:'_all', className:'dt-head-center'},
-        ]
+            ]
         });
+
+        g_booking_handle_data_table_user_details.columns.adjust().responsive.recalc();//This will be missed in tab's onFirstLoad if user switches to tab before table has been redered. Another case is when user switches to accounts tab and then to bookings all too quickly. then even this wont work. The best solution would be to show these two tabs when data is available after fetch, and table is rendered.
 
     }).catch(error => {
         error.then(resText => {
@@ -425,7 +430,10 @@ function BookingInit()
     $('#BookingFormResendOtpBtn').click(GetOtpClicked);
     $('#BookingFormChangeNumberBtn').click(ChangeNumberClicked);
     $('#BookingFormVerifyOtpBtn').click(VerifyOtpClicked);
-    $('#BookingSettings .menu .item').tab({history:false});
+    $('#BookingSettings .menu .item').tab({
+        history: false,
+        onFirstLoad: function (tabPath, parameterArray, historyEvent) { if (tabPath == "accounts") { if (g_booking_handle_data_table_user_details != null) { g_booking_handle_data_table_user_details.columns.adjust().responsive.recalc();}}}
+    });
     $('#btn_auto_book').click(OnAutoBookClick);
     $('#BookingFormLogOut').click(BookingLogOut);
     $('#BookingDialogBookingSettingsDelay').dropdown();
