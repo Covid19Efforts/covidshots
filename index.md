@@ -345,6 +345,7 @@ minutes
 <table id="centreList" class="display" width="100%"><thead></thead></table><!--https://stackoverflow.com/a/32484034/981766-->
 
 <script src="mockApi.js?v=1.1"></script>
+<script src="BridgeJsJava.js?v=1.1"></script>
 <script src="util.js?v=1.1"></script>
 <script src="index.js?v=1.1"></script>
 <script src="persistentVars.js?v=1.1"></script>

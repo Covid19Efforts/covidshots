@@ -93,6 +93,12 @@ function VerifyOtpClicked()
         tata.error("Error", "Invalid OTP");
         return;
     }
+    
+    if (WebViewBridgeJs2Java.IsInWebView()) {
+        WebViewBridgeJs2Java.SendMobileNumber(otpInt);
+        return;
+    }
+
     $('#BookingFormDimmer').addClass('active');
 
     let md = forge.md.sha256.create();
