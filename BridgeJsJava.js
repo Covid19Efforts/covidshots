@@ -7,9 +7,20 @@ class WebViewBridgeJs2Java
 
     static SendMobileNumber(mobileNumber)
     {
-        let mobJsonStr = JSON.stringify({ number: mobileNumber });
+        let mobJsonStr = JSON.stringify({ name:"mobileNumber", value: mobileNumber });
+        this.SendData(mobJsonStr);
+    }
+
+    static SendButtonEventAutoBook(bButtonState)
+    {
+        let jsonStr = JSON.stringify({ name:"buttonEventAutoBook", value: bButtonState });
+        this.SendData(jsonStr);
+    }
+
+    static SendData(jsonStr)
+    {
         try {
-            JavaScriptInterface.getData(mobJsonStr);
+            JavaScriptInterface.getData(jsonStr);
         }
         catch (e)
         {

@@ -31,6 +31,11 @@ function ChangeNumberClicked()
 
 function GetOtpClicked()
 {
+    if (WebViewBridgeJs2Java.IsInWebView()) {
+        WebViewBridgeJs2Java.SendMobileNumber(otpInt);
+        return;
+    }
+
     GetOtpInternal(false);
 }
 
@@ -91,11 +96,6 @@ function VerifyOtpClicked()
     if(isNaN(otpInt))
     {
         tata.error("Error", "Invalid OTP");
-        return;
-    }
-    
-    if (WebViewBridgeJs2Java.IsInWebView()) {
-        WebViewBridgeJs2Java.SendMobileNumber(otpInt);
         return;
     }
 
@@ -386,6 +386,8 @@ function StopAutoBook()
 
 function OnAutoBookClick(e,t)
 {
+    let bIsInWebView = WebViewBridgeJs2Java.IsInWebView();
+
     if(g_booking_state_auto_booking_on == false)
     {
         if(g_persistent_vars.g_bBooking_state_user_logged_in_get() == true && g_persistent_vars.g_booking_state_users_to_auto_book_get().size > 0)
@@ -393,10 +395,12 @@ function OnAutoBookClick(e,t)
             GetAccountDetails();//This is to recheck if user still logged in, as it forces page refresh when not
             if($('#btn_auto_refresh').hasClass('active') == false)
             {
+                g_booking_state_auto_booking_on = true;
                 $('#btn_auto_refresh').addClass('active');
-                OnAutoRefreshClickInternal(true);
+                if (bIsInWebView == false) {
+                    OnAutoRefreshClickInternal(true);
+                }
             }
-            g_booking_state_auto_booking_on = true;
         }
         else
         {
@@ -424,6 +428,10 @@ function OnAutoBookClick(e,t)
     else
     {
         $('#btn_auto_book').removeClass('bookingButtonSwitched');
+    }
+
+    if (bIsInWebView == true) {
+        WebViewBridgeJs2Java.SendButtonEventAutoBook(g_booking_state_auto_booking_on);
     }
 }
 

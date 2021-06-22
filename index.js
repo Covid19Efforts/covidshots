@@ -1316,6 +1316,7 @@ function OnAutoRefreshClickInternal(buttonOn) {
 		}
 
 		else {
+			
 			if(g_handle_refresh_interval_timer != null)
 			{
 				clearInterval(g_handle_refresh_interval_timer);
