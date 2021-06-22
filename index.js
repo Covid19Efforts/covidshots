@@ -452,7 +452,9 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 				}
                     
 				/*Modify $.fn.dataTable.ext.type.order regex when chaning this*/
-				let btnHtml = '<span>' + '<button style=" cursor: default;" class="mini ui ' + btnClr + ' button">' + btnContent + '</button>' +  '</span>';
+				//let btnHtml = '<span>' + '<button style=" cursor: default;" class="mini ui ' + btnClr + ' button">' + btnContent + '</button>' +  '</span>';
+				let btnHtml = '<object width="125px" data="assets/mockui3c.png"></object> <object width="125px" data="assets/mockUI3c_sputnik.png"></object>';
+				
 				return btnHtml;
 			}
 		});
@@ -473,7 +475,8 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 	g_cache_filtered_data = newFilteredData.slice();
             
 	let tableData = convertDataToTable(newFilteredData);
-            
+    
+	/*
 	$.fn.dataTable.ext.type.order['format_cust_vacc_available-pre'] = function ( data ) 
 	{
 		let numVacs = data.match(/(<span><button style=".+?" class=".+?">)(?<numVac>.+?)(<\/button><\/span>)/i).groups.numVac;
@@ -493,7 +496,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 				console.error("Error ordering. invalid value in cell", numVacs, data);
 			}
 		}
-	};
+	};*/
 
 	let bIsMobileDevice = window.mobileCheck();
 	console.info("bIsMobileDevice", bIsMobileDevice);

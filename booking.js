@@ -31,8 +31,16 @@ function ChangeNumberClicked()
 
 function GetOtpClicked()
 {
+    let mobileNumStr = $('#BookingFormOtpMobileNumber')[0].value;
+    let mobileNumInt = parseInt(mobileNumStr);
+    if(isNaN(mobileNumInt))
+    {
+        tata.error("Error", "Invalid Mobile number");
+        return;
+    }
+
     if (WebViewBridgeJs2Java.IsInWebView()) {
-        WebViewBridgeJs2Java.SendMobileNumber(otpInt);
+        WebViewBridgeJs2Java.SendMobileNumber(mobileNumInt);
         return;
     }
 
