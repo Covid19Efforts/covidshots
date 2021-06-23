@@ -20,11 +20,16 @@ class WebViewBridgeJs2Java
     static SendData(jsonStr)
     {
         try {
-            JavaScriptInterface.getData(jsonStr);
+            JavaScriptInterface.jsToAndroid(jsonStr);
         }
         catch (e)
         {
             return;
         }
     }
+}
+
+function androidToJs(obj)
+{
+    console.log("androidToJs", obj);
 }
