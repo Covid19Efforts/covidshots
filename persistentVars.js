@@ -5,6 +5,7 @@ class g_persistent_vars
     static _g_booking_state_users_to_auto_book = new Set();
     static _g_booking_state_users_to_auto_book_settings = {};//stores autobook related settings(configured from autobook settings cards) for user which has autobook on
     static _g_booking_state_users_details = {};
+    static _g_booking_state_user_mobile = ""; //flush autobook settings when user mobile number changes
 
     static g_booking_state_auth_bearer_token_set(value)
     {
@@ -63,7 +64,13 @@ class g_persistent_vars
         return this._g_booking_state_users_to_auto_book;
     }
 
-    ///
+    static g_booking_state_users_to_auto_book_clear()
+    {
+        this._g_booking_state_users_to_auto_book = new Set();
+        localStorage.setItem("_g_booking_state_users_to_auto_book", JSON.stringify([...this._g_booking_state_users_to_auto_book]));
+    }
+
+    ///_g_booking_state_users_details
     static g_booking_state_users_details_set(userDetails)
     {
         this._g_booking_state_users_details[userDetails.beneficiary_reference_id] = userDetails;
@@ -87,7 +94,7 @@ class g_persistent_vars
         return retVal;
     }
 
-    ///
+    ///_g_booking_state_users_to_auto_book_settings
     static g_booking_state_users_to_auto_book_settings_set(userId, userDetails) {
         this._g_booking_state_users_to_auto_book_settings[userId] = userDetails;
         localStorage.setItem("_g_booking_state_users_to_auto_book_settings", JSON.stringify(this._g_booking_state_users_to_auto_book_settings));
@@ -109,5 +116,30 @@ class g_persistent_vars
         this._g_booking_state_users_to_auto_book_settings = JSON.parse(localStorage.getItem("_g_booking_state_users_to_auto_book_settings"));
         delete this._g_booking_state_users_to_auto_book_settings[userId];
         localStorage.setItem("_g_booking_state_users_to_auto_book_settings", JSON.stringify(this._g_booking_state_users_to_auto_book_settings));
+    }
+
+    static g_booking_state_users_to_auto_book_settings_clear() {
+        this._g_booking_state_users_to_auto_book_settings = {};
+        localStorage.setItem("_g_booking_state_users_to_auto_book_settings", JSON.stringify(this._g_booking_state_users_to_auto_book_settings));
+    }
+
+    //_g_booking_state_user_mobile
+    static g_booking_state_user_mobile_set(value)
+    {
+        this._g_booking_state_user_mobile = String(value);
+        localStorage.setItem("_g_booking_state_user_mobile", this._g_booking_state_user_mobile);
+    }
+
+    static g_booking_state_user_mobile_get()
+    {
+        if(this._g_booking_state_user_mobile == "")
+        {
+            this._g_booking_state_user_mobile = localStorage.getItem("_g_booking_state_user_mobile");
+        }
+        if(this._g_booking_state_user_mobile == null)
+        {
+            //console.error("Error getting mobile number from local storage");
+        }
+        return this._g_booking_state_user_mobile;
     }
 }

@@ -39,6 +39,16 @@ function GetOtpClicked()
         return;
     }
 
+    let oldMobNum = g_persistent_vars.g_booking_state_user_mobile_get();
+    if (oldMobNum != String(mobileNumInt))
+    {
+        console.info("mobile number changed", oldMobNum, mobileNumInt);
+        g_persistent_vars.g_booking_state_user_mobile_set(mobileNumInt);
+        g_persistent_vars.g_booking_state_users_to_auto_book_clear();
+        g_persistent_vars.g_booking_state_users_to_auto_book_settings_clear();
+
+    }
+
     if (WebViewBridgeJs2Java.IsInWebView()) {
         WebViewBridgeJs2Java.SendMobileNumber(mobileNumInt);
         return;
