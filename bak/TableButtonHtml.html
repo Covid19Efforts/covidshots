@@ -1,109 +1,4 @@
-.BkgDlgBookingSettings {
-    /*Empty class to make it easier to find the elements*/
-}
-
-body #BookingSettings {
-    font-family: sans-serif;
-}
-
-#BookingSettings .tab,
-#BookingSettings div.ui.top.attached.tabular.menu,
-#BookingSettings .tabular.menu .item.active {
-    border-color: #cc1b64;
-}
-
-#topBar p {
-    color: #333333;
-    display: inline;
-    font-weight: bolder;
-}
-
-#topBar #AutoRefreshRecordGif {
-    color: #db2828;
-    width: fit-content;
-}
-
-#topBar #AutoRefreshRecordTimeRemaing {
-    color: #2085D0ff;
-}
-
-#topBar {
-    background: #FFD54EFF;
-}
-
-#vaccinesAvailableNumBlock img:hover {
-    transform: translateY(8px);
-    border-bottom-style: solid;
-    border-bottom-color: #2085D0;
-}
-
-#viewStatsContent {
-    border-radius: 20px;
-    width: 100%;
-    border: none;
-}
-
-.dataTables_length#centreList_length,
-#centreList_filter>label {
-    /*Search box label*/
-    font-size: small;
-}
-
-#centreList_filter>label>span>input[type=search] {
-    /*searchbox*/
-    border-radius: 20px;
-}
-
-.dataTables_length#centreList_length .selection.ui.dropdown {
-    min-width: 0;
-}
-
-#centreList_wrapper {
-    margin-top: 25px;
-}
-
-#centreList_wrapper>div>div:nth-child(1) {
-    padding-bottom: 0;
-}
-
-#centreList_wrapper>div>div.row.dt-table {
-    padding-top: 0;
-}
-
-.ui.button.tableOptionsButtonOuter,
-.ui.button.tableOptionsButtonInner {
-    border: 1px solid transparent;
-}
-
-#btn_auto_book {
-    color: #c71585;
-}
-
-#btn_auto_book.bookingButtonSwitched {
-    color: #ffffff;
-    background-color: #c71585;
-}
-
-#BookingDialogUsersRender {
-    font-family: sans-serif;
-}
-
-#BookingDialogUsersRender p {
-    font-size: small;
-}
-
-#BookingDialogUsersRender .BookingDialogUsersRenderSecret {
-    background-color: #51c2d5;
-    color: white;
-    border-radius: 5px;
-    padding: 2px;
-}
-
-#BookingDialogUsersRender .BookingDialogUsersRenderAge {
-    color: rgb(255, 99, 71);
-}
-
-/*START vaccine info table cell card*/
+<style>
 div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
     overflow:hidden;
     }
@@ -129,11 +24,7 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
         --info-card-body-s:89%;
         --info-card-body-l:50%;
       }
-      .tableVaccineInfoRoot_sputnikv {
-        --info-card-body-h:272;
-        --info-card-body-s:66%;
-        --info-card-body-l:50%;
-      }
+      .tableVaccineInfoRoot_sputnikv {}
       
       .tableVaccineInfoRoot .vaccineInfoTitle{
       bottom:0;
@@ -211,41 +102,31 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
        background:radial-gradient(hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 2%)), hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 10%)));
        align-self:flex-end;
       }
-/*END*/
+  
+</style>
+<div class="tableVaccineInfoRoot ##VAC_root_class##" style="##VAC_root_style##">
+  
+  <div class="tableVaccineInfoParent" style="##VAC_45_p_display##">
+  	<div class="vaccineInfoAgeText"><p>45+</p></div>
+    	<div class="doseBox" style="##VAC_45_p_d1_display##">##VAC_45_p_d1##</div>
+        <div class="vaccineInfoDivider" style="##VAC_45_p_divider_v_display##"></div>
+        <div class="doseBox" style="##VAC_45_p_d2_display##">##VAC_45_p_d2##</div>
+  </div>
+  
+  <div class="vaccineInfoDividerH_parent" style="##VAC_divider_h_p_display##">
+  	<div class="vaccineInfoDivider_gapfiller"></div>
+  	<div class="vaccineInfoDividerH" style="##VAC_divider_h_d1_display##"></div>
+  	<div class="vaccineInfoDividerH" style="##VAC_divider_h_d2_display##"></div>
+  </div>
+  
+  <div class="tableVaccineInfoParent" style="##VAC_18_45_p_display##">
+  	<div class="vaccineInfoAgeText"><p>18-45</p></div>
+    <div class="doseBox" style="##VAC_18_45_d1_display##">##VAC_18_45_d1##</div>
+    	<div class="vaccineInfoDivider" style="##VAC_18_45_divider_v_display##"></div>
+       <div class="doseBox" style="##VAC_18_45_d2_display##">##VAC_18_45_d2##</div>
+  </div>
+  
+  
+  <div class="vaccineInfoTitle ##VAC_TITLE_CLASS##">##VAC_TITLE_TEXT##</div>
 
-/*START https://codepen.io/desirecode/pen/MJPJqV*/
-#scrollToTop {
-    position: fixed;
-    right: 10px;
-    bottom: 10px;
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    background-color: #3498db;
-    text-indent: -9999px;
-    display: none;
-    -webkit-border-radius: 60px;
-    -moz-border-radius: 60px;
-    border-radius: 60px
-}
-
-#scrollToTop span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -8px;
-    margin-top: -12px;
-    height: 0;
-    width: 0;
-    border: 8px solid transparent;
-    border-bottom-color: #ffffff;
-}
-
-#scrollToTop:hover {
-    background-color: #e74c3c;
-    opacity: 1;
-    filter: "alpha(opacity=100)";
-    -ms-filter: "alpha(opacity=100)";
-}
-
-/*END*/
+</div>

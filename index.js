@@ -3,7 +3,9 @@ const g_config_daystoShow = 7;
 const g_config_refresh_interval_default = 1;
 const g_config_refresh_interval_min     = 1;
 const g_config_refresh_interval_max     = 600;
-    
+
+const g_config_supported_vaccines = ["covishield", "covaxin", "sputnikv"];
+
 //filters
 g_filter_count = 0; //count of enabled filters
 g_filter_age_18to45                         = new Boolean(false);
@@ -260,16 +262,29 @@ function convertDataToTable(data)
 		{//generate calendar entries for 7 days of the week
 			let calendarDate = selectedDate.add(day, 'day');
 			let dayStr = "day" + day;
-			daysData[dayStr] = {vaccine:"", available: -1, minAge: -1, slots:[]};
+			
+			//each element of vaccines[name] -> {minAge:-1, numDose1:-1, numDose2:-1, slots: []}
+			daysData[dayStr] = { vaccines: {}, totalAvailable: -1};
 
 			sessions.forEach(session => 
 			{
 				if(calendarDate.isSame(session.date, 'day') == true)
 				{
-					daysData[dayStr].vaccine = session["vaccine"];
-					daysData[dayStr].available = session["capacity_to_show"];//could be available_capacity, or available_capacity_dose1/available_capacity_dose2 depending on filters
-					daysData[dayStr].minAge = session["min_age_limit"];
-					daysData[dayStr].slots = session["slots"];
+					if (daysData[dayStr].totalAvailable == -1) { daysData[dayStr].totalAvailable = 0; }
+					
+					let vacName = session["vaccine"];
+
+					if (daysData[dayStr].vaccines[vacName] == undefined)
+					{
+						daysData[dayStr].vaccines[vacName] = {};
+					}
+
+					let vacInfo = { numDose1: session.available_capacity_dose1, numDose2: session.available_capacity_dose2, slots: session["slots"] };
+					let minAgeStr = String(session["min_age_limit"]);
+					daysData[dayStr].vaccines[vacName][minAgeStr] = vacInfo;
+					
+					daysData[dayStr].totalAvailable += session["capacity_to_show"];//could be available_capacity, or available_capacity_dose1/available_capacity_dose2 depending on filters
+					
 				}
 			})
 		}
@@ -402,6 +417,120 @@ function DetectChange(newData, oldData, bShowNotification = true)
 	}
 }
 
+function TableCellRender(data, type)
+{
+	let retHtmlStr = '<div style="display:inline-flex;flex-direction:column;">';
+	let vaccines = data.vaccines;
+	let bVaccinesAvailable = false;
+	for (let iVac = 0; iVac < g_config_supported_vaccines.length; iVac++)
+	{
+		let vaccName = g_config_supported_vaccines[iVac].toUpperCase();
+		let vacInfo = vaccines[vaccName];
+		
+		if (vacInfo != undefined)
+		{
+			let bShowDose1 = (g_filter_vaccine_dose_1 == true) || (g_filter_vaccine_dose_2 == false);
+			let bShowDose2 = (g_filter_vaccine_dose_2 == true) || (g_filter_vaccine_dose_2 == false);
+			let bShow18_45 = (g_filter_age_18to45 == true) || (g_filter_age_45plus == false);
+			let bShow45plus = (g_filter_age_45plus == true) || (g_filter_age_18to45 == false);
+
+			let numDose1Total = 0;
+			let numDose2Total = 0;
+
+			let numDose1_18_45 = 0;
+			let numDose2_18_45 = 0;
+			let numDose1_45plus = 0;
+			let numDose2_45plus = 0;
+
+			if (g_option_table_centres_show_all == false)//dont show 0 capacity
+			{
+				if (vacInfo["18"] != undefined)
+				{
+					numDose1_18_45 = vacInfo["18"].numDose1;
+					numDose2_18_45 = vacInfo["18"].numDose2;
+				}
+				else
+				{
+					bShow18_45 = false;
+				}
+
+				if (vacInfo["45"] != undefined)
+				{
+					numDose1_45plus = vacInfo["45"].numDose1;
+					numDose2_45plus = vacInfo["45"].numDose2;
+				}
+				else
+				{
+					bShow45plus = false;
+				}
+				numDose1Total = numDose1_18_45 + numDose1_45plus;
+				numDose2Total = numDose2_18_45 + numDose2_45plus;
+				
+				bShowDose1 = bShowDose1 && (numDose1Total > 0);
+				bShowDose2 = bShowDose2 && (numDose2Total > 0);
+			}
+
+			if ((bShow18_45 || bShow45plus) && (bShowDose1 || bShowDose2)) {//at least 1 true
+				let alldisplayStyles = ["##VAC_45_p_display##", "##VAC_45_p_d1_display##", "##VAC_45_p_d2_display##", "##VAC_divider_h_d1_display##", "##VAC_divider_h_d2_display##", "##VAC_18_45_p_display##", "##VAC_18_45_d1_display##", "##VAC_18_45_divider_v_display##", "##VAC_18_45_d2_display##"];
+
+				let htmlStr = GetHtmlVaccineInfo();
+				
+				htmlStr = htmlStr.replace("##VAC_root_class##", "tableVaccineInfoRoot_" + vaccName.toLowerCase());
+
+				/*Dont hide dose1, dose 2 columns since once one of them is hidden user as no way to know what the remaining column represents since there are no headings*/
+				htmlStr = htmlStr.replace("##VAC_TITLE_CLASS##", "vaccineInfoTitle");//.vaccineInfoTitleShort to be used when we hide a column
+				if (bShowDose1 == false)
+				{
+					htmlStr = htmlStr.replace("##VAC_45_p_d1##", "0");
+					htmlStr = htmlStr.replace("##VAC_18_45_d1##", "0");
+				}
+				else
+				{
+					htmlStr = htmlStr.replace("##VAC_45_p_d1##", String(numDose1_45plus));
+					htmlStr = htmlStr.replace("##VAC_18_45_d1##", String(numDose1_18_45));
+				}
+
+				if (bShowDose2 == false)
+				{
+					htmlStr = htmlStr.replace("##VAC_45_p_d2##", "0");
+					htmlStr = htmlStr.replace("##VAC_18_45_d2##", "0");
+				}
+				else {
+					htmlStr = htmlStr.replace("##VAC_45_p_d2##",  String(numDose2_45plus));
+					htmlStr = htmlStr.replace("##VAC_18_45_d2##", String(numDose2_18_45));
+				}
+
+				htmlStr = htmlStr.replace("##VAC_45_p_display##", bShow45plus? "": "display:none");
+				htmlStr = htmlStr.replace("##VAC_18_45_p_display##", bShow18_45 ? "" : "display:none");
+				
+				if (bShow45plus == false || bShow18_45 == false)
+				{
+					htmlStr = htmlStr.replace("##VAC_divider_h_p_display##", "display:none");
+				}
+
+				htmlStr = htmlStr.replace("##VAC_TITLE_TEXT##", vaccName.toUpperCase());
+				if (retHtmlStr != "")
+				{
+					htmlStr = htmlStr.replace("##VAC_root_style##", "margin-top:10px;");
+					//htmlStr = htmlStr.replace("##VAC_root_style##", " ");
+				}
+				else
+				{
+					htmlStr = htmlStr.replace("##VAC_root_style##", " ");
+				}
+				retHtmlStr += htmlStr;
+				bVaccinesAvailable = true;
+			}
+		}
+	}
+	if (bVaccinesAvailable == false)
+	{
+		retHtmlStr +=GetHtmlVaccineInfoNoVaccine();
+	}
+	retHtmlStr += "</div>";
+	return retHtmlStr;
+}
+
 function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
 {   
 
@@ -419,44 +548,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 		tableColumns.push({data: "day" + day, title:nextDateDjs.format('ddd MMM DD'), "orderSequence": [ "desc", "asc"],
 			//type:"html-num-fmt",
 			type:"format_cust_vacc_available" /*So that sorting is handled by $.fn.dataTable.ext.type.order[format_cust_vacc_available-pre]*/,
-			render: function(data, type)
-			{
-				let numAvail = data["available"];
-				let btnClr = "grey";
-				let btnContent = "NA";
-				switch(numAvail)
-				{
-				case -1:
-					btnClr = "grey";
-					btnContent = "NA";
-					break;
-				case 0:
-					btnClr = "red";
-					btnContent = "0";
-					break;
-				default:
-					if(numAvail < 10)
-					{
-						btnClr = "yellow";
-						btnContent = String(numAvail);
-					}
-					else if(numAvail >= 10)
-					{
-						btnClr = "green";
-						btnContent = String(numAvail);
-					}
-					else
-					{
-						console.error("Unexpected number of available slots");
-					}
-				}
-                    
-				/*Modify $.fn.dataTable.ext.type.order regex when chaning this*/
-				let btnHtml = '<span>' + '<button style=" cursor: default;" class="mini ui ' + btnClr + ' button">' + btnContent + '</button>' +  '</span>';
-				//let btnHtml = '<object width="125px" data="assets/mockui3c.png"></object> <object width="125px" data="assets/mockUI3c_sputnik.png"></object>';
-				
-				return btnHtml;
-			}
+			render: TableCellRender
 		});
 	}
             
@@ -477,7 +569,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 	let tableData = convertDataToTable(newFilteredData);
     
 	
-	$.fn.dataTable.ext.type.order['format_cust_vacc_available-pre'] = function ( data ) 
+	/*$.fn.dataTable.ext.type.order['format_cust_vacc_available-pre'] = function ( data ) 
 	{
 		let numVacs = data.match(/(<span><button style=".+?" class=".+?">)(?<numVac>.+?)(<\/button><\/span>)/i).groups.numVac;
 		if(numVacs === "NA" )
@@ -496,7 +588,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 				console.error("Error ordering. invalid value in cell", numVacs, data);
 			}
 		}
-	};
+	};*/
 
 	let bIsMobileDevice = window.mobileCheck();
 	console.info("bIsMobileDevice", bIsMobileDevice);
