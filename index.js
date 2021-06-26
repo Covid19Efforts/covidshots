@@ -288,7 +288,7 @@ function convertDataToTable(data)
 				}
 			})
 		}
-		centreData = Object.assign({}, {name:{name:centre["name"], district:centre["district"]}}, daysData);
+		centreData = Object.assign({}, {name_info:{name:centre["name"], district:centre["district"]}, name:centre["name"]}, daysData);
 		tableData.push(centreData);
 	});
         
@@ -534,10 +534,11 @@ function TableCellRender(data, type)
 function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, bAutoScroll = true /*Auto scroll down to results table*/, bShowScrollNotif = true/*Show notification that you may have to scroll*/)
 {   
 
-	let tableColumns = [{data: ['name'], title: 'Centre name', 
+	let tableColumns = [{data: ['name_info'], title: 'Centre name', 
 		render: function(data, type){
 			return "<b>"+ data["name"] + "</b><br /> ( " + data["district"] +" )";
-		}}];
+		}
+	}];
 	let selectedDate = new Date($('#dateInput')[0].value);
 	for(let day = 0; day < g_config_daystoShow ; day++)
 	{
@@ -622,7 +623,8 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 		columns: tableColumns,
 		language: {
 			"search" : "",
-			"searchPlaceholder" : "Search..."
+			"searchPlaceholder": "Search...",
+			"lengthMenu":"_MENU_ entries"
 		},
 		dom: 'Blfrtip',
 		buttons: [{
@@ -644,7 +646,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 				//    className: showDetailsBtnClasses
 				//}
 			]
-		}],
+		}]
 	});
 
 	//g_handle_data_table.columns.adjust().responsive.recalc();

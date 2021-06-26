@@ -11,7 +11,7 @@
 - [Development](#development)
   - [Building locally](#building-locally)
   - [Contributing](#contributing)
-  - [Mock API](#Mock-API)
+  - [Mock API](#mock-api)
 - [Credits](#credits)
 
 # Looking for contributors !!!
@@ -20,6 +20,8 @@
 ![Join us](images/joinTeam.png)
 
 ## Use this website to find free vaccine slots, Set alarms
+<img src="https://raw.githubusercontent.com/lihas/covidshots/gh-pages/assets/help_vaccine_info.jpg" width="500px">
+
 ### Search across multiple districts (and states) at once
 <!--![Select multiple states at once](images/tour_states.png)-->
 <!--![Select multiple districts at once](images/tour_districts.png)-->

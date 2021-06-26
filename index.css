@@ -103,6 +103,10 @@ body #BookingSettings {
     color: rgb(255, 99, 71);
 }
 
+#centreList_wrapper button {
+    margin-top:0px !important;
+}
+
 /*START vaccine info table cell card*/
 div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
     overflow:hidden;
