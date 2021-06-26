@@ -20,7 +20,7 @@
 ![Join us](images/joinTeam.png)
 
 ## Use this website to find free vaccine slots, Set alarms
-<img src="https://raw.githubusercontent.com/Covid19Efforts/covidshots/gh-pages/assets/help_vaccine_info.jpg" width="500px">
+<img src="https://raw.githubusercontent.com/Covid19Efforts/covidshots/gh-pages/assets/help_vaccine_info.jpg" width="250px">
 
 ### Search across multiple districts (and states) at once
 <!--![Select multiple states at once](images/tour_states.png)-->
