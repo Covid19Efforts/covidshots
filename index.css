@@ -111,7 +111,8 @@ body #BookingSettings {
 div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
     overflow:hidden;
     }
-      .tableVaccineInfoRoot {
+
+      .tableVaccineInfoRootParent{
       --info-card-width:125px;
       --info-card-title-height:18px;
       --info-card-divider-width:1px;
@@ -120,9 +121,14 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
       --info-card-body-s:71%;
       --info-card-body-l:50%;
       --info-card-color-body:hsl(var(--info-card-body-h),var(--info-card-body-s),var(--info-card-body-l));
+      /*Others*/
+      cursor: pointer;
+      }
       
+      .tableVaccineInfoRoot{
       display:inline-flex;
       flex-direction:column;
+      --info-card-color-body:hsl(var(--info-card-body-h),var(--info-card-body-s),var(--info-card-body-l));/*WAR copied from tableVaccineInfoRootParent else tableVaccineInfoRoot was losing color*/
       background-color:var(--info-card-color-body);
       overflow:hidden;
       }
@@ -215,6 +221,23 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
        background:radial-gradient(hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 2%)), hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 10%)));
        align-self:flex-end;
       }
+  
+      .tableVaccineInfoRootParent .tableVaccineInfoRootParentDimmer{
+          padding:0px !important;
+      }
+
+  .tableVaccineInfoRootParent .tableVaccineInfoRootParentDimmer button{
+    --info-card-color-body:hsl(var(--info-card-body-h),var(--info-card-body-s),var(--info-card-body-l));/*WAR copied from tableVaccineInfoRootParent else button was losing color*/
+      background-color:var(--info-card-color-body);
+      }
+
+  .tableVaccineInfoRootParent .tableVaccineInfoRootParentDimmer button:hover{
+        background-color:hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) + 10%))
+      }
+    
+   .tableVaccineInfoRootParent .tableVaccineInfoRootParentDimmer button:focus{
+     background-color:hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) + 15%))
+   }
 /*END*/
 
 /*START https://codepen.io/desirecode/pen/MJPJqV*/

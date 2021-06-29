@@ -19,6 +19,7 @@ g_filter_vaccine_dose_2                     = new Boolean(false);
 //cache
 g_cache_all_centres = []; // data fetched from xhr. before applying filters.
 g_cache_filtered_data = []; //filtered data shown in table. useful for comparing changes in filtered data
+g_cache_centre_slots = {};//filtered slot availability at each centre
 g_cache_state_id_map = {};
 g_cache_district_id_map = {};
 
@@ -255,31 +256,28 @@ function convertDataToTable(data)
 {
 	let selectedDate = dayjs($('#dateInput')[0].value, 'YYYY-MM-DD');
 	let tableData = [];
+	g_cache_centre_slots = {};
 	data.forEach((centre, index) => {
 		let sessions = centre["sessions"];
 		let daysData = {};
-		for(let day = 0; day < g_config_daystoShow ; day++)
-		{//generate calendar entries for 7 days of the week
+		for (let day = 0; day < g_config_daystoShow; day++) {//generate calendar entries for 7 days of the week
 			let calendarDate = selectedDate.add(day, 'day');
 			let dayStr = "day" + day;
 			
 			//each element of vaccines[name] -> {minAge:-1, numDose1:-1, numDose2:-1, slots: []}
-			daysData[dayStr] = { vaccines: {}, totalAvailable: -1};
+			daysData[dayStr] = { vaccines: {}, totalAvailable: -1, centreId: centre["centreId"] /*to use it in cell render function */, "dayStr": dayStr, "dateStr" : calendarDate.format('YYYY-MM-DD')};
 
-			sessions.forEach(session => 
-			{
-				if(calendarDate.isSame(session.date, 'day') == true)
-				{
+			sessions.forEach(session => {
+				if (calendarDate.isSame(session.date, 'day') == true) {
 					if (daysData[dayStr].totalAvailable == -1) { daysData[dayStr].totalAvailable = 0; }
 					
 					let vacName = session["vaccine"];
 
-					if (daysData[dayStr].vaccines[vacName] == undefined)
-					{
+					if (daysData[dayStr].vaccines[vacName] == undefined) {
 						daysData[dayStr].vaccines[vacName] = {};
 					}
 
-					let vacInfo = { numDose1: session.available_capacity_dose1, numDose2: session.available_capacity_dose2, slots: session["slots"] };
+					let vacInfo = { numDose1: session.available_capacity_dose1, numDose2: session.available_capacity_dose2, slots: session["slots"], sessionId:session["session_id"] };
 					let minAgeStr = String(session["min_age_limit"]);
 					daysData[dayStr].vaccines[vacName][minAgeStr] = vacInfo;
 					
@@ -288,7 +286,8 @@ function convertDataToTable(data)
 				}
 			})
 		}
-		centreData = Object.assign({}, {name_info:{name:centre["name"], district:centre["district"]}, name:centre["name"]}, daysData);
+		centreData = Object.assign({}, { name_info: { name: centre["name"], district: centre["district"] }, name: centre["name"] }, daysData);
+		g_cache_centre_slots[centre["centreId"]] = centreData;
 		tableData.push(centreData);
 	});
         
@@ -419,9 +418,12 @@ function DetectChange(newData, oldData, bShowNotification = true)
 
 function TableCellRender(data, type)
 {
-	let retHtmlStr = '<div style="display:inline-flex;flex-direction:column;">';
 	let vaccines = data.vaccines;
+	let centreId = data.centreId;
+	let dayStr = data.dayStr;
+	let dateStr = data.dateStr;
 	let bVaccinesAvailable = false;
+	let retHtmlStr = '<div style="display:inline-flex;flex-direction:column;" data-type="cellParent" data-centreId="' + centreId + '" data-daystr="' + dayStr +'" data-datestr="' + dateStr + '">';
 	for (let iVac = 0; iVac < g_config_supported_vaccines.length; iVac++)
 	{
 		let vaccName = g_config_supported_vaccines[iVac].toUpperCase();
@@ -475,7 +477,7 @@ function TableCellRender(data, type)
 
 				let htmlStr = GetHtmlVaccineInfo();
 				
-				htmlStr = htmlStr.replace("##VAC_root_class##", "tableVaccineInfoRoot_" + vaccName.toLowerCase());
+				htmlStr = htmlStr.replaceAll("##VAC_root_class##", "tableVaccineInfoRoot_" + vaccName.toLowerCase());//replace at 2 places
 
 				/*Dont hide dose1, dose 2 columns since once one of them is hidden user as no way to know what the remaining column represents since there are no headings*/
 				htmlStr = htmlStr.replace("##VAC_TITLE_CLASS##", "vaccineInfoTitle");//.vaccineInfoTitleShort to be used when we hide a column
@@ -508,15 +510,15 @@ function TableCellRender(data, type)
 					htmlStr = htmlStr.replace("##VAC_divider_h_p_display##", "display:none");
 				}
 
+				htmlStr = htmlStr.replace("##VAC_NAME_INTERAL##", vaccName);
 				htmlStr = htmlStr.replace("##VAC_TITLE_TEXT##", vaccName.toUpperCase());
-				if (retHtmlStr != "")
-				{
-					htmlStr = htmlStr.replace("##VAC_root_style##", "margin-top:10px;");
-					//htmlStr = htmlStr.replace("##VAC_root_style##", " ");
+				if (bVaccinesAvailable == false)
+				{//first vaccine of cell
+					htmlStr = htmlStr.replace("##VAC_root_style##", " ");
 				}
 				else
 				{
-					htmlStr = htmlStr.replace("##VAC_root_style##", " ");
+					htmlStr = htmlStr.replace("##VAC_root_style##", "margin-top:10px;");
 				}
 				retHtmlStr += htmlStr;
 				bVaccinesAvailable = true;
@@ -1427,14 +1429,14 @@ function OnAutoRefreshClickInternal(buttonOn) {
 			}
 			console.error("invalid value for interval", intervalTimeMinsStr, intervalTimeMinsInt);
 		}
+		$('#topBar').sidebar('show');
 	}
 
 	else {
 		$('#input_auto_refresh_interval_parent').addClass('disabled');
 		$('#viewStatsContent').hide();
+		$('#topBar').sidebar('hide');
 	}
-
-	$('#topBar').sidebar('toggle');
 }
 
 function OnClickSettingsAutoScroll(e,t)

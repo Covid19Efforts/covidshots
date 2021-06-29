@@ -2,7 +2,7 @@
 div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
     overflow:hidden;
     }
-      .tableVaccineInfoRoot {
+      .tableVaccineInfoRootParent{
       --info-card-width:125px;
       --info-card-title-height:18px;
       --info-card-divider-width:1px;
@@ -11,7 +11,9 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
       --info-card-body-s:71%;
       --info-card-body-l:50%;
       --info-card-color-body:hsl(var(--info-card-body-h),var(--info-card-body-s),var(--info-card-body-l));
+      }
       
+      .tableVaccineInfoRoot{
       display:inline-flex;
       flex-direction:column;
       background-color:var(--info-card-color-body);
@@ -102,9 +104,15 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
        background:radial-gradient(hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 2%)), hsl(var(--info-card-body-h),var(--info-card-body-s),calc(var(--info-card-body-l) - 10%)));
        align-self:flex-end;
       }
-  
+      
+  .tableVaccineInfoRootParent .tableVaccineInfoRootParentDimmer{
+      background-color:var(--info-card-color-body);
+      }
 </style>
-<div class="tableVaccineInfoRoot ##VAC_root_class##" style="##VAC_root_style##">
+
+<div class="ui basic segment tableVaccineInfoRootParent" onclick="VaccineInfoCardClicked(this)" style="padding:0px;margin:0px;" data-vac-name-internal="##VAC_NAME_INTERAL##">
+  <!--vac-info-card-start-->
+  <div class="tableVaccineInfoRoot ##VAC_root_class##" style="##VAC_root_style##">
   
   <div class="tableVaccineInfoParent" style="##VAC_45_p_display##">
   	<div class="vaccineInfoAgeText"><p>45+</p></div>
@@ -129,4 +137,11 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
   
   <div class="vaccineInfoTitle ##VAC_TITLE_CLASS##">##VAC_TITLE_TEXT##</div>
 
+</div>
+  <!--vac-info-card-end-->
+  <div class="ui inverted dimmer tableVaccineInfoRootParentDimmer ##VAC_root_class##" data-type="bookDimmer">
+    <div class="content">
+      <button class="ui button" onclick="VaccineInfoCardBookClicked(this)">Book</button>
+    </div>
+  </div>
 </div>

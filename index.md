@@ -91,11 +91,73 @@ title: Covid Shots
     <p></p>
   </div>
   <div class="actions">
-    <!--<div class="ui approve button">Approve</div>
-    <div class="ui button">Neutral</div>-->
     <div class="ui cancel button">Close</div>
   </div>
 </div>
+
+<!--dialog start-->
+<div class="ui modal" id="BookViaTableCellClickModal">
+  <div class="header">Book</div>
+  <div class="scrolling content" style="min-height:200px;">
+
+<div class="ui icon message" data-type="loading_anim">
+  <i class="notched circle loading icon"></i>
+  <div class="content">
+    <div class="header">
+      Loading details
+    </div>
+    <p>Checking if the user is logged in, and loading account details.</p>
+  </div>
+</div>
+
+
+<div class="ui icon message" data-type="error_message">
+  <i class="x icon"></i>
+  <div class="content">
+    <div class="header">
+      Error getting details
+    </div>
+    <p data-type="error_message_content">Try after some time</p>
+  </div>
+</div>
+
+<h4 class="ui sub header" style="display:inline;" data-type="vaccine_name"></h4>
+<br />
+<h4 class="ui sub header" style="display:inline;" data-type="centre_name"></h4>
+
+<!--<span style="display:none" data-type="vaccine_select">
+<h4 class="ui sub header" style="display:inline;">Vaccine&nbsp;</h4>
+  <select name="Vaccine" class="ui fluid dropdown">
+  </select>
+</span>-->
+
+<div class="ui warning message" style="display:none" data-type="user_select_warn">
+  <div class="header">
+    No user can be booked for this vaccine type
+  </div>
+  <p></p>
+</div>
+
+<span style="display:none; margin-top:10px;" data-type="user_select">
+<h4 class="ui sub header" style="display:inline;">User&nbsp;</h4>
+  <select name="User" class="ui fluid dropdown">
+  </select>
+</span>
+
+<span style="display:none; margin-top:10px;" data-type="slots_select">
+<h4 class="ui sub header" style="display:inline;">Slots&nbsp;</h4>
+  <select name="User" class="ui fluid dropdown">
+  </select>
+</span>
+
+<button class="ui primary disabled button" onclick="VaccineInfoCardFinalBookClicked(this)" data-type="book_button" style="margin-top:10px;" data-book-payload="" data-book-userId="" data-book-centrename="">Book</button>
+
+  </div>
+  <div class="actions">
+    <div class="ui cancel button">Close</div>
+  </div>
+</div>
+<!--dialog end-->
 
 
 <div class="ui modal" id="AboutDialogModal">
