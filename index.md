@@ -170,8 +170,6 @@ title: Covid Shots
     <p></p>
   </div>
   <div class="actions">
-    <!--<div class="ui approve button">Approve</div>
-    <div class="ui button">Neutral</div>-->
     <div class="ui cancel button">Close</div>
   </div>
 </div>
