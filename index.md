@@ -98,10 +98,11 @@ title: Covid Shots
 <!--dialog start-->
 <div class="ui modal" id="BookViaTableCellClickModal">
   <div class="header">Book</div>
-  <div class="scrolling content" style="min-height:200px;">
+  <div class="scrolling content" style="min-height:225px;">
 
 <div class="ui icon message" data-type="loading_anim">
-  <i class="notched circle loading icon"></i>
+  <i class="notched circle loading icon" data-type="circle_loading"></i>
+  <img src="assets/downloaded/tick.gif" style="width: 50px; display:none" data-type="tick_gif">
   <div class="content">
     <div class="header">
       Loading details
@@ -111,7 +112,7 @@ title: Covid Shots
 </div>
 
 
-<div class="ui icon message" data-type="error_message">
+<div class="ui icon negative message" data-type="error_message">
   <i class="x icon"></i>
   <div class="content">
     <div class="header">
@@ -150,7 +151,7 @@ title: Covid Shots
   </select>
 </span>
 
-<button class="ui primary disabled button" onclick="VaccineInfoCardFinalBookClicked(this)" data-type="book_button" style="margin-top:10px;" data-book-payload="" data-book-userId="" data-book-centrename="">Book</button>
+<button class="ui primary disabled button" onclick="VaccineInfoCardFinalBookClicked(this)" data-type="book_button" style="margin-top:10px;" data-book-payload="" data-book-userId="" data-book-centrename="" data-book-vaccine="">Book</button>
 
   </div>
   <div class="actions">
@@ -410,3 +411,5 @@ minutes
 <script src="index.js?v=1.1"></script>
 <script src="persistentVars.js?v=1.1"></script>
 <script src="booking.js?v=1.1"></script>
+
+<i style="opacity:0;" class="tata-icon material-icons">forum</i><!--will preload material icon fonts so tata.js wont show text instead of icon while font is loading-->

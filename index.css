@@ -240,6 +240,10 @@ div.tableVaccineInfoRoot, .tableVaccineInfoRoot div {
    }
 /*END*/
 
+#BookViaTableCellClickModal [data-type=loading_anim] p td{
+     border:none !important;
+}
+
 /*START https://codepen.io/desirecode/pen/MJPJqV*/
 #scrollToTop {
     position: fixed;

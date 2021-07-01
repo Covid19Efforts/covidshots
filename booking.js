@@ -632,7 +632,7 @@ function TryAutoBook(notifyInfo)
     }
 }
 
-function TryAutoBookInternal(payload, userId, centreName, bProcessingPendingPayloads = false/*To prevent infinite recursion. If true it means that we are already on retry code path*/)
+function TryAutoBookInternal(payload, userId, centreName, bProcessingPendingPayloads = false/*To prevent infinite recursion. If true it means that we are already on retry code path*/, SUCCESS_CALLBACK = null, FAILURE_CALLBACK = null)
 {
     let payloadStr = JSON.stringify(payload);
     let userDetails = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId);
@@ -665,10 +665,19 @@ function TryAutoBookInternal(payload, userId, centreName, bProcessingPendingPayl
 
         g_booking_state_pending_payloads = g_booking_state_pending_payloads.filter(ele => ele.userId != userId);//remove user
 
-        tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot, {holding:true});
+        tata.success("Slot booked", userDetails.name + "<br />" + centreName + "<br/>" + payload.slot, { holding: true });
+        
+        if (SUCCESS_CALLBACK != null)
+        {
+            SUCCESS_CALLBACK();
+        }
         
     }).catch(error => {
         tata.error("Error", "Error Booking");
+        if(FAILURE_CALLBACK != null)
+        {
+            FAILURE_CALLBACK();
+        }
         error.then(resText => {
             bTriggerLogout = true;
             if(resText == "Unauthenticated access!")
@@ -864,6 +873,10 @@ function VaccineInfoCardClicked(that) {
 function VaccineInfoCardBookClicked(that)
 {
     $('#BookViaTableCellClickModal [data-type*="_"]').hide();
+    $('#BookViaTableCellClickModal [data-type=loading_anim] [data-type=circle_loading]').show();
+    $('#BookViaTableCellClickModal [data-type=loading_anim] [data-type=tick_gif]').hide();
+    $('#BookViaTableCellClickModal [data-type=loading_anim] .header')[0].innerText = "Loading details";
+    $('#BookViaTableCellClickModal [data-type=loading_anim] p')[0].innerHTML = "Checking if the user is logged in, and loading account details.";
     $('#BookViaTableCellClickModal [data-type=loading_anim]').show();
     $('#BookViaTableCellClickModal [data-type=book_button]').addClass("disabled");
     $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-payload", "");
@@ -891,7 +904,10 @@ function VaccineInfoCardBookClicked(that)
                     value: user.User_name.refId,
                 });
         });
-
+        
+        $('#BookViaTableCellClickModal [data-type=user_select] select').parent().dropdown('destroy');
+        function closeDropDown() { $('#BookViaTableCellClickModal [data-type=user_select] select').dropdown('hide Menu'); };
+        
         $('#BookViaTableCellClickModal [data-type=user_select] select').dropdown({
             placeholder: "Select Users",
             values: userVals,
@@ -940,18 +956,23 @@ function VaccineInfoCardBookClicked(that)
                     } else if (dateStrJs.isBefore(dose2DateMin, 'day'))
                     {
                         errorTitle = "Too soon";
-                        errorMessage = "There should be a gap of " + g_booking_config_dose2_gap + " days between the two doses."
+                        errorMessage = "There should be a gap of <b>" + g_booking_config_dose2_gap + " days</b> between the two doses."
+                        errorMessage += "<br/>";
+                        errorMessage += "First dose was taken on <b>" + dose1Date.format("D MMM") + "</b>. Second dose should be on (or after) <b>" + dose2DateMin.format("D MMM") + "</b>.";
                     }
                 }
 
                 if (errorMessage != "")
                 {
                     $('#BookViaTableCellClickModal [data-type=error_message] .header')[0].innerText = errorTitle;
-                    $('#BookViaTableCellClickModal [data-type=error_message_content]')[0].innerText = errorMessage;
+                    $('#BookViaTableCellClickModal [data-type=error_message_content]')[0].innerHTML = errorMessage;
                     $('#BookViaTableCellClickModal [data-type=error_message]').show();
                     $('#BookViaTableCellClickModal [data-type=error_message_content]').show();
                     $('#BookViaTableCellClickModal [data-type=slots_select] select').dropdown({ values: [] });
                     $('#BookViaTableCellClickModal [data-type=slots_select]').hide();
+
+                    closeDropDown();
+                    setTimeout(closeDropDown, 500);
                     return;
                 }
                 else
@@ -963,6 +984,7 @@ function VaccineInfoCardBookClicked(that)
                     vacInf.slots.forEach(slot => {
                         allSlots.push({ name: slot, value: slot });
                     });
+                    $('#BookViaTableCellClickModal [data-type=slots_select] select').dropdown('destroy');
                     $('#BookViaTableCellClickModal [data-type=slots_select] select').dropdown({
                         values: allSlots,
                         placeholder: "Select Slots ...",
@@ -975,13 +997,18 @@ function VaccineInfoCardBookClicked(that)
                                 $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-payload", JSON.stringify(bookPayload));
                                 $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-userId", userId);
                                 $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-centrename", centreName);
+                                $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-vaccine", vacName);
                             }
+                            $('#BookViaTableCellClickModal [data-type=slots_select] select').dropdown('hide menu');
                         }
                     });
                     $('#BookViaTableCellClickModal [data-type=slots_select]').show();
                 }
+                
+                closeDropDown();
+                setTimeout(closeDropDown, 500);
              }
-          });
+        });
 
         $('#BookViaTableCellClickModal [data-type=vaccine_name]').show();
         $('#BookViaTableCellClickModal [data-type=centre_name]').show();
@@ -1016,7 +1043,42 @@ function VaccineInfoCardFinalBookClicked(that)
             payloadJson = JSON.parse(payload);
             let userId = $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-userId");
             let centreName = $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-centrename");
-            TryAutoBookInternal(payloadJson, userId, centreName, false);
+            let vacName = $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-vaccine");
+
+            $('#BookViaTableCellClickModal [data-type=loading_anim] .header')[0].innerText = "Booking ...";
+            $('#BookViaTableCellClickModal [data-type=loading_anim] p')[0].innerHTML = "Wait while we book the slot for you.";
+            $('#BookViaTableCellClickModal [data-type=loading_anim]').show();
+            $('#BookViaTableCellClickModal [data-type=book_button]').addClass("disabled");
+            $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-payload", "");
+            $('#BookViaTableCellClickModal [data-type=book_button]').hide();
+
+            $('#BookViaTableCellClickModal [data-type=vaccine_name]').hide();
+            $('#BookViaTableCellClickModal [data-type=centre_name]').hide();
+            $('#BookViaTableCellClickModal [data-type=user_select]').hide();
+            $('#BookViaTableCellClickModal [data-type=slots_select]').hide();
+            
+            let successFun = function () {
+                let userName = g_persistent_vars.g_booking_state_users_details_get_by_user_id(userId).name;
+                let slot = payloadJson.slot;
+                $('#BookViaTableCellClickModal [data-type=loading_anim]').hide();
+                $('#BookViaTableCellClickModal [data-type=loading_anim] .header')[0].innerText = "Booking successful!";
+                $('#BookViaTableCellClickModal [data-type=loading_anim] p')[0].innerHTML = '<table class="ui small table"><tbody><tr><td><b>Name:</b></td><td>' + userName + '</td></tr><tr><td><b>Vaccine:</b></td><td>' + vacName + '</td></tr><tr><td><b>Slot:</b></td><td>' + slot + '</td></tr><tr><td><b>Centre:</b></td><td>' + centreName + '</td></tr></tbody></table>';
+                $('#BookViaTableCellClickModal [data-type=loading_anim] [data-type=circle_loading]').hide();
+                $('#BookViaTableCellClickModal [data-type=loading_anim] [data-type=tick_gif]').show();
+                $('#BookViaTableCellClickModal [data-type=loading_anim]').show();
+            };
+
+            let failFun = function () {
+                $('#BookViaTableCellClickModal [data-type=loading_anim]').hide();
+                
+                
+                $('#BookViaTableCellClickModal [data-type=error_message] .header')[0].innerText = "Booking failed";
+                $('#BookViaTableCellClickModal [data-type=error_message_content]')[0].innerHTML = "Error occured during booking. Try later";
+                $('#BookViaTableCellClickModal [data-type=error_message]').show();
+                $('#BookViaTableCellClickModal [data-type=error_message_content]').show();
+            };
+
+            TryAutoBookInternal(payloadJson, userId, centreName, false, successFun, failFun);
         }
         catch (e)
         {
