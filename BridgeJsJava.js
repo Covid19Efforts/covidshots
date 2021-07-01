@@ -16,11 +16,17 @@ class WebViewBridgeJs2Java
         let jsonStr = JSON.stringify({ name:"buttonEventAutoBook", value: bButtonState });
         this.SendData(jsonStr);
     }
+    static SendWindowUrl() {
+        let jsonStr = JSON.stringify({ name:"stored_url", value: window.location.href });
+        this.SendData(jsonStr);
+    }
 
     static SendData(jsonStr)
     {
         try {
-            JavaScriptInterface.jsToAndroid(jsonStr);
+            if (WebViewBridgeJs2Java.IsInWebView()) {
+                JavaScriptInterface.jsToAndroid(jsonStr);
+            }
         }
         catch (e)
         {

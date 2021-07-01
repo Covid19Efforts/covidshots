@@ -1001,6 +1001,7 @@ function AddRemoveUrlParam(/*bool*/ bAdd, paramName, paramValue)//eg. 1,states,1
 	}
         
 	SanitizeUrl(decodeURIComponent(uSp.toString()), true);
+	WebViewBridgeJs2Java.SendWindowUrl();
 }
     
     function GetStates()
