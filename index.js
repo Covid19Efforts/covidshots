@@ -119,12 +119,14 @@ function onDistrictRemove(value, text, $selectedItem)
 	{
 		console.error("invalid value", value, distInt);
 	}
+	WebViewBridgeJs2Java.SendWindowUrl();
 }
     
 function onDistrictHide(value, text, $selectedItem)
 {
 	OnDateChange();
 	RefreshAll(false, true);
+	WebViewBridgeJs2Java.SendWindowUrl();
 }
 
 
@@ -1001,7 +1003,6 @@ function AddRemoveUrlParam(/*bool*/ bAdd, paramName, paramValue)//eg. 1,states,1
 	}
         
 	SanitizeUrl(decodeURIComponent(uSp.toString()), true);
-	WebViewBridgeJs2Java.SendWindowUrl();
 }
     
     function GetStates()
