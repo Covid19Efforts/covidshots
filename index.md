@@ -196,7 +196,7 @@ title: Covid Shots
         <button class="ui button"  id="BookingFormgetOtpBtn">Get OTP</button>
       </div>
       <div class="field" style="display:none" id="InputOtpToVerify">
-        <label>Enter OTP</label>
+        <label>Enter OTP<p style="display: inline;font-weight: initial;" id="otpMobileNumberLabel"></p></label>
         <input type="number" name="otpObtained" id="otpObtained" placeholder="Enter OTP ...">
         <button class="ui button"  id="BookingFormChangeNumberBtn">Change Number</button>
         <button class="ui button"  id="BookingFormResendOtpBtn">Resend OTP</button>

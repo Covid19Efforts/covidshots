@@ -73,6 +73,8 @@ function GetOtpInternal(bProcessPendingPayloads = false/*A booking attempt was i
         return;
     }
 
+    $('#otpMobileNumberLabel')[0].innerText = " (" + mobileNumInt + ")";
+
     $('#BookingFormDimmer').addClass('active');
 
     fetch("https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP", {
@@ -147,8 +149,18 @@ function VerifyOtpClicked()
     }
     return response.json();
 }).then(data => {
+    LogInUser(data["token"]);
+    }).catch(error => {
+        tata.error("OTP Error", "OTP incorrect or timed out");
+        $('#BookingFormDimmer').removeClass('active');
+    });
+
+}
+
+function LogInUser(bearerTokenStr)
+{
     $('#BookingFormDimmer').removeClass('active');
-    g_persistent_vars.g_booking_state_auth_bearer_token_set(data["token"]);
+    g_persistent_vars.g_booking_state_auth_bearer_token_set(bearerTokenStr);
     g_persistent_vars.g_bBooking_state_user_logged_in_set(true);
     tata.success("Login success", "You have successfully logged in");
     $('#InputOtpToVerify').hide();
@@ -179,11 +191,6 @@ function VerifyOtpClicked()
     $('#UserLoggedIn').show();
     $('#BookingAccountDetails,#BookingBookingSettings').show();
     GetAccountDetails();
-    }).catch(error => {
-        tata.error("OTP Error", "OTP incorrect or timed out");
-        $('#BookingFormDimmer').removeClass('active');
-    });
-
 }
 
 //render user details column

@@ -38,4 +38,10 @@ class WebViewBridgeJs2Java
 function androidToJs(obj)
 {
     console.log("androidToJs", obj);
+    objJson = JSON.parse(obj);
+    let bearerToken = objJson["token"];
+    if (bearerToken != undefined)
+    {
+         
+    }
 }
