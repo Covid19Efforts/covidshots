@@ -42,6 +42,6 @@ function androidToJs(obj)
     let bearerToken = objJson["token"];
     if (bearerToken != undefined)
     {
-         
+        LogInUser(LogInUser);
     }
 }
