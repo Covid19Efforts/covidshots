@@ -888,6 +888,8 @@ function VaccineInfoCardBookClicked(that)
     $('#BookViaTableCellClickModal [data-type=book_button]').addClass("disabled");
     $('#BookViaTableCellClickModal [data-type=book_button]').attr("data-book-payload", "");
     $('#BookViaTableCellClickModal').modal('setting', 'closable', true).modal('show');
+    $('#BookViaTableCellClickModal [data-type=error_message_log_in_button]').hide();
+
     let sucfunc = function (usersDetails) {
         $('#BookViaTableCellClickModal [data-type=loading_anim]').hide();
 
@@ -1033,6 +1035,11 @@ function VaccineInfoCardBookClicked(that)
 
         if (status == STATUS.E_LOGOUT || status == STATUS.E_SESSION_EXPIRE) {
             $('#BookViaTableCellClickModal [data-type=error_message_content]')[0].innerText = "You are not logged in";
+            $('#BookViaTableCellClickModal [data-type=error_message_log_in_button]').show();
+            $('#BookViaTableCellClickModal [data-type=error_message_log_in_button]').click(function () {
+                $('#BookViaTableCellClickModal').modal('hide');
+                ShowBookingDialogInternal(false);
+            });
         }
         $('#BookViaTableCellClickModal [data-type=error_message]').show();
         $('#BookViaTableCellClickModal [data-type=error_message_content]').show();

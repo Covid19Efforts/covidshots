@@ -119,6 +119,7 @@ title: Covid Shots
       Error getting details
     </div>
     <p data-type="error_message_content">Try after some time</p>
+    <button class="ui primary button"  style="display:none" data-type="error_message_log_in_button">Log in</button>
   </div>
 </div>
 
