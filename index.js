@@ -540,7 +540,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 
 	let tableColumns = [{data: ['name_info'], title: 'Centre name', 
 		render: function(data, type){
-			return "<fieldset><legend>Free</legend><b>"+ data["name"] + "</b><br /> <p style='font-size:smaller;'> " + data["address"] +" </p></fieldset>";
+			return "<fieldset><legend>Free</legend><b>"+ data["name"] + "</b><br /> <p style='font-size:smaller;max-height: 60px;overflow-Y: auto;'> " + data["address"] +" </p></fieldset>";
 		}
 	}];
 	let selectedDate = new Date($('#dateInput')[0].value);
