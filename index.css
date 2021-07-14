@@ -70,6 +70,49 @@ body #BookingSettings {
     padding-top: 0;
 }
 
+/*Common to all Centres*/
+#centreList .row_all{
+    
+}
+
+#centreList .row_all td {
+    min-height: 1px; /*HACK - https://stackoverflow.com/a/3542470/981766*/
+}
+
+#centreList .row_all td:nth-of-type(1) fieldset{
+    min-height: 95%;
+    box-sizing: border-box;
+    border-style: dashed;
+    border-color: #ffffff00;/*Initially we planned to use border, then dropped it*/
+}
+
+#centreList .row_all td:nth-of-type(1) fieldset legend{
+    padding: 0px 2px;
+    background-color: white;
+    font-weight: bold;
+    font-size: small;
+    font-style: italic;
+    border-radius: 3px;
+}
+
+/*Centres which are free*/
+#centreList .row_free td:nth-of-type(1){
+    background-color: hsl(211deg 100% 90%) !important;
+}
+
+/*Centres which are paid*/
+#centreList .row_paid td:nth-of-type(1){
+    background-color: hsl(354deg 100% 90%) !important;
+}
+
+#centreList .row_free fieldset legend{
+    color: hsl(211deg 100% 70%);   
+}
+
+#centreList .row_paid fieldset legend{
+    color: hsl(354deg 100% 70%);   
+}
+
 .ui.button.tableOptionsButtonOuter,
 .ui.button.tableOptionsButtonInner {
     border: 1px solid transparent;

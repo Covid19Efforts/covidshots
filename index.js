@@ -245,7 +245,7 @@ function filterData(data)
 
 		if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
 		{
-			filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"], district:centre["district"]});
+			filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"], district:centre["district"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"]});
 		}
 	});
             
@@ -288,7 +288,7 @@ function convertDataToTable(data)
 				}
 			})
 		}
-		centreData = Object.assign({}, { name_info: { name: centre["name"], district: centre["district"] }, name: centre["name"] }, daysData);
+		centreData = Object.assign({}, { name_info: { name: centre["name"], district: centre["district"] }, name: centre["name"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"] }, daysData, );
 		g_cache_centre_slots[centre["centreId"]] = centreData;
 		tableData.push(centreData);
 	});
@@ -540,7 +540,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 
 	let tableColumns = [{data: ['name_info'], title: 'Centre name', 
 		render: function(data, type){
-			return "<b>"+ data["name"] + "</b><br /> ( " + data["district"] +" )";
+			return "<fieldset><legend>Free</legend><b>"+ data["name"] + "</b><br /> ( " + data["district"] +" )</fieldset>";
 		}
 	}];
 	let selectedDate = new Date($('#dateInput')[0].value);
@@ -629,6 +629,20 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 			"searchPlaceholder": "Search...",
 			"lengthMenu":"_MENU_ entries"
 		},
+		"rowCallback": function (row, data, displayNum, displayIndex, dataIndex) {
+			$(row).addClass('row_all');
+			if (data.feeType.toLowerCase() == "free")
+			{
+				$(row).addClass('row_free');
+				$(row).find("td:nth-of-type(1) fieldset legend")[0].innerText = "Free";
+			}
+			else
+			{
+				let fees = data.vaccineFees[0].fee;
+				$(row).addClass('row_paid');
+				$(row).find("td:nth-of-type(1) fieldset legend")[0].innerText = "Paid |" + fees;
+			}
+		},
 		dom: 'Blfrtip',
 		buttons: [{
 			extend: 'collection',
@@ -701,8 +715,12 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
                         session["date"] = cDateObj;
                         cSessions2.push(session);
                     });
-                    
-					let cInfo = {name:cName, sessions:cSessions2, centreId: centre["center_id"], district:cDistrictName};
+					let feeType = centre["fee_type"];
+					let cInfo = { name: cName, sessions: cSessions2, centreId: centre["center_id"], district: cDistrictName, feeType: feeType, vaccineFees: [] };
+					if (feeType.toLowerCase() == "paid")
+					{
+						cInfo.vaccineFees = centre["vaccine_fees"];
+					}
                     centresTable.push(cInfo);
                 });
             });
