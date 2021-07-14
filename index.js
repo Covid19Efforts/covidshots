@@ -245,7 +245,7 @@ function filterData(data)
 
 		if(g_option_table_centres_show_all == true || bVaccineAvailable == true)
 		{
-			filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"], district:centre["district"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"]});
+			filteredData.push({name:centre["name"], sessions:filteredSessions, centreId:centre["centreId"], geoInfo: centre["geoInfo"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"]});
 		}
 	});
             
@@ -288,7 +288,7 @@ function convertDataToTable(data)
 				}
 			})
 		}
-		centreData = Object.assign({}, { name_info: { name: centre["name"], district: centre["district"] }, name: centre["name"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"] }, daysData, );
+		centreData = Object.assign({}, { name_info: { name: centre["name"], district: centre["geoInfo"]["district"], address: centre["geoInfo"]["address"]}, name: centre["name"], feeType: centre["feeType"], vaccineFees:centre["vaccineFees"] }, daysData, );
 		g_cache_centre_slots[centre["centreId"]] = centreData;
 		tableData.push(centreData);
 	});
@@ -540,7 +540,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
 
 	let tableColumns = [{data: ['name_info'], title: 'Centre name', 
 		render: function(data, type){
-			return "<fieldset><legend>Free</legend><b>"+ data["name"] + "</b><br /> ( " + data["district"] +" )</fieldset>";
+			return "<fieldset><legend>Free</legend><b>"+ data["name"] + "</b><br /> <p style='font-size:smaller;'> " + data["address"] +" </p></fieldset>";
 		}
 	}];
 	let selectedDate = new Date($('#dateInput')[0].value);
@@ -706,7 +706,9 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
             data.forEach(centres => {
                 centres.centers.forEach(centre => {
                     let cName = centre["name"];
-                    let cDistrictName = centre["district_name"];
+					let cDistrictName = centre["district_name"];
+					let cAddress = centre["address"];
+					let cGeoInfo = { address: cAddress, district: cDistrictName };
                     let cSessions = centre["sessions"];
                     let cSessions2 = [];
                     cSessions.forEach(session => {
@@ -716,7 +718,7 @@ function CreateTable(bCallAlarm = false /*Show notification, and sound alarm*/, 
                         cSessions2.push(session);
                     });
 					let feeType = centre["fee_type"];
-					let cInfo = { name: cName, sessions: cSessions2, centreId: centre["center_id"], district: cDistrictName, feeType: feeType, vaccineFees: [] };
+					let cInfo = { name: cName, sessions: cSessions2, centreId: centre["center_id"], geoInfo: cGeoInfo, feeType: feeType, vaccineFees: [] };
 					if (feeType.toLowerCase() == "paid")
 					{
 						cInfo.vaccineFees = centre["vaccine_fees"];
